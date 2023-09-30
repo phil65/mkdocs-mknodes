@@ -14,7 +14,8 @@ from mknodes import paths
 from mknodes.utils import mergehelpers, pathhelpers, resources
 
 from mkdocs_mknodes import mkdocsconfig
-from mkdocs_mknodes.plugin import buildbackend, mkdocsbuilder, mkdocshelpers
+from mkdocs_mknodes.backends import buildbackend
+from mkdocs_mknodes.plugin import mkdocsbuilder, mkdocshelpers
 
 
 logger = get_plugin_logger(__name__)

@@ -7,7 +7,7 @@ from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure import files as files_, nav, pages
 
 from mkdocs_mknodes import mkdocsconfig
-from mkdocs_mknodes.plugin import buildbackend
+from mkdocs_mknodes.backends import buildbackend
 
 
 logger = get_plugin_logger(__name__)

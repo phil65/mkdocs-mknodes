@@ -15,7 +15,7 @@ from mknodes.utils import log, resources
 if TYPE_CHECKING:
     from mknodes.theme import theme as theme_
 
-    from mkdocs_mknodes.plugin import buildbackend
+    from mkdocs_mknodes.backends import buildbackend
 
 
 logger = log.get_logger(__name__)

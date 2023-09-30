@@ -9,19 +9,15 @@ import urllib.parse
 import tempfile
 from typing import TYPE_CHECKING, Literal
 from mkdocs import livereload
-
 from mkdocs.plugins import BasePlugin, get_plugin_logger
-
-from mkdocs_mknodes import buildcollector, mkdocsconfig
 from mknodes import project
 from mknodes.pages import mkpage
-from mkdocs_mknodes.plugin import (
-    linkreplacer,
-    markdownbackend,
-    mkdocsbackend,
-    pluginconfig,
-)
 from mknodes.theme import theme
+from mknodes.utils import linkreplacer
+
+from mkdocs_mknodes import buildcollector, mkdocsconfig
+from mkdocs_mknodes.backends import markdownbackend, mkdocsbackend
+from mkdocs_mknodes.plugin import pluginconfig
 
 if TYPE_CHECKING:
     import jinja2

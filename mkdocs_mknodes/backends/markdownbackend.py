@@ -5,7 +5,7 @@ import pathlib
 
 from mknodes.utils import log, pathhelpers
 
-from mkdocs_mknodes.plugin import buildbackend
+from mkdocs_mknodes.backends import buildbackend
 
 
 logger = log.get_logger(__name__)
