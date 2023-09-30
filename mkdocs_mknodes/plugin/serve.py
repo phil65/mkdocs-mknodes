@@ -18,9 +18,9 @@ import jinja2.exceptions
 from mkdocs.config import load_config
 from mkdocs.exceptions import Abort
 from mkdocs.livereload import LiveReloadServer
-from mknodes import paths
 from mknodes.utils import log, yamlhelpers
 
+from mkdocs_mknodes import paths
 from mkdocs_mknodes.plugin import build_page
 
 
