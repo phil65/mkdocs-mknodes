@@ -22,7 +22,6 @@ dependencies = [
     # Testing
     "pytest",
     "pytest-cov",
-    "pytest-responsemock",
 
     # Docs
     "pymdown-extensions",
@@ -113,9 +112,7 @@ dependencies = [
 
     # Tools
     "jinja2",
-    "fsspec",
     "deepmerge",
-    "coloraide",
 ]
 license = "MIT"
 
