@@ -18,7 +18,6 @@ from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.files import InclusionLevel, _set_exclusions, get_files
 from mkdocs.structure.nav import get_navigation
 from mkdocs.structure.pages import Page
-
 from mknodes.utils import yamlhelpers
 
 

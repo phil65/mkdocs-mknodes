@@ -14,7 +14,12 @@ from mkdocs.plugins import BasePlugin, get_plugin_logger
 
 from mknodes import buildcollector, mkdocsconfig, project
 from mknodes.pages import mkpage
-from mkdocs_mknodes.plugin import linkreplacer, markdownbackend, mkdocsbackend, pluginconfig
+from mkdocs_mknodes.plugin import (
+    linkreplacer,
+    markdownbackend,
+    mkdocsbackend,
+    pluginconfig,
+)
 from mknodes.theme import theme
 
 if TYPE_CHECKING:
