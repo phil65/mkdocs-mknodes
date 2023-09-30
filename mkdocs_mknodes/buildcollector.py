@@ -70,7 +70,7 @@ def update_nav_template(nav: mk.MkNav):
             nav.page_template.extends = extends
 
 
-def _get_extends_from_parent(node: mk.MkPage | mk.MkNav):
+def _get_extends_from_parent(node: mk.MkPage | mk.MkNav) -> str | None:
     for nav in node.parent_navs:
         if nav.page_template:
             p = pathlib.Path(nav.resolved_file_path)
