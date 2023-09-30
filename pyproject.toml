@@ -57,8 +57,8 @@ lint-check = [
 
 docs-build-test = [
   "hatch run mkdocs build -v",
-  "hatch run mkdocs_mknodes build -d site/mkdocstrings -p configs/mkdocs_mkdocstrings.yml -v --clone-depth 100",
-  "hatch run mkdocs_mknodes build -d site/mkdocs -p configs/mkdocs_mkdocs.yml -v --clone-depth 100",
+  "hatch run mknodes build -d site/mkdocstrings -p configs/mkdocs_mkdocstrings.yml -v --clone-depth 100",
+  "hatch run mknodes build -d site/mkdocs -p configs/mkdocs_mkdocs.yml -v --clone-depth 100",
 ]
 
 [build-system]
@@ -120,7 +120,7 @@ dependencies = [
 license = "MIT"
 
 [project.scripts]
-mkdocs_mknodes = "mkdocs_mknodes.cli:cli"
+mknodes = "mkdocs_mknodes.cli:cli"
 
 [project.entry-points."mkdocs.plugins"]
 mknodes = "mkdocs_mknodes.plugin:MkNodesPlugin"
