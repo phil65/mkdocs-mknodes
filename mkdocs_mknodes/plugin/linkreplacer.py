@@ -7,7 +7,6 @@ import re
 import urllib.parse
 
 from mkdocs.plugins import get_plugin_logger
-
 from mknodes.utils import helpers
 
 

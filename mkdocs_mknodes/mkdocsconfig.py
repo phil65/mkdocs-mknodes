@@ -14,7 +14,6 @@ from mkdocs import config as _config
 from mkdocs.commands import get_deps
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
-
 from mknodes.info import contexts
 from mknodes.utils import mdconverter, pathhelpers
 

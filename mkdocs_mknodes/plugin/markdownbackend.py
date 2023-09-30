@@ -3,8 +3,9 @@ from __future__ import annotations
 import os
 import pathlib
 
-from mkdocs_mknodes.plugin import buildbackend
 from mknodes.utils import log, pathhelpers
+
+from mkdocs_mknodes.plugin import buildbackend
 
 
 logger = log.get_logger(__name__)
