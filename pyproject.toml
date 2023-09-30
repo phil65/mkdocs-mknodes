@@ -65,7 +65,7 @@ requires = ["hatchling", "hatch-regex-commit"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mkdocs_mknodes"
+name = "mkdocs-mknodes"
 authors = [
   { name = "Philipp Temminghoff", email = "philipptemminghoff@gmail.com" }
 ]
