@@ -1,7 +1,8 @@
 import mknodes as mk
 
-from mknodes import manual
 from mknodes.theme import materialtheme
+
+from mkdocs_mknodes import manual
 
 
 HEADER = r"{{metadata.summary}}"
