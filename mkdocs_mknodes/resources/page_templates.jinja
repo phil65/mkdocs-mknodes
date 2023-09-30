@@ -1,0 +1,29 @@
+The page template can be edited easily via the 'template' attribute.
+MkNodes will then generate an individual template HTML file the page during the build process.
+Some blocks can be populated by assigning MkNodes to its content, others can be used
+to add CSS / javascript specific to each page.
+
+```py
+page.template.tabs.content = mk.MkAdmonition("Some text.")
+```
+would generate the following template override automatically:
+
+```html
+{ % extends "base.html" % }
+
+{ % block content % }
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Some text</p>
+</div>
+
+{ % endblock % }
+```
+
+
+```py
+page.template.announce.content = mk.MkMetadataBadges(typ="classifiers")
+page.template.footer.content = mk.MkProgressBar(50)
+page.template.tabs.content = mk.MkCode("information = 'You can even put MkNodes here!'")
+page.template.hero.content = mk.MkHeader("A header!")
+```

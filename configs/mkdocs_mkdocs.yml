@@ -1,0 +1,40 @@
+site_name: MkDocs
+site_description: A MkDocs page created by MkNodes
+repo_url: "https://github.com/mkdocs/mkdocs/"
+site_url: https://phil65.github.io/mknodes/mkdocs/
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  palette:
+    scheme: slate
+    primary: deep orange
+  features:
+  - announce.dismiss
+  - navigation.tabs # make top level tabs
+  - navigation.indexes # documents can be directly attached to sections (overview pages)
+  - navigation.footer # next/previous page buttons in footer
+  - navigation.top  # adds back-to-top button
+  - toc.follow  # makes toc follow scrolling
+
+plugins:
+- search
+- literate-nav
+- mkdocstrings
+- mknodes:
+    repo_path: https://github.com/mkdocs/mkdocs.git
+    clone_depth: 100
+    build_fn: mknodes.navs.mkdefaultwebsite:MkDefaultWebsite.for_project
+    kwargs:
+      static_pages:
+        Usage:
+          - Getting started: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/getting-started.md
+          - Configuration: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/configuration.md
+          # - Customizing your theme: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/customizing-your-theme.md
+          - Deploying your docs: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/deploying-your-docs.md
+          - Installation: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/installation.md
+          - Localizing your Theme: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/localizing-your-theme.md
+          - Writing your docs: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/writing-your-docs.md
+
+markdown_extensions:
+- mkdocs-click

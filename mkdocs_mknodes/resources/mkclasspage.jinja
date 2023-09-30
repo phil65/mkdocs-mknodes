@@ -1,0 +1,11 @@
+An MkClassPage is an MkPage subclass used to display information about
+ a specific class. It uses a Jinja template to display the class-related information.
+ By default, the Docstrings, tables for sub and parent classes as well as an inheritance
+ graph are shown. The template can be adjusted manually in case a different layout
+ is preferred.
+
+
+This is an example for an MkClassPage with the default layout:
+
+
+ {{ example_class | MkClassPage(inclusion_level=False) }}

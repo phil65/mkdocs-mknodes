@@ -1,0 +1,15 @@
+`MkNodes` offers a CLI interface in order to build projects based on
+Callables. The CLI is closely aligned to the MkDocs CLI to simplify the usage. Most
+arguments have the same name.
+
+
+There are 3 diffent commands right now:
+
+- `mknodes build`: Closely aligned to `mkdocs build`, but with the option to point
+to a (remote) repository as well as a Website template in form of a Python Callable.
+
+- `mknodes serve`: Same as `mknodes build`, but for serving the page.
+
+- `mknodes create-config`: Does a test run with given callable and repository and
+creates a Config file based on the metadata and extension requirements provided
+by the combination of Callable and repository.

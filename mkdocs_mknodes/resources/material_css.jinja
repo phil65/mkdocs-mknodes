@@ -1,0 +1,88 @@
+/*required: admonitions, status_icons, accent_fg_color, primary_bg_color, tooltip_width
+content_area_width, classic_admonition_style, show_annotation_numbers, default_icons, color_theme*/
+:root {
+{% for admonition in admonitions %}
+    --md-admonition-icon--{{ admonition.name }}: url('data:image/svg+xml;charset=utf-8,{{ admonition.svg }}');
+{% endfor %}
+{% for status_icon in status_icons %}
+    --md-status--encrypted: url('data:image/svg+xml;charset=utf-8,{ {status_icon.svg }}');
+{% endfor %}
+{% for k, v in default_icons.values() %}
+    --md-{k}: url('data:image/svg+xml;charset=utf-8,{{ v }}');
+{% endfor %}
+{% if accent_fg_color %}
+    --md-accent-fg-color: {{ accent_fg_color }};
+    --md-accent-fg-color--transparent: {{ accent_fg_color }};
+{% endif %}
+{% if primary_bg_color %}
+    --md-primary-bg-color: {{ primary_bg_color }};
+    --md-primary-bg-color--light: {{ primary_bg_color }};
+{% endif %}
+{% if color_theme %}
+    --md-primary-fg-color: {{ color_theme.color_str }};
+    --md-primary-fg-color--light: {{ color_theme.light_str }};
+    --md-primary-fg-color--dark: {{ color_theme.dark_str }};
+{% endif %}
+{% if tooltip_width %}
+    --md-tooltip-width: {{ tooltip_width }}px;
+{% endif %}
+}
+{% for admonition in admonitions %}
+.md-typeset .admonition.{{ admonition.name }},
+.md-typeset details.{{ admonition.name }} {
+    border-color: {{ admonition.border_color }};
+}
+.md-typeset .admonition.{{ admonition.name }}:focus-within,
+.md-typeset details.{{ admonition.name }}:focus-within {
+    box-shadow: 0 0 0 0.2rem {{ admonition.header_color }}; ## #00c8531a
+}
+.md-typeset .{{ admonition.name }} > .admonition-title,
+.md-typeset .{{ admonition.name }} > summary {
+    background-color: {{ admonition.header_color }};
+    color: {{ admonition.font_color }};
+}
+.md-typeset .{{ admonition.name }} > .admonition-title:before,
+.md-typeset .{{ admonition.name }} > summary:before {
+    background-color: {{admonition.icon_color}};
+    -webkit-mask-image: var(--md-admonition-icon--{{ admonition.name }});
+    mask-image: var(--md-admonition-icon--{{ admonition.name }});
+}
+.md-typeset .{{ admonition.name }} > .admonition-title:after,
+.md-typeset .{{ admonition.name }} > summary:after {
+    color: {{ admonition.icon_color }};  ## #00c853
+}
+
+{% endfor %}
+
+
+{% for status_icon in status_icons %}
+.md-status--{{ status_icon.name }}:after {
+    -webkit-mask-image: var(--md-status--{{ status_icon.name }});
+    mask-image: var(--md-status--{{ status_icon.name }});
+}
+{% endfor %}
+
+
+{% if content_area_width %}
+.md-grid {
+    --max-width: {{ content_area_width }}px;
+}
+{% endif %}
+
+{% if classic_admonition_style %}
+.md-typeset .admonition, .md-typeset details {
+    --border-width: 0;
+    --border-left-width: 4px;
+}
+{% endif %}
+
+
+{% if show_annotation_numbers %}
+.md-typeset .md-annotation__index > ::before {
+    --content: attr(data-md-annotation-id);
+}
+.md-typeset :focus-within > .md-annotation__index > ::before {
+    --transform: none;
+}
+{% endif %}
+

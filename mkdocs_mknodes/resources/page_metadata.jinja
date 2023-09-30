@@ -1,0 +1,26 @@
+##Description
+
+Every `MkPage` as well as every `MkNav` can carry metadata.
+Page metadata inherits from Nav metadata, similarly as the MkDocs-Material meta plugin.
+
+Metadata can be set either via the `MkPage` constructor, via the `MkNav.route.page`
+decorator. Also, some methods like `MkNav.parse.folder` take metadata keyword arguments
+in order to set it for all parsed pages.
+
+## Examples
+
+Via decorators:
+`````py
+@nav.route.page("My page", icon="material/code-json", status="new")
+def _(page: mk.MkPage):
+    ...
+`````
+
+Via constructor:
+`````py
+page = MkPage("My page", icon="material/code-json", status="new")
+`````
+
+## Metadata fields
+
+{{ "mknodes.pages.metadata.Metadata" | MkDocStrings(show_root_toc_entry=False, heading_level=3, show_bases=False, show_source=False) }}

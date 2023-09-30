@@ -1,0 +1,39 @@
+site_name: MkDocstrings
+repo_url: "https://github.com/mkdocstrings/mkdocstrings/"
+site_url: https://phil65.github.io/mknodes/mkdocstrings/
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  palette:
+    scheme: slate
+    primary: cyan
+  features:
+  - announce.dismiss
+  - navigation.tabs # make top level tabs
+  - navigation.indexes # documents can be directly attached to sections (overview pages)
+  - navigation.footer # next/previous page buttons in footer
+  - navigation.top  # adds back-to-top button
+  - toc.follow  # makes toc follow scrolling
+
+plugins:
+- search
+- literate-nav
+- mkdocstrings
+- mknodes:
+    repo_path: https://github.com/mkdocstrings/mkdocstrings.git
+    build_fn: mknodes.navs.mkemptywebsite:MkEmptyWebsite.for_project
+    clone_depth: 100
+    kwargs:
+      static_pages:
+        Development:
+          - Changelog: ->MkChangelog
+          - Code of conduct: ->MkCodeOfConduct
+          - Commit conventions: ->MkCommitConventions
+          - Pull requests: ->MkPullRequestGuidelines
+          - Development environment: ->MkDevEnvSetup
+          - Tools: ->MkDevTools
+          - Dependencies: ->MkDependencyTable
+          - Module overview: ->MkModuleOverview
+          - Plugin flow: ->MkPluginFlow
+          - License: ->MkLicense

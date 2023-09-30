@@ -1,0 +1,7 @@
+{% for admonition in admonitions %}
+.admonition.{{ admonition.name }}, details.{{ admonition.name }} {
+    color: {{ admonition.font_color}};
+    background-color: {{ admonition.header_color }};
+    border-color: {{ admonition.border_color }};
+}
+{% endfor %}

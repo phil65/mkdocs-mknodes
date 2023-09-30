@@ -1,0 +1,101 @@
+site_name: MkNodes (MkDocs plugin)
+site_description: "Don´t write docs. Code them."
+repo_url: "https://github.com/phil65/mkdocs_mknodes/"
+site_url: https://phil65.github.io/mkdocs_mknodes/
+site_author: Philipp Temminghoff
+copyright: Copyright &copy; 2023 Philipp Temminghoff
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  icon: material/graph-outline
+  palette:
+  # Palette toggle for light mode
+  - media: "(prefers-color-scheme: light)"
+    scheme: default
+    primary: custom
+    toggle:
+      icon: material/brightness-7
+      name: Switch to dark mode
+
+  # Palette toggle for dark mode
+  - media: "(prefers-color-scheme: dark)"
+    scheme: slate
+    primary: custom
+    toggle:
+      icon: material/brightness-4
+      name: Switch to light mode
+  features:
+  - announce.dismiss
+  - content.action.edit
+  - content.code.copy
+  - content.code.select
+  - content.code.annotate
+  # - content.tooltips  # for insiders..
+  # - content.tabs.link
+  - navigation.tracking # update URL based on current item in TOC
+  - navigation.path  # shows breadcrumbs
+  - navigation.tabs # make top level tabs
+  - navigation.prune
+  - navigation.indexes # documents can be directly attached to sections (overview pages)
+  - navigation.footer # next/previous page buttons in footer
+  - navigation.top  # adds back-to-top button
+  # - navigation.sections # top-level sections are rendered as groups
+  # - navigation.expand # expand all subsections in left sidebar by defuault
+  # - navigation.tabs.sticky # and make them sticky
+  - toc.follow  # makes toc follow scrolling
+  # - toc.integrate  # integrates toc into left menu
+  - search.highlight
+  - search.suggest
+  # - search.share
+
+plugins:
+- search
+- social:
+    enabled: !ENV [CI, false]
+- tags
+- markdown-exec
+- literate-nav
+- mknodes:
+    build_fn: mknodes.manual.root:build
+    show_page_info: true
+    # build_fn: mknodes.navs.mkdefaultwebsite:MkDefaultWebsite.for_project
+    # repo_path: https://github.com/pallets/jinja2.git
+- mkdocstrings:
+    default_handler: python
+    handlers:
+      python:
+        import:
+        - url: https://docs.python.org/3/objects.inv
+          domains: [std, py]
+        options:
+          # https://mkdocstrings.github.io/python/usage/
+          show_docstring_returns: false
+          show_source: true
+          show_signature_annotations: true
+          show_symbol_type_toc: true
+          show_symbol_type_heading: true
+          # merge_init_into_class: true
+          ignore_init_summary: true
+          inherited_members: false
+          signature_crossrefs: true
+          separate_signature: true
+          line_length: 90
+
+markdown_extensions:
+- attr_list
+- pymdownx.emoji
+- toc:
+    permalink: true
+
+# extra:
+#   social:
+  # - icon: fontawesome/brands/github
+  #   link: https://github.com/phil65
+  # - icon: fontawesome/brands/gitter
+  #   link: https://matrix.to/#/#mknodes:gitter.im
+  # - icon: fontawesome/brands/python
+  #   link: https://pypi.org/project/mknodes/
+  # generator: false disable "made with Material"
+  # version:  # multiple doc versions
+  #   provider: mike

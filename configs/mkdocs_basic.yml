@@ -1,0 +1,26 @@
+site_name: Not set
+site_description: Not set
+repo_url: "https://github.com/phil65/mknodes/"
+site_url: https://phil65.github.io/mknodes/
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  palette:
+    scheme: slate
+    primary: deep orange
+  features:
+  - announce.dismiss
+  - navigation.tabs # make top level tabs
+  - navigation.indexes # documents can be directly attached to sections (overview pages)
+  - navigation.footer # next/previous page buttons in footer
+  - navigation.top  # adds back-to-top button
+  - toc.follow  # makes toc follow scrolling
+
+plugins:
+- search
+- literate-nav
+- mknodes:
+    build_fn: mknodes.navs.mkdefaultwebsite:MkDefaultWebsite.for_project
+    clone_depth: 100
+- mkdocstrings
