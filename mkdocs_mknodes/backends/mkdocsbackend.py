@@ -77,11 +77,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
 
     def collect_css(self, css_files):
         for css in css_files:
-            if isinstance(css, resources.CSSFile):
-                css_text = pathlib.Path(css).read_text()
-                path = f"{hash(css_text)}.css"
-                self.add_css_file(path, css_text)
-            elif isinstance(css, resources.CSSText):
+            if isinstance(css, resources.CSSText):
                 self.add_css_file(css.filename, css.content)
             else:
                 logger.debug("Adding remote CSS file %s", css)
@@ -98,8 +94,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
 
     def collect_js_files(self, js_files):
         for file in js_files:
-            js_text = pathlib.Path(file).read_text()
-            path = (pathlib.Path("assets") / f"{hash(js_text)}.css").as_posix()
+            path = (pathlib.Path("assets") / file.filename).as_posix()
             val = config_options.ExtraScriptValue(str(path))
             val.async_ = file.async_
             val.defer = file.defer
@@ -107,7 +102,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             self._config.extra_javascript.append(path)
             abs_path = pathlib.Path(self._config.site_dir) / path
             logger.info("Registering js file %s...", abs_path)
-            pathhelpers.write_file(js_text, abs_path)
+            pathhelpers.write_file(file.content, abs_path)
 
     def collect_extensions(self, extensions):
         if extensions:
