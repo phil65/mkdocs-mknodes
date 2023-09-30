@@ -77,8 +77,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
     def collect_css(self, css_files):
         for css in css_files:
             if isinstance(css, resources.CSSFile):
-                file_path = paths.RESOURCES / css
-                css_text = file_path.read_text()
+                css_text = pathlib.Path(css).read_text()
                 path = f"{hash(css_text)}.css"
                 self.add_css_file(path, css_text)
             elif isinstance(css, resources.CSSText):
@@ -98,8 +97,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
 
     def collect_js_files(self, js_files):
         for file in js_files:
-            file_path = paths.RESOURCES / str(file)
-            js_text = file_path.read_text()
+            js_text = pathlib.Path(file).read_text()
             path = (pathlib.Path("assets") / f"{hash(js_text)}.css").as_posix()
             val = config_options.ExtraScriptValue(str(path))
             val.async_ = file.async_

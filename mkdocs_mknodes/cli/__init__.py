@@ -3,11 +3,12 @@ from __future__ import annotations
 import logging
 import typer as t
 
-from mknodes import paths
-from mkdocs_mknodes.cli import richstate
 from mknodes.info import mkdocsconfigfile
-from mkdocs_mknodes.plugin import build_page, serve as serve_
 from mknodes.utils import log, yamlhelpers
+
+from mkdocs_mknodes import paths
+from mkdocs_mknodes.cli import richstate
+from mkdocs_mknodes.plugin import build_page, serve as serve_
 
 
 logger = log.get_logger(__name__)
