@@ -8,7 +8,7 @@ from mknodes.utils import log, yamlhelpers
 
 from mkdocs_mknodes import paths
 from mkdocs_mknodes.cli import richstate
-from mkdocs_mknodes.plugin import build_page, serve as serve_
+from mkdocs_mknodes.commands import build_page, serve as serve_
 
 
 logger = log.get_logger(__name__)

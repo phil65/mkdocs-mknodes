@@ -21,7 +21,7 @@ from mkdocs.livereload import LiveReloadServer
 from mknodes.utils import log, yamlhelpers
 
 from mkdocs_mknodes import paths
-from mkdocs_mknodes.plugin import build_page
+from mkdocs_mknodes.commands import build_page
 
 
 if TYPE_CHECKING:
