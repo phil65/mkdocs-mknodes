@@ -157,7 +157,7 @@ class BuildCollector:
 
 if __name__ == "__main__":
     project = mk.Project.for_mknodes()
-    from mknodes.manual import root
+    from mkdocs_mknodes.manual import root
 
     log.basic()
     root.build(project)

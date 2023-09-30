@@ -12,7 +12,8 @@ from mkdocs import livereload
 
 from mkdocs.plugins import BasePlugin, get_plugin_logger
 
-from mknodes import buildcollector, mkdocsconfig, project
+from mkdocs_mknodes import buildcollector, mkdocsconfig
+from mknodes import project
 from mknodes.pages import mkpage
 from mkdocs_mknodes.plugin import (
     linkreplacer,

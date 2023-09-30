@@ -4,9 +4,10 @@ import logging
 import typer as t
 
 from mknodes import paths
+from mkdocs_mknodes.cli import richstate
 from mknodes.info import mkdocsconfigfile
 from mkdocs_mknodes.plugin import build_page, serve as serve_
-from mknodes.utils import log, richhelpers, yamlhelpers
+from mknodes.utils import log, yamlhelpers
 
 
 logger = log.get_logger(__name__)
@@ -48,14 +49,14 @@ QUIET_CMDS = "-q", "--quiet"
 
 def verbose(ctx: t.Context, param: t.CallbackParam, value: bool):
     # sourcery skip: move-assign
-    state = ctx.ensure_object(richhelpers.RichState)
+    state = ctx.ensure_object(richstate.RichState)
     if value:
         state.stream.setLevel(logging.DEBUG)
 
 
 def quiet(ctx: t.Context, param: t.CallbackParam, value: bool):
     # sourcery skip: move-assign
-    state = ctx.ensure_object(richhelpers.RichState)
+    state = ctx.ensure_object(richstate.RichState)
     if value:
         state.stream.setLevel(logging.ERROR)
 

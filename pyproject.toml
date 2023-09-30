@@ -29,6 +29,7 @@ dependencies = [
     "markdown-exec[ansi]",
     "mkdocs-click",
     "pygments",
+    "mkdocs-mknodes",
 
     # Material Social addon
     "cairosvg",

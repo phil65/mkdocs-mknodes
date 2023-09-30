@@ -57,7 +57,7 @@ plugins:
 - markdown-exec
 - literate-nav
 - mknodes:
-    build_fn: mknodes.manual.root:build
+    build_fn: mkdocs_mknodes.manual.root:build
     show_page_info: true
     # build_fn: mknodes.navs.mkdefaultwebsite:MkDefaultWebsite.for_project
     # repo_path: https://github.com/pallets/jinja2.git

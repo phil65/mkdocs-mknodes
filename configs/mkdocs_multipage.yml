@@ -4,4 +4,4 @@ markdown_extensions:
 
 plugins:
 - mknodes:
-    build_fn: mknodes.manual.multi_project:build
+    build_fn: mkdocs_mknodes.manual.multi_project:build

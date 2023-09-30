@@ -4,7 +4,7 @@ import mknodes as mk
 # this is the nav we will populate via decorators.
 nav = mk.MkNav("CLI")
 
-CLI_PATH = "mknodes.cli:cli"
+CLI_PATH = "mkdocs_mknodes.cli:cli"
 
 
 def create_cli_section(root_nav: mk.MkNav):

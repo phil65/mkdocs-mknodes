@@ -10,9 +10,10 @@ from mkdocs.config import config_options
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure import files as files_
-from mknodes import mkdocsconfig, paths
+from mknodes import paths
 from mknodes.utils import mergehelpers, pathhelpers, resources
 
+from mkdocs_mknodes import mkdocsconfig
 from mkdocs_mknodes.plugin import buildbackend, mkdocsbuilder, mkdocshelpers
 
 
