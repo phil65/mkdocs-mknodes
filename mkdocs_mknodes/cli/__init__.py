@@ -141,7 +141,7 @@ def create_config(
     """Create a config based on a given build setup.
 
     Runs the build script on given repository (either locally or a hosted one),
-    infers the requirements (CSS / JS / Md extensions) as well as metadata
+    infers the required resources (CSS / JS / Md extensions) as well as metadata
     and creates a MkDocs config file.
 
     Further info here: https://phil65.github.io/mknodes/Development/CLI/
@@ -177,9 +177,9 @@ def create_config(
         clone_depth=1,
     )
     info = proj.build()
-    requirements = info.requirements
+    resources = info.resources
     info = proj.context.metadata
-    config["markdown_extensions"] = requirements.markdown_extensions
+    config["markdown_extensions"] = resources.markdown_extensions
     if social := info.social_info:
         config["extra"]["social"] = social  # type: ignore[index]
     config["repo_path"] = info.repository_url

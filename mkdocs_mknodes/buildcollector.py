@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 import mknodes as mk
 
 from mknodes.info import contexts
-from mknodes.utils import log, requirements
+from mknodes.utils import log, resources
 
 
 if TYPE_CHECKING:
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 logger = log.get_logger(__name__)
 
 
-def add_page_info(page: mk.MkPage, req: requirements.Requirements):
+def add_page_info(page: mk.MkPage, req: resources.Resources):
     adm = mk.MkAdmonition([], title="Page info", typ="theme", collapsible=True)
 
     if page.created_by:
@@ -30,7 +30,7 @@ def add_page_info(page: mk.MkPage, req: requirements.Requirements):
         details = mk.MkAdmonition(code, title=title, collapsible=True, typ="quote")
         adm += details
 
-    title = "Requirements"
+    title = "Resources"
     pretty = mk.MkPrettyPrint(req)
     details = mk.MkAdmonition(pretty, title=title, collapsible=True, typ="quote")
     adm += details
@@ -96,7 +96,7 @@ class BuildCollector:
         self.node_files: dict[str, str | bytes] = {}
         self.extra_files: dict[str, str | bytes] = {}
         self.node_counter: collections.Counter[str] = collections.Counter()
-        self.requirements = requirements.Requirements()
+        self.resources = resources.Resources()
         self.mapping: dict[str, mk.MkNode] = dict()
 
     def collect(self, root: mk.MkNode, theme: theme_.Theme):
@@ -106,7 +106,7 @@ class BuildCollector:
             root: A node to collect build stuff from
             theme: A theme to collect build stuff from.
         """
-        logger.debug("Collecting theme requirements...")
+        logger.debug("Collecting theme resources...")
         iterator = itertools.chain(theme.iter_nodes(), root.iter_nodes())
         for _, node in iterator:
             self.node_counter.update([node.__class__.__name__])
@@ -117,17 +117,17 @@ class BuildCollector:
                 case mk.MkNav() as nav:
                     self.collect_nav(nav)
         logger.debug("Setting default markdown extensions...")
-        reqs = theme.get_requirements()
-        self.requirements.merge(reqs)
+        reqs = theme.get_resources()
+        self.resources.merge(reqs)
         logger.debug("Adapting collected extensions to theme...")
-        theme.adapt_extensions(self.requirements.markdown_extensions)
+        theme.adapt_extensions(self.resources.markdown_extensions)
         build_files = self.node_files | self.extra_files
         for backend in self.backends:
             logger.info("%s: Collecting data..", type(backend).__name__)
-            backend.collect(build_files, self.requirements)
+            backend.collect(build_files, self.resources)
         return contexts.BuildContext(
             page_mapping=self.mapping,
-            requirements=self.requirements,
+            resources=self.resources,
             node_counter=self.node_counter,
             build_files=build_files,
         )
@@ -137,8 +137,8 @@ class BuildCollector:
             return
         path = page.resolved_file_path
         self.mapping[path] = page
-        req = page.get_requirements()
-        self.requirements.merge(req)
+        req = page.get_resources()
+        self.resources.merge(req)
         update_page_template(page)
         if self.show_page_info:
             add_page_info(page, req)

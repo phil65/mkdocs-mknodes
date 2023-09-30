@@ -29,7 +29,6 @@ dependencies = [
     "markdown-exec[ansi]",
     "mkdocs-click",
     "pygments",
-    "pydeps",
 
     # Material Social addon
     "cairosvg",
@@ -106,15 +105,6 @@ dependencies = [
     "mkdocs-material >= 9.4",
     "mkdocstrings[python]",
     "mknodes",
-
-    # Serialization
-    "PyYAML >=5.1",
-    "pyyaml_env_tag",
-    "tomli-w",
-
-    # HTTP
-    "requests",
-    "requests_cache",
 
     # CLI
     "rich",

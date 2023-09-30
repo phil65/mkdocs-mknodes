@@ -1,4 +1,4 @@
-## Plugin requirements
+## Plugin resources
 
 ### Files
 
@@ -10,22 +10,22 @@ All files connected to the node tree:
 
 Plugins used by the tree nodes:
 
-{{ requirements.plugins | MkPrettyPrint }}
+{{ resources.plugins | MkPrettyPrint }}
 
 ### CSS
 
 CSS used by the tree nodes:
 
-{{ requirements.css | MkPrettyPrint }}
+{{ resources.css | MkPrettyPrint }}
 
 ### JS
 
 JS used by the tree nodes:
 
-{{ requirements.js | MkPrettyPrint }}
+{{ resources.js | MkPrettyPrint }}
 
 ### Markdown extensions
 
 Extensions used by the tree nodes:
 
-{{ requirements.markdown_extensions | dump_yaml |  MkCode(language="yaml") }}
+{{ resources.markdown_extensions | dump_yaml |  MkCode(language="yaml") }}

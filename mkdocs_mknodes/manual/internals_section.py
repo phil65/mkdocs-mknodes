@@ -28,7 +28,7 @@ STEP_6 = (
     "(using literate-nav-style SUMMARY.md files to describe the hierarchy)"
 )
 STEP_7 = (
-    "### Collect requirements\n"
+    "### Collect resources\n"
     "Gather information from the nodes about required Extensions / CSS / JavaScript"
 )
 STEP_8 = (

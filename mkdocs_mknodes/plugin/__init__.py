@@ -159,7 +159,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             return
         if not self.config.build_fn:
             return
-        for template in self.build_info.requirements.templates:
+        for template in self.build_info.resources.templates:
             path = pathlib.Path(config.theme.custom_dir) / template.filename
             path.unlink(missing_ok=True)
 

@@ -39,7 +39,7 @@ class PluginConfig(base.Config):
     containing information about the created page.
     This includes:
     - Metadata
-    - Requirements
+    - Resources
     - Code which created the page (needs the page to be created via decorators, or
     the `generated_by` attribute of the MkPage needs to be set manually)
     """

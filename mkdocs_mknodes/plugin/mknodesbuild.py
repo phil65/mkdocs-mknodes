@@ -92,7 +92,7 @@ class MkNodesBuild:
 
         for backend in self.backends:
             logger.info("%s: Collecting data..", type(self).__name__)
-            backend.collect(self.build_info.build_files, self.build_info.requirements)
+            backend.collect(self.build_info.build_files, self.build_info.resources)
         return mkdocs_backend.files
 
     def on_nav(

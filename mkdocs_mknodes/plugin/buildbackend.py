@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from mknodes.utils import log, requirements
+from mknodes.utils import log, resources
 
 
 logger = log.get_logger(__name__)
 
 
 class BuildBackend:
-    def collect(self, files: dict[str, str | bytes], reqs: requirements.Requirements):
+    def collect(self, files: dict[str, str | bytes], reqs: resources.Resources):
         self.collect_extensions(reqs.markdown_extensions)
         self.collect_js_links(reqs.js_links)
         self.collect_js_files(reqs.js_files)
