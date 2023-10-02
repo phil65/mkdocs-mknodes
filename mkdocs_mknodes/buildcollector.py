@@ -141,7 +141,10 @@ class BuildCollector:
         req = page.get_resources()
         self.resources.merge(req)
         update_page_template(page)
-        if self.show_page_info:
+        show_info = page.metadata.get("show_page_info")
+        if show_info is None:
+            show_info = self.show_page_info
+        if show_info:
             add_page_info(page, req)
         md = page.to_markdown()
         self.node_files[path] = md
