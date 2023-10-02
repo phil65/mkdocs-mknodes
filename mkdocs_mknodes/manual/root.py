@@ -16,6 +16,8 @@ def build(project: mk.Project[materialtheme.MaterialTheme]) -> mk.MkNav:
 
     manual.create_get_started_section(root_nav)
     manual.create_use_cases_section(root_nav)
+    doc = root_nav.add_doc(section_name="API")
+    doc.collect_classes(recursive=True)
     manual.create_cli_section(root_nav)
     manual.create_development_section(root_nav)
     return root_nav
