@@ -81,7 +81,8 @@ plugins:
           signature_crossrefs: true
           separate_signature: true
           line_length: 90
-
+        preload_modules:
+        - mknodes
 markdown_extensions:
 - attr_list
 - pymdownx.emoji

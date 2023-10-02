@@ -17,7 +17,7 @@ STEP_1 = (
 )
 STEP_2 = (
     "### Create theme\nInitialize the theme object based on which theme is chosen in the"
-    " **MkDocs** config / CLI"
+    " **MkDocs** config / CLI."
 )
 STEP_3 = (
     "### Create project.\n The theme, the build function, the **Git**"
@@ -44,26 +44,26 @@ STEP_7 = (
 )
 STEP_8 = (
     "### Collect build artifacts\nThe `BuildCollector` aggregates and preprocesses all"
-    " the data from the node tree (navigation hierarchy, markdown output, required"
+    " the data from the node tree (navigation hierarchy, Markdown output, required"
     " resources, templates, ...) and passes the prepared data to the build backends."
 )
 STEP_9 = (
     "### Convert templates\nIf required, convert the template pages which were populated"
-    " with markdown by the user to HTML using the **Python-Markdown** parser."
+    " with Markdown by the user to HTML using the **Python-Markdown** parser."
 )
 STEP_10 = (
-    "### Write to disk using backends\nThe Markdown backend creates plain markdown pages"
+    "### Write to disk using backends\nThe Markdown backend creates plain Markdown pages"
     " and index files on disk.\nThe **MkDocs** backend updates the **Mkdocs**"
     " configuration with information from the node tree and adds the rquired CSS / JS /"
-    " etc. resources as well as required markdown extensions. Also, all markdown files"
-    " and templates are written to the location where **MkDocs** expects them to be. In"
-    " addition, `SUMMARY.md` files are generated to describe the hierarchy. These files"
-    " get picked up by **mkdocs-literate-nav** plugin later on."
+    " etc. resources as well as the required Markdown extensions. Also, all Markdown"
+    " files and templates are written to the location where **MkDocs** expects them to"
+    " be. In addition, `SUMMARY.md` files are generated to describe the hierarchy. These"
+    " files get picked up by **mkdocs-literate-nav** plugin later on."
 )
 
 STEP_11 = (
     "### Set edit URIs\n Set the page edit URIs to the recorded caller location (gathered"
-    " from `FrameInfo` objects."
+    " from `FrameInfo` objects)."
 )
 STEP_12 = (
     "### Render **jinja2** templates\nThe pages get rendered by **jinja2** and a custom"
@@ -121,6 +121,7 @@ def _(page: mk.MkPage):
     node.add_item(date="Step 12", content=STEP_12)
     node.add_item(date="Step 13", content=STEP_13)
     node.add_item(date="Step 14", content=STEP_14)
+    page += INTRO
     page += node
 
 
