@@ -68,6 +68,8 @@ plugins:
         import:
         - url: https://docs.python.org/3/objects.inv
           domains: [std, py]
+        - url: https://phil65.github.io/mknodes/objects.inv
+          domains: [std, py]
         options:
           # https://mkdocstrings.github.io/python/usage/
           show_docstring_returns: false
