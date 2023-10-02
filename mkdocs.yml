@@ -73,10 +73,11 @@ plugins:
         options:
           # https://mkdocstrings.github.io/python/usage/
           show_docstring_returns: false
-          show_source: true
+          show_source: false
           show_signature_annotations: true
           show_symbol_type_toc: true
           show_symbol_type_heading: true
+          show_root_toc_entry: false
           # merge_init_into_class: true
           ignore_init_summary: true
           inherited_members: false
