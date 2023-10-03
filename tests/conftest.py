@@ -15,4 +15,4 @@ def config():
 @pytest.fixture(scope="session")
 def project():
     skin = materialtheme.MaterialTheme()
-    return project_.Project(skin)
+    return project_.Project(skin, build_fn="mkdocs_mknodes.manual.root:build")

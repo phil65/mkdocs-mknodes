@@ -13,8 +13,6 @@ build_folder = pathlib.Path(_dir.name)
 
 def test_build(project):
     project.build()
-    project.build()
-    # now we add our stuff to the MkDocs build environment
     cfg = mkdocsconfig.Config()
     cfg.update_from_context(project.context)
     mkdocs_backend = mkdocsbackend.MkDocsBackend(
