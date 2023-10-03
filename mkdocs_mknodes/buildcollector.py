@@ -22,6 +22,12 @@ logger = log.get_logger(__name__)
 
 
 def add_page_info(page: mk.MkPage, req: resources.Resources):
+    """Add a collapsed admonition box showing some page-related data.
+
+    Arguments:
+        page: Page which should get updated.
+        req: Resources of the page (passed in to avoid having to collect them again)
+    """
     adm = mk.MkAdmonition([], title="Page info", typ="theme", collapsible=True)
 
     if page.created_by:
@@ -45,6 +51,11 @@ def add_page_info(page: mk.MkPage, req: resources.Resources):
 
 
 def update_page_template(page: mk.MkPage):
+    """Set template filename, metadata reference and `extends` path for given page.
+
+    Arguments:
+        page: Page of the template
+    """
     if page.template:
         node_path = pathlib.Path(page.resolved_file_path)
     elif any(i.page_template for i in page.parent_navs):
@@ -61,6 +72,11 @@ def update_page_template(page: mk.MkPage):
 
 
 def update_nav_template(nav: mk.MkNav):
+    """Set template filename, metadata reference and `extends` path for given nav.
+
+    Arguments:
+        nav: Nav of the template
+    """
     if nav.page_template:
         path = pathlib.Path(nav.resolved_file_path)
         html_path = path.with_suffix(".html").as_posix()
@@ -71,6 +87,11 @@ def update_nav_template(nav: mk.MkNav):
 
 
 def _get_extends_from_parent(node: mk.MkPage | mk.MkNav) -> str | None:
+    """Check parent navs for a page template and return its path if one was found.
+
+    Arguments:
+        node: Node to get the `extends` path for
+    """
     for nav in node.parent_navs:
         if nav.page_template:
             p = pathlib.Path(nav.resolved_file_path)
@@ -134,6 +155,11 @@ class BuildCollector:
         )
 
     def collect_page(self, page: mk.MkPage):
+        """Preprocess page and collect its data.
+
+        Arguments:
+            page: Page to collect the data from.
+        """
         if page.metadata.inclusion_level is False:
             return
         path = page.resolved_file_path
@@ -150,6 +176,11 @@ class BuildCollector:
         self.node_files[path] = md
 
     def collect_nav(self, nav: mk.MkNav):
+        """Preprocess nav and collect its data.
+
+        Arguments:
+            nav: Nav to collect the data from.
+        """
         logger.info("Processing section %r...", nav.section)
         path = nav.resolved_file_path
         self.mapping[path] = nav
