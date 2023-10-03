@@ -153,6 +153,8 @@ class BuildCollector:
         logger.info("Processing section %r...", nav.section)
         path = nav.resolved_file_path
         self.mapping[path] = nav
+        req = nav.get_resources()
+        self.resources.merge(req)
         update_nav_template(nav)
         md = nav.to_markdown()
         self.node_files[path] = md
