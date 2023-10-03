@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import mknodes as mk
 
 from mknodes.theme import materialtheme
 
 from mkdocs_mknodes import manual
+from mkdocs_mknodes.manual import get_started_section
 
 
 def build(project: mk.Project[materialtheme.MaterialTheme]) -> mk.MkNav:
@@ -13,8 +16,9 @@ def build(project: mk.Project[materialtheme.MaterialTheme]) -> mk.MkNav:
     project.theme.error_page.content = mk.MkAdmonition("Page does not exist!")
     project.theme.content_area_width = 1300
     project.theme.tooltip_width = 800
-
-    manual.create_get_started_section(root_nav)
+    nav = mk.MkNav("Get started", parent=root_nav)
+    get_started_section.router.register_nodes(nav)
+    root_nav += nav
     manual.create_use_cases_section(root_nav)
     doc = root_nav.add_doc(section_name="API")
     doc.collect_classes(recursive=True)

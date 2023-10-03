@@ -1,0 +1,25 @@
+## Overview
+
+MkDocs-MkNodes integrates the **MkNodes** toolkit into **MkDocs**.
+
+
+**MkNodes** is a library to create complex documentation websites. It includes a powerful jinja environment to assist in writing Markdown text as well as a a large set of so-called **MkNodes**, which can be used to create reusable ElementTree-like node trees describing a complete website. That node tree covers the whole site navigation down to single Markdown elements, allowing the creator anytime to switch between programatically creating documentation and writing Markdown "by hand".
+
+This plugin acts as a bridge and embeds **MkNodes** into the MkDocs event hook system and converts the **MkNodes** tree to a **MkDocs**-powered website.
+
+!!! info
+    Still sounds confusing? The best way to learn how everything works is to start with the **MkNodes** documentation. This website will focus on the integration with MkDocs.
+
+    In addition, all pages on this website include an Admonition box at the bottom, which also includes the code which generated the page. That might be a helpful resource to understand how **MkNodes** can be used.
+
+
+## Hello, world
+
+A minimum example for a **MkNodes** website:
+
+``` py
+def build(project: mk.Project):
+    root = project.get_root()
+    index_page = root.get_index_page(hide="toc")
+    index += mk.MkAdmonition("Hello world!")
+```
