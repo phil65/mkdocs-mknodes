@@ -32,9 +32,14 @@ logger = log.get_logger(__name__)
 
 def serve(
     config: str | os.PathLike | MkDocsConfig | Mapping[str, Any] = paths.CFG_DEFAULT,
-    **kwargs,
+    **kwargs: Any,
 ):
-    """Serve a MkNodes-based website."""
+    """Serve a MkNodes-based website.
+
+    Arguments:
+        config: The config to use
+        kwargs: Optional config values (overrides value from config)
+    """
     match config:
         case str() | os.PathLike():
             text = pathlib.Path(config).read_text(encoding="utf-8")

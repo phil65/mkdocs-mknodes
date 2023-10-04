@@ -29,6 +29,12 @@ logger = get_plugin_logger(__name__)
 
 
 def build(config: MkDocsConfig | Mapping[str, Any], **kwargs):
+    """Build a MkNodes-based website.
+
+    Arguments:
+        config: The config to use
+        kwargs: Optional config values (overrides value from config)
+    """
     text = yamlhelpers.dump_yaml(dict(config))
     buffer = io.StringIO(text)
     config = load_config(buffer, **kwargs)
@@ -44,7 +50,13 @@ def _build(
     live_server_url: str | None = None,
     dirty: bool = False,
 ) -> None:
-    """Perform a full site build."""
+    """Perform a full site build.
+
+    Arguments:
+        config: Config to use
+        live_server_url: An optional URL of the live server to use
+        dirty: Do a dirty build
+    """
     # Add CountHandler for strict mode
     warning_counter = utils.CountHandler()
     warning_counter.setLevel(logging.WARNING)

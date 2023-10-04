@@ -28,6 +28,13 @@ class MkDocsBackend(buildbackend.BuildBackend):
         config: mkdocsconfig.Config | MkDocsConfig | str | os.PathLike | None = None,
         directory: str | os.PathLike | None = None,
     ):
+        """Constructor.
+
+        Arguments:
+            files: A Files collection to use for new files
+            config: An MkDocs config
+            directory: The build directory
+        """
         match config:
             case mkdocsconfig.Config():
                 self._config = config._config
