@@ -9,6 +9,12 @@ class RichState:
     LOG_NAME = "mkdocs"
 
     def __init__(self, log_name: str | None = None, level: int = logging.INFO):
+        """Constructor.
+
+        Arguments:
+            log_name: Logger name
+            level: Logging level
+        """
         from rich.logging import RichHandler
 
         self.logger = logging.getLogger(log_name or self.LOG_NAME)
