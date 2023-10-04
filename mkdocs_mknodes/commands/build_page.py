@@ -50,7 +50,10 @@ def _build(
     live_server_url: str | None = None,
     dirty: bool = False,
 ) -> None:
-    """Perform a full site build.
+    """Build a MkNodes-based website. Also used for serving.
+
+    This method does NOT call the the startup / shutdown event hooks.
+    If that is desired, build() should be called.
 
     Arguments:
         config: Config to use
