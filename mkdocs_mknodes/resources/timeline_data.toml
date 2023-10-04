@@ -13,27 +13,25 @@ label = "Step 2"
 content = """
 ### Create theme
 
-Initialize the theme object based on which theme is chosen in the
-**MkDocs** config / CLI."
+Initialize the theme object based on which theme is chosen in the **MkDocs** config / CLI."
 """
 
 [step_3]
 label = "Step 3"
 content = """
-### Create project.
+### Create project
 
-The theme, the build function, the **Git**
-repository (in most cases the current working dir) and a URL linker are
-consolidated into one project instance.
+The theme, the build function, the **Git** repository (in most cases the current
+working dir) and a URL linker are consolidated into one project instance.
 """
 
 [step_4]
 label = "Step 4"
 content = """
-### Create context.
+### Create context
 
-All available information from following
- sources are extracted in order to build a context object:
+All available information from following sources are extracted in order to build
+a context object:
 
 * metadata.Distribution
 * PyProject File
@@ -48,8 +46,8 @@ label = "Step 5"
 content = """
 ### Create environment
 
-Create the **jinja2** environment and populate it with all
-the data provided by the context object.
+Create the **jinja2** environment and populate it with all the data provided by the
+context object.
 """
 
 [step_6]
@@ -76,9 +74,9 @@ label = "Step 8"
 content = """
 ### Collect build artifacts
 
-The `BuildCollector` aggregates and preprocesses all
-the data from the node tree (navigation hierarchy, Markdown output, required
-resources, templates, ...) and passes the prepared data to the build backends.
+The `BuildCollector` aggregates and preprocesses all the data from the node tree
+(navigation hierarchy, Markdown output, required resources, templates, ...)
+and passes the prepared data to the build backends.
 """
 
 [step_9]
@@ -95,8 +93,7 @@ label = "Step 10"
 content = """
 ### Write to disk using backends
 
-The Markdown backend creates plain Markdown pages
-and index files on disk.
+The Markdown backend creates plain Markdown pages and index files on disk.
 The **MkDocs** backend updates the **Mkdocs**
 configuration with information from the node tree and adds the rquired CSS / JS /
 etc. resources as well as the required Markdown extensions. Also, all Markdown
@@ -110,8 +107,7 @@ label = "Step 11"
 content = """
 ### Set edit URIs
 
-Set the page edit URIs to the recorded caller location (gathered
-from `FrameInfo` objects).
+Set the page edit URIs to the recorded caller location (gathered from `FrameInfo` objects).
 """
 
 [step_12]
@@ -119,9 +115,7 @@ label = "Step 12"
 content = """
 ### Render **jinja2** templates
 
-The pages get rendered by **jinja2** and a custom
-
-`LinkReplacer` is doing a bit of work.
+The pages get rendered by **jinja2** and a custom `LinkReplacer` is doing a bit of work.
 """
 
 [step_13]
