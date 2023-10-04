@@ -8,7 +8,7 @@ import pathlib
 import shutil
 import tempfile
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 from urllib.parse import urlsplit
 
 import jinja2.exceptions
@@ -85,7 +85,7 @@ def catch_exceptions(config, site_dir):
 def _serve(
     config_file: str | None = None,
     livereload: bool = True,
-    build_type: str | None = None,
+    build_type: Literal["clean", "dirty"] | None = None,
     watch_theme: bool = False,
     watch: list[str] | None = None,
     **kwargs,
@@ -95,6 +95,14 @@ def _serve(
     By default it will serve the documentation on http://localhost:8000/ and
     it will rebuild the documentation and refresh the page automatically
     whenever a file is edited.
+
+    Arguments:
+        config_file: Config file to use
+        livereload: Reload on file changes
+        build_type: Type of the build
+        watch_theme: Whether to watch the theme for file changes
+        watch: Additional files / folders to watch
+        kwargs: Additional config values. Overrides values from config_file
     """
     watch = watch or []
     site_dir = pathlib.Path(tempfile.mkdtemp(prefix="mkdocs_"))

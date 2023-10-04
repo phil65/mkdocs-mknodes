@@ -17,6 +17,12 @@ class MarkdownBackend(buildbackend.BuildBackend):
         directory: str | os.PathLike | None = None,
         extension: str = ".md",
     ):
+        """Constructor.
+
+        Arguments:
+            directory: build directory
+            extension: Extention of files to generate
+        """
         self.extension = extension
         self.directory = pathlib.Path(directory or ".")
         self._files: dict[str, str | bytes] = {}

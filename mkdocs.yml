@@ -42,7 +42,6 @@ theme:
   - navigation.top  # adds back-to-top button
   # - navigation.sections # top-level sections are rendered as groups
   # - navigation.expand # expand all subsections in left sidebar by defuault
-  # - navigation.tabs.sticky # and make them sticky
   - toc.follow  # makes toc follow scrolling
   # - toc.integrate  # integrates toc into left menu
   - search.highlight
@@ -51,10 +50,6 @@ theme:
 
 plugins:
 - search
-- social:
-    enabled: !ENV [CI, false]
-- tags
-- markdown-exec
 - literate-nav
 - mknodes:
     build_fn: mkdocs_mknodes.manual.root:build
@@ -72,8 +67,6 @@ plugins:
           domains: [std, py]
         options:
           # https://mkdocstrings.github.io/python/usage/
-          show_docstring_returns: false
-          show_source: false
           show_signature_annotations: true
           show_symbol_type_toc: true
           show_symbol_type_heading: true

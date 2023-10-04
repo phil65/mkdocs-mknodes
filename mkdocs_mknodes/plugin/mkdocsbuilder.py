@@ -36,6 +36,11 @@ class MkDocsBuilder:
         self,
         config: mkdocsconfig.Config | MkDocsConfig | str | os.PathLike | None = None,
     ):
+        """Constructor.
+
+        Arguments:
+            config: MkDocs Config
+        """
         match config:
             case mkdocsconfig.Config():
                 self._config = config._config
