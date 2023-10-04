@@ -1,12 +1,19 @@
 from __future__ import annotations
 
+import tomllib
+
 import mknodes as mk
 
-from mkdocs_mknodes.manual import timeline_data
+from mkdocs_mknodes import paths
 
 
 nav = mk.MkNav("Getting started")
 router = mk.Router()
+
+INTRO = (
+    "This section provides an overview about the sequence of operations applied by"
+    " **MkNodes** when running the full build process."
+)
 
 
 @router.route_page("MkNodes plugin for MkDocs", hide="toc", is_homepage=True)
@@ -34,8 +41,10 @@ def _(page: mk.MkPage):
 
 @router.route_page("The build process", hide="toc")
 def _(page: mk.MkPage):
-    page += timeline_data.INTRO
+    text = (paths.RESOURCES / "timeline_data.toml").read_text()
+    data = tomllib.loads(text)
+    page += INTRO
     node = mk.MkTimeline()
-    for step in timeline_data.STEPS:
-        node.add_item(date=step["step"], content=step["content"])
+    for step in data.values():
+        node.add_item(date=step["label"], content=step["content"])
     page += node
