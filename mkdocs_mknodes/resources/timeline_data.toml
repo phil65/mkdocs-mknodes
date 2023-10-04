@@ -93,12 +93,13 @@ label = "Step 10"
 content = """
 ### Write to disk using backends
 
-The Markdown backend creates plain Markdown pages and index files on disk.
-The **MkDocs** backend updates the **Mkdocs**
-configuration with information from the node tree and adds the rquired CSS / JS /
-etc. resources as well as the required Markdown extensions. Also, all Markdown
-files and templates are written to the location where **MkDocs** expects them to
-be. In addition, `SUMMARY.md` files are generated to describe the hierarchy. These
+* The Markdown backend creates plain Markdown pages and index files on disk.
+* The **MkDocs** backend updates the **Mkdocs**
+configuration with information from the node tree and adds the required CSS / JS /
+etc. resources as well as the required Markdown extensions. All Markdown files
+and templates are written to the location where **MkDocs**
+expects them to be.
+* `SUMMARY.md` files are generated to describe the hierarchy. These
 files get picked up by **mkdocs-literate-nav** plugin later on.
 """
 

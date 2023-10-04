@@ -9,7 +9,6 @@ from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure import files as files_, nav, pages
 
 from mkdocs_mknodes import mkdocsconfig
-from mkdocs_mknodes.backends import buildbackend
 
 
 if TYPE_CHECKING:
@@ -19,6 +18,8 @@ logger = get_plugin_logger(__name__)
 
 
 class MkDocsPage(pages.Page):
+    """MkPage-based Mkocs-Page subclass."""
+
     def __init__(self, mkpage: mk.MkPage, file: files_.File, config: MkDocsConfig):
         self.mkpage = mkpage
         super().__init__(title=self.mkpage.title, file=file, config=config)
@@ -30,7 +31,7 @@ class MkDocsPage(pages.Page):
         self.mkpage.metadata = self.meta
 
 
-class MkDocsBuilder(buildbackend.BuildBackend):
+class MkDocsBuilder:
     def __init__(
         self,
         config: mkdocsconfig.Config | MkDocsConfig | str | os.PathLike | None = None,

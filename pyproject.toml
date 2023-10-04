@@ -150,6 +150,7 @@ exclude_lines = [
 [tool.mypy]
 python_version = "3.11"
 disable_error_code = ["assignment", "misc", "import", "has-type"]
+pretty = true
 
 [tool.ruff]
 line-length = 90

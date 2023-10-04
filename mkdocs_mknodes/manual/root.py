@@ -20,7 +20,7 @@ def build(project: mk.Project[materialtheme.MaterialTheme]) -> mk.MkNav:
     get_started_section.router.register_nodes(nav)
     root_nav += nav
     manual.create_use_cases_section(root_nav)
-    doc = root_nav.add_doc(section_name="API")
+    doc = root_nav.add_doc(section_name="API", flatten_nav=True)
     doc.collect_classes(recursive=True)
     manual.create_cli_section(root_nav)
     manual.create_development_section(root_nav)
