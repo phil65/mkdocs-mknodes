@@ -1,18 +1,16 @@
 """The Mkdocs Plugin."""
 
 from __future__ import annotations
-from collections.abc import Callable
 
+from collections.abc import Callable
 import pathlib
 import urllib.parse
-
 import tempfile
 from typing import TYPE_CHECKING, Literal
+
 from mkdocs import livereload
 from mkdocs.plugins import BasePlugin, get_plugin_logger
-from mknodes import project
-from mknodes.pages import mkpage
-from mknodes.theme import theme
+import mknodes as mk
 from mknodes.utils import linkreplacer
 
 from mkdocs_mknodes import buildcollector, mkdocsconfig
@@ -53,11 +51,11 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         """Create the project based on MkDocs config."""
         if not self.config.build_fn:
             return
-        skin = theme.Theme.get_theme(
+        skin = mk.Theme.get_theme(
             theme_name=config.theme.name or "material",
             data=config.theme._vars,  # type: ignore[attr-defined]
         )
-        self.project = project.Project(
+        self.project = mk.Project(
             base_url=config.site_url or "",
             use_directory_urls=config.use_directory_urls,
             theme=skin,
@@ -135,7 +133,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
     ) -> Page | None:
         """During this phase we set the edit paths."""
         node = self.build_info.page_mapping.get(page.file.src_uri)
-        edit_path = node._edit_path if isinstance(node, mkpage.MkPage) else None
+        edit_path = node._edit_path if isinstance(node, mk.MkPage) else None
         cfg = mkdocsconfig.Config(config)
         if path := cfg.get_edit_url(edit_path):
             page.edit_url = path
