@@ -1,9 +1,7 @@
 import mknodes as mk
 
-from mknodes.theme import materialtheme
 
-
-def build(project: mk.Project[materialtheme.MaterialTheme]):
+def build(project: mk.Project[mk.MaterialTheme]):
     nav = project.get_root()
     index_page = nav.add_index_page(hide="toc")
     index_page += "## Sub-Pages"

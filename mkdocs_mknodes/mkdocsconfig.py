@@ -30,7 +30,14 @@ def load_config(path: str | os.PathLike | None = None) -> MkDocsConfig:
 
 
 class Config:
+    """MkDocs config file wrapper."""
+
     def __init__(self, config: Mapping | str | os.PathLike | None = None):
+        """Constructor.
+
+        Arguments:
+            config: MkDocs config
+        """
         match config:
             case MkDocsConfig():
                 self._config: MkDocsConfig = config
@@ -79,7 +86,12 @@ class Config:
         additional_extensions: list[str] | None = None,
         config_override: dict[str, Any] | None = None,
     ) -> mdconverter.MdConverter:
-        """Return a markdown instance based on given config."""
+        """Return a markdown instance based on given config.
+
+        Arguments:
+            additional_extensions: Additional extensions to use
+            config_override: Dict with extension settings. Overrides config settings.
+        """
         extensions = self._config.markdown_extensions
         if additional_extensions:
             extensions = list(set(additional_extensions + extensions))
@@ -87,6 +99,14 @@ class Config:
         return mdconverter.MdConverter(extensions=extensions, extension_configs=configs)
 
     def get_edit_url(self, edit_path: str | None) -> str | None:
+        """Return edit url.
+
+        If no explicit edit path is given, this will return the path
+        to the builder function.
+
+        Arguments:
+            edit_path: Edit path
+        """
         repo_url = self.repo_url
         if not repo_url:
             return None

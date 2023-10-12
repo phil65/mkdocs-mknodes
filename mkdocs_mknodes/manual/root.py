@@ -2,13 +2,11 @@ from __future__ import annotations
 
 import mknodes as mk
 
-from mknodes.theme import materialtheme
-
 from mkdocs_mknodes import manual
 from mkdocs_mknodes.manual import get_started_section
 
 
-def build(project: mk.Project[materialtheme.MaterialTheme]) -> mk.MkNav:
+def build(project: mk.Project[mk.MaterialTheme]) -> mk.MkNav:
     project.env.add_template_path("mkdocs_mknodes/resources")
 
     root_nav = project.get_root()

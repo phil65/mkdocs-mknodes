@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from mknodes import project as project_
-from mknodes.theme import materialtheme
+import mknodes as mk
 import pytest
 
 from mkdocs_mknodes import mkdocsconfig
@@ -14,5 +13,5 @@ def config():
 
 @pytest.fixture(scope="session")
 def project():
-    skin = materialtheme.MaterialTheme()
-    return project_.Project(skin, build_fn="mkdocs_mknodes.manual.root:build")
+    skin = mk.MaterialTheme()
+    return mk.Project(skin, build_fn="mkdocs_mknodes.manual.root:build")
