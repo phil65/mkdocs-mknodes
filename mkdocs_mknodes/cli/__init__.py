@@ -166,11 +166,10 @@ def create_config(
         ],
     }
 
-    from mknodes import project
-    from mknodes.theme import theme as theme_
+    import mknodes as mk
 
-    skin = theme_.Theme(theme_name)
-    proj = project.Project(
+    skin = mk.Theme(theme_name)
+    proj = mk.Project(
         base_url="",
         use_directory_urls=True,
         theme=skin,

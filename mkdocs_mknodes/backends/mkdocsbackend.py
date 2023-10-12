@@ -171,11 +171,10 @@ class MkDocsBackend(buildbackend.BuildBackend):
 if __name__ == "__main__":
     backend = MkDocsBackend()
 
-    from mknodes import project
-    from mknodes.theme import theme as theme_
+    import mknodes as mk
 
-    skin = theme_.Theme("material")
-    proj = project.Project(
+    skin = mk.Theme("material")
+    proj = mk.Project(
         base_url="",
         use_directory_urls=True,
         theme=skin,

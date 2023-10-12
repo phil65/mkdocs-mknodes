@@ -13,8 +13,6 @@ from mknodes.utils import log, resources
 
 
 if TYPE_CHECKING:
-    from mknodes.theme import theme as theme_
-
     from mkdocs_mknodes.backends import buildbackend
 
 
@@ -121,7 +119,7 @@ class BuildCollector:
         self.resources = resources.Resources()
         self.mapping: dict[str, mk.MkNode] = dict()
 
-    def collect(self, root: mk.MkNode, theme: theme_.Theme):
+    def collect(self, root: mk.MkNode, theme: mk.Theme):
         """Collect build stuff from given node + theme.
 
         Arguments:
