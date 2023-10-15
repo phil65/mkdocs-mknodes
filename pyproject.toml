@@ -8,7 +8,7 @@ source = "regex_commit"
 commit_extra_args = ["-e"]
 path = "mkdocs_mknodes/__init__.py"
 
-[too.hatch.dirs.env]
+[tool.hatch.dirs.env]
 virtual = ".hatch"
 
 [tool.hatch.envs.default]
@@ -26,7 +26,6 @@ dependencies = [
     # Docs
     "pymdown-extensions",
     "markdown-exec[ansi]",
-    "mkdocs-click",
     "pygments",
     "mkdocs-mknodes",
 
@@ -129,10 +128,7 @@ Gitter = "https://app.gitter.im/#/room/#mknodes:gitter.im"
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-testpaths = [
-    "tests",
-]
-junit_family = "xunit2"
+testpaths = ["tests"]
 log_cli = true
 log_format = "%(asctime)s %(levelname)s %(message)s"
 log_date_format = "%Y-%m-%d %H:%M:%S"
@@ -245,7 +241,6 @@ ignore = [
     "PLR0915",# Too many statements
     "SLF001",# Private member accessed
     "RUF012", # Mutable class attributes should be annotated
-    "RUF013", # PEP 484 prohibits implicit `Optional`
     "TRY003", # Avoid specifying long messages outside the exception class
 ]
 extend-exclude = [
