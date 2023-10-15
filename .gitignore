@@ -60,7 +60,8 @@ test.db
 # Django stuff:
 *.log
 local_settings.py
-
+pdm.lock
+.pdm-python
 # Flask stuff:
 instance/
 .webassets-cache
