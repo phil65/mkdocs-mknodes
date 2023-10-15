@@ -1,6 +1,4 @@
 INHERIT: mkdocs_basic.yml
-markdown_extensions:
-- mkdocs-click
 
 plugins:
 - mknodes:
