@@ -4,7 +4,6 @@ import pathlib
 import tempfile
 
 from unittest import mock
-from unittest.mock import ANY
 
 from typer.testing import CliRunner
 
@@ -26,7 +25,11 @@ def test_build(mock_build):
 
     assert result.exit_code == 0
     mock_build.assert_called_once_with(
-        ANY,
+        config_path="mkdocs.yml",
+        repo_path=None,
+        build_fn=None,
+        clone_depth=None,
+        site_dir="site",
         strict=False,
         theme=None,
         use_directory_urls=True,
@@ -37,7 +40,11 @@ def test_build(mock_build):
 @mock.patch("mkdocs_mknodes.commands.build_page._build", autospec=True)
 def test_serve_default(mock_build, mock_serve):
     runner = CliRunner()
-    result = runner.invoke(cli.cli, ["serve"], catch_exceptions=False)
+    result = runner.invoke(
+        cli.cli,
+        ["serve", "--config-path", "configs/mkdocs_mkdocs.yml"],
+        catch_exceptions=False,
+    )
 
     assert result.exit_code == 0
     mock_build.assert_called_once()

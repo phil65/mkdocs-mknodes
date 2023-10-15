@@ -7,7 +7,7 @@ copyright: Copyright &copy; 2023 Philipp Temminghoff
 
 theme:
   name: material
-  custom_dir: docs/overrides
+  custom_dir: overrides
   icon: material/graph-outline
   palette:
   # Palette toggle for light mode

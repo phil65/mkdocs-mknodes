@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import typer as t
 
-from mknodes.info import mkdocsconfigfile
 from mknodes.utils import log, yamlhelpers
 
 from mkdocs_mknodes import paths
@@ -82,15 +81,12 @@ def build(
 
     Further info here: https://phil65.github.io/mknodes/Development/CLI/
     """
-    cfg = mkdocsconfigfile.MkDocsConfigFile(config_path)
-    cfg.update_mknodes_section(
-        repo_url=repo_path,
+    build_page.build(
+        config_path=config_path,
+        repo_path=repo_path,
         build_fn=build_fn,
         clone_depth=clone_depth,
-    )
-    cfg["site_dir"] = site_dir
-    build_page.build(
-        cfg,
+        site_dir=site_dir,
         strict=strict,
         theme=theme if theme != "material" else None,
         use_directory_urls=use_directory_urls,
@@ -116,14 +112,11 @@ def serve(
 
     Further info here: https://phil65.github.io/mknodes/Development/CLI/
     """
-    cfg = mkdocsconfigfile.MkDocsConfigFile(config_path)
-    cfg.update_mknodes_section(
-        repo_url=repo_path,
-        build_fn=build_fn,
-        clone_depth=clone_depth,
-    )
     serve_.serve(
-        cfg,
+        config_path=config_path,
+        build_fn=build_fn,
+        repo_path=repo_path,
+        clone_depth=clone_depth,
         strict=strict,
         theme=theme if theme != "material" else None,
         use_directory_urls=use_directory_urls,

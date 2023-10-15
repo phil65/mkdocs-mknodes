@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
 import contextlib
 import io
 import os
@@ -18,6 +17,7 @@ import jinja2.exceptions
 from mkdocs.config import load_config
 from mkdocs.exceptions import Abort
 from mkdocs.livereload import LiveReloadServer
+from mknodes.info import mkdocsconfigfile
 from mknodes.utils import log, yamlhelpers
 
 from mkdocs_mknodes import paths
@@ -31,21 +31,30 @@ logger = log.get_logger(__name__)
 
 
 def serve(
-    config: str | os.PathLike | MkDocsConfig | Mapping[str, Any] = paths.CFG_DEFAULT,
+    config_path: str | os.PathLike = paths.CFG_DEFAULT,
+    repo_path: str = ".",
+    build_fn: str = paths.DEFAULT_BUILD_FN,
+    clone_depth: int = 100,
     **kwargs: Any,
 ):
     """Serve a MkNodes-based website.
 
     Arguments:
-        config: The config to use
+        config_path: The path to the config file to use
+        repo_path: Path to the repository a page should be built for
+        build_fn: Callable to use for creating the webpage
+        clone_depth: If repository is remote, the amount of commits to fetch
         kwargs: Optional config values (overrides value from config)
     """
-    match config:
-        case str() | os.PathLike():
-            text = pathlib.Path(config).read_text(encoding="utf-8")
-        case _:
-            text = yamlhelpers.dump_yaml(dict(config))
+    config = mkdocsconfigfile.MkDocsConfigFile(config_path)
+    config.update_mknodes_section(
+        repo_url=repo_path,
+        build_fn=build_fn,
+        clone_depth=clone_depth,
+    )
+    text = yamlhelpers.dump_yaml(dict(config))
     stream = io.StringIO(text)
+    stream.name = str(config_path)
     _serve(config_file=stream, livereload=False, **kwargs)  # type: ignore[arg-type]
 
 

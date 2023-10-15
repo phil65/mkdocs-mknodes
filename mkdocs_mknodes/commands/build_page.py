@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 import io
 import logging
+import os
 import time
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 from urllib.parse import urljoin
 
 from mkdocs import utils
@@ -18,6 +18,7 @@ from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.files import InclusionLevel, _set_exclusions, get_files
 from mkdocs.structure.nav import get_navigation
 from mkdocs.structure.pages import Page
+from mknodes.info import mkdocsconfigfile
 from mknodes.utils import yamlhelpers
 
 
@@ -28,15 +29,35 @@ if TYPE_CHECKING:
 logger = get_plugin_logger(__name__)
 
 
-def build(config: MkDocsConfig | Mapping[str, Any], **kwargs):
+def build(
+    config_path: str | os.PathLike,
+    repo_path: str,
+    build_fn,
+    site_dir: str | None = None,
+    clone_depth: int = 100,
+    **kwargs,
+):
     """Build a MkNodes-based website.
 
     Arguments:
-        config: The config to use
+        config_path: The path to the config file to use
+        repo_path: Path to the repository a page should be built for
+        build_fn: Callable to use for creating the webpage
+        site_dir: Path for the website build
+        clone_depth: If repository is remote, the amount of commits to fetch
         kwargs: Optional config values (overrides value from config)
     """
-    text = yamlhelpers.dump_yaml(dict(config))
+    cfg = mkdocsconfigfile.MkDocsConfigFile(config_path)
+    cfg.update_mknodes_section(
+        repo_url=repo_path,
+        build_fn=build_fn,
+        clone_depth=clone_depth,
+    )
+    if site_dir:
+        cfg["site_dir"] = site_dir
+    text = yamlhelpers.dump_yaml(dict(cfg))
     buffer = io.StringIO(text)
+    buffer.name = config_path
     config = load_config(buffer, **kwargs)
     for k, v in config.items():
         logger.debug("%s: %s", k, v)
