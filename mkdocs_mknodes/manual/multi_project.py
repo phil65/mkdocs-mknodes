@@ -3,7 +3,7 @@ import mknodes as mk
 
 def build(project: mk.Project[mk.MaterialTheme]):
     nav = project.get_root()
-    index_page = nav.add_index_page(hide="toc")
+    index_page = nav.add_page(is_index=True, hide="toc")
     index_page += "## Sub-Pages"
     websites = dict(
         ruff="https://github.com/astral-sh/ruff.git",

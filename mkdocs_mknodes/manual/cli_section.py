@@ -16,7 +16,7 @@ def create_cli_section(root_nav: mk.MkNav):
     # This means that this section could be imported by other packages and be
     # used without any further adaptation.
     root_nav += nav
-    page = nav.add_index_page(hide="toc")
+    page = nav.add_page(is_index=True, hide="toc")
     page += mk.MkBinaryImage.for_file("docs/assets/cli.gif")
     page += mk.MkJinjaTemplate("cli_index.jinja")
     page.created_by = create_cli_section

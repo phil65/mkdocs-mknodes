@@ -9,7 +9,7 @@ nav = mk.MkNav("Use cases")
 def create_use_cases_section(root_nav: mk.MkNav):
     """Create the "Development" sub-MkNav."""
     root_nav += nav
-    page = nav.add_index_page(hide="toc")
+    page = nav.add_page(is_index=True, hide="toc")
     page += mk.MkJinjaTemplate("use_cases_index.jinja")
     page.created_by = create_use_cases_section
 
@@ -36,7 +36,7 @@ def _(page: mk.MkPage):
 
 @nav.route.nav("Sub-Websites")
 def sub_websites(nav: mk.MkNav):
-    page = nav.add_index_page()
+    page = nav.add_page(is_index=True)
     page += mk.MkJinjaTemplate("use_case_subwebsites.jinja")
     # page += mk.MkCode.for_object(sub_websites)
     proj = mk.Project.for_path("https://github.com/mkdocstrings/mkdocstrings.git")
