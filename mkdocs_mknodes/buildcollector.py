@@ -1,3 +1,5 @@
+"""Module containing the BuildCollector class."""
+
 from __future__ import annotations
 
 import collections
