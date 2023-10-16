@@ -12,6 +12,6 @@ def config():
 
 
 @pytest.fixture(scope="session")
-def project():
+def mkdocs_mknodes_project():
     skin = mk.MaterialTheme()
     return mk.Project(skin, build_fn="mkdocs_mknodes.manual.root:build")
