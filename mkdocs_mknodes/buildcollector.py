@@ -117,7 +117,7 @@ class BuildCollector:
         self.extra_files: dict[str, str | bytes] = {}
         self.node_counter: collections.Counter[str] = collections.Counter()
         self.resources = resources.Resources()
-        self.mapping: dict[str, mk.MkNode] = dict()
+        self.mapping: dict[str, mk.MkNode] = {}
 
     def collect(self, root: mk.MkNode, theme: mk.Theme):
         """Collect build stuff from given node + theme.
