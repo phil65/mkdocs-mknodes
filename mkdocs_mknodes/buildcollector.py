@@ -163,6 +163,11 @@ class BuildCollector:
         path = page.resolved_file_path
         self.mapping[path] = page
         req = page.get_resources()
+
+        # libs = [i for i in req.js_files if i.is_library]
+        # req.remove(*libs)
+        # for lib in libs:
+        #     page.template.libs.add_script_file(lib)
         self.resources.merge(req)
         update_page_template(page)
         show_info = page.metadata.get("show_page_info")
