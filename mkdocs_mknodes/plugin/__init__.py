@@ -15,7 +15,7 @@ from mknodes.utils import linkreplacer
 
 from mkdocs_mknodes import buildcollector, mkdocsconfig
 from mkdocs_mknodes.backends import markdownbackend, mkdocsbackend
-from mkdocs_mknodes.plugin import pluginconfig
+from mkdocs_mknodes.plugin import pluginconfig, rewriteloader
 
 if TYPE_CHECKING:
     import jinja2
@@ -126,6 +126,10 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         env.globals["mknodes"] = node_env.globals
         env.filters |= node_env.filters
         logger.debug("Added macros / filters to MkDocs jinja2 environment.")
+        if self.project.theme.theme_name == "material":
+            assert env.loader
+            env.loader = rewriteloader.RewriteLoader(env.loader)
+        return env
 
     def on_pre_page(
         self,

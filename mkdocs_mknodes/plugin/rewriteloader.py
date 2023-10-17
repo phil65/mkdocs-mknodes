@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 import pathlib
+import re
 
 import jinja2
 
@@ -36,4 +37,8 @@ def adapt_template(path, src):
             r'{% set sections = "navigation.sections" in features or (page and page.meta'
             r" and page.meta.nav_sections) %}",
         )
-    return src
+    return re.sub(
+        r"{% include \"\.icons/\" ~ (.*) ~ \"\.svg\" %}",
+        r"{{ \g<1> | get_icon_svg }}",
+        src,
+    )
