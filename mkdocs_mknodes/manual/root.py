@@ -8,13 +8,12 @@ from mkdocs_mknodes.manual import get_started_section
 
 def build(project: mk.Project[mk.MaterialTheme]) -> mk.MkNav:
     project.env.add_template_path("mkdocs_mknodes/resources")
-
-    root_nav = project.get_root()
-    root_nav.page_template.announcement_bar = mk.MkMetadataBadges("websites")
-
     project.theme.error_page.content = mk.MkAdmonition("Page does not exist!")
     project.theme.content_area_width = 1300
     project.theme.tooltip_width = 800
+
+    root_nav = project.get_root()
+    root_nav.page_template.announcement_bar = mk.MkMetadataBadges("websites")
     nav = mk.MkNav("Get started", parent=root_nav)
     get_started_section.router.register_nodes(nav)
     root_nav += nav
