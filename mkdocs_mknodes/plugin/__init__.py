@@ -85,6 +85,8 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
 
         logger.info("Updating MkDocs config metadata...")
         cfg.update_from_context(self.project.context)
+        cfg.extra["status"] = {}
+        self.project.theme.adapt_extras(cfg.extra)
 
         logger.info("Setting up build backends...")
         mkdocs_backend = mkdocsbackend.MkDocsBackend(
