@@ -53,7 +53,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             return
         skin = mk.Theme.get_theme(
             theme_name=config.theme.name or "material",
-            data=config.theme._vars,  # type: ignore[attr-defined]
+            data=dict(config.theme),
         )
         self.project = mk.Project(
             base_url=config.site_url or "",

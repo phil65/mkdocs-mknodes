@@ -158,4 +158,4 @@ class Config:
 
 if __name__ == "__main__":
     cfg = Config()
-    print(cfg.theme._vars)
+    print(dict(cfg.theme))
