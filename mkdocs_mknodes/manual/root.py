@@ -10,7 +10,8 @@ def build(project: mk.Project[mk.MaterialTheme]) -> mk.MkNav:
     project.env.add_template_path("mkdocs_mknodes/resources")
 
     root_nav = project.get_root()
-    project.theme.announcement_bar = mk.MkMetadataBadges("websites")
+    root_nav.page_template.announcement_bar = mk.MkMetadataBadges("websites")
+
     project.theme.error_page.content = mk.MkAdmonition("Page does not exist!")
     project.theme.content_area_width = 1300
     project.theme.tooltip_width = 800
