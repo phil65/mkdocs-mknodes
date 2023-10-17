@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 import logging
 import typer as t
 
@@ -182,6 +183,8 @@ def create_config(
     config["site_description"] = info.summary
     config["site_name"] = info.distribution_name
     config["site_author"] = info.author_name
+    text = f"Copyright © {datetime.now().year} {info.author_name}"
+    config["copyright"] = text
     result = yamlhelpers.dump_yaml(config)
     print(result)
 

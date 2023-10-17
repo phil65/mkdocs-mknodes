@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 import contextlib
+
+from datetime import datetime
 import functools
 import io
 import os
 import pathlib
-
 from typing import Any
 from urllib import parse
 
@@ -80,6 +81,8 @@ class Config:
         self._config.site_description = context.metadata.summary
         self._config.site_name = context.metadata.distribution_name
         self._config.site_author = context.metadata.author_name
+        text = f"Copyright © {datetime.now().year} {context.metadata.author_name}"
+        self._config.copyright = text
 
     def get_markdown_instance(
         self,
