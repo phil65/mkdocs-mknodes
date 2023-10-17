@@ -37,8 +37,10 @@ def adapt_template(path, src):
             r'{% set sections = "navigation.sections" in features or (page and page.meta'
             r" and page.meta.nav_sections) %}",
         )
-    return re.sub(
-        r"{% include \"\.icons/\" ~ (.*) ~ \"\.svg\" %}",
-        r"{{ \g<1> | get_icon_svg }}",
-        src,
-    )
+    if "/material/templates/" in path:
+        return re.sub(
+            r"{% include \"\.icons/\" ~ (.*) ~ \"\.svg\" %}",
+            r"{{ \g<1> | get_icon_svg }}",
+            src,
+        )
+    return src
