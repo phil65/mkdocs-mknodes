@@ -43,7 +43,7 @@ def add_page_info(page: mk.MkPage, req: resources.Resources):
     adm += details
 
     title = "Metadata"
-    code = mk.MkCode(str(page.metadata), language="yaml")
+    code = mk.MkCode(str(page.resolved_metadata), language="yaml")
     details = mk.MkAdmonition(code, title=title, collapsible=True, typ="quote")
     adm += details
 
@@ -65,7 +65,7 @@ def update_page_template(page: mk.MkPage):
         node_path = None
     if node_path:
         html_path = node_path.with_suffix(".html").as_posix()
-        page._metadata.template = html_path
+        page.metadata.template = html_path
         page.template.filename = html_path
         if extends := _get_extends_from_parent(page):
             page.template.extends = extends
@@ -160,7 +160,7 @@ class BuildCollector:
         Arguments:
             page: Page to collect the data from.
         """
-        if page.metadata.inclusion_level is False:
+        if page.resolved_metadata.inclusion_level is False:
             return
         path = page.resolved_file_path
         self.mapping[path] = page
@@ -172,7 +172,7 @@ class BuildCollector:
         #     page.template.libs.add_script_file(lib)
         self.resources.merge(req)
         update_page_template(page)
-        show_info = page.metadata.get("show_page_info")
+        show_info = page.resolved_metadata.get("show_page_info")
         if show_info is None:
             show_info = self.show_page_info
         if show_info:
