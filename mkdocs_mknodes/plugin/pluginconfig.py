@@ -43,3 +43,14 @@ class PluginConfig(base.Config):
     - Code which created the page (needs the page to be created via decorators, or
     the `generated_by` attribute of the MkPage needs to be set manually)
     """
+    rewrite_theme_templates = c.Type(bool, default=True)
+    """Add additional functionality to themes by rewriting template files.
+
+    MkNodes can rewrite the HTML templates of Themes in order to add additional
+    functionality.
+
+    Right now, setting this feature allows these options for the Material-MkDocs theme:
+    - use iconify icons instead of the Material-MkDocs icons
+    - setting the theme features "navigation.indexes" and "navigation.expand" via
+      page metadata.
+    """

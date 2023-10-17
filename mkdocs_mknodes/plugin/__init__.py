@@ -126,7 +126,8 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         env.globals["mknodes"] = node_env.globals
         env.filters |= node_env.filters
         logger.debug("Added macros / filters to MkDocs jinja2 environment.")
-        if self.project.theme.theme_name == "material":
+        is_material = self.project.theme.theme_name == "material"
+        if is_material and self.config.rewrite_theme_templates:
             assert env.loader
             env.loader = rewriteloader.RewriteLoader(env.loader)
         return env
