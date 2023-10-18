@@ -43,4 +43,9 @@ def adapt_template(path, src):
             r"{{ \g<1> | get_icon_svg }}",
             src,
         )
+        # return re.sub(
+        #     r"{% import \"\.icons/\" ~ (.*) ~ \"\.svg\" as (.*) %}",
+        #     r"{% set \g<2> = \g<1> | get_icon_svg %}",
+        #     src,
+        # )
     return src
