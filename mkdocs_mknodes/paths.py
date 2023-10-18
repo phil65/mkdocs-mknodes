@@ -5,6 +5,7 @@ from __future__ import annotations
 import pathlib
 
 
-CFG_DEFAULT = "configs/mkdocs_basic.yml"
-RESOURCES = pathlib.Path(__file__).parent / "resources"
+SRC_FOLDER = pathlib.Path(__file__).parent
+RESOURCES = SRC_FOLDER / "resources"
+CFG_DEFAULT = SRC_FOLDER.parent / "configs/mkdocs_basic.yml"
 DEFAULT_BUILD_FN = "mknodes:MkDefaultWebsite.for_project"
