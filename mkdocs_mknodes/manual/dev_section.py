@@ -4,10 +4,6 @@ import mknodes as mk
 nav = mk.MkNav("Development")
 
 
-def create_development_section(root_nav: mk.MkNav):
-    root_nav += nav
-
-
 @nav.route.page("Module overview", icon="file-tree-outline")
 def _(page: mk.MkPage):
     page += mk.MkModuleOverview(maximum_depth=2)

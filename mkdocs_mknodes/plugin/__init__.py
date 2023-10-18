@@ -32,6 +32,50 @@ logger = get_plugin_logger(__name__)
 CommandStr = Literal["build", "serve", "gh-deploy"]
 
 
+class Build:
+    def setup_build_folder(self, build_folder):
+        if build_folder:
+            self.build_folder = pathlib.Path(build_folder)
+        else:
+            self._dir = tempfile.TemporaryDirectory(prefix="mknodes_")
+            self.build_folder = pathlib.Path(self._dir.name)
+            logger.debug("Creating temporary dir %s", self._dir.name)
+
+    def setup_project(
+        self,
+        build_fn,
+        repo_path,
+        theme,
+        base_url,
+        use_directory_urls: bool = True,
+        clone_depth: int = 100,
+        **kwargs,
+    ):
+        if not build_fn:
+            return
+        self.project = mk.Project(
+            base_url=base_url,
+            use_directory_urls=use_directory_urls,
+            theme=theme,
+            repo=repo_path,
+            build_fn=build_fn,
+            build_kwargs=kwargs,
+            clone_depth=clone_depth,
+        )
+
+    def on_build_project(self, backends, show_page_info):
+        logger.info("Generating pages...")
+        self.project.build()
+
+        logger.info("Setting up build backends...")
+        collector = buildcollector.BuildCollector(
+            backends=backends,
+            show_page_info=show_page_info,
+        )
+        assert self.project._root
+        self.build_info = collector.collect(self.project._root, self.project.theme)
+
+
 class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

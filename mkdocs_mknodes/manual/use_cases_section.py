@@ -6,12 +6,9 @@ from mknodes.info import mkdocsconfigfile
 nav = mk.MkNav("Use cases")
 
 
-def create_use_cases_section(root_nav: mk.MkNav):
-    """Create the "Development" sub-MkNav."""
-    root_nav += nav
-    page = nav.add_page(is_index=True, hide="toc")
+@nav.route.page(is_index=True, hide="toc")
+def _(page: mk.MkPage):
     page += mk.MkJinjaTemplate("use_cases_index.jinja")
-    page.created_by = create_use_cases_section
 
 
 @nav.route.page("Creating a website via config", hide="toc")

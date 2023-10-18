@@ -2,24 +2,36 @@ from __future__ import annotations
 
 import mknodes as mk
 
-from mkdocs_mknodes import manual
-from mkdocs_mknodes.manual import get_started_section
+from mkdocs_mknodes.manual import (
+    cli_section,
+    dev_section,
+    get_started_section,
+    use_cases_section,
+)
+
+
+class Build:
+    def on_theme(self, theme: mk.MaterialTheme):
+        theme.error_page.content = mk.MkAdmonition("Page does not exist!")
+        theme.content_area_width = 1300
+        theme.tooltip_width = 800
+
+    def on_root(self, nav: mk.MkNav):
+        nav.page_template.announcement_bar = mk.MkMetadataBadges("websites")
+        get_started_nav = mk.MkNav("Get started", parent=nav)
+        get_started_section.router.register_nodes(get_started_nav)
+        nav += get_started_nav
+        nav += use_cases_section.nav
+        doc = nav.add_doc(section_name="API", flatten_nav=True)
+        doc.collect_classes(recursive=True)
+        nav += cli_section.nav
+        nav += dev_section.nav
+        return nav
 
 
 def build(project: mk.Project[mk.MaterialTheme]) -> mk.MkNav:
+    build = Build()
     project.env.add_template_path("mkdocs_mknodes/resources")
-    project.theme.error_page.content = mk.MkAdmonition("Page does not exist!")
-    project.theme.content_area_width = 1300
-    project.theme.tooltip_width = 800
-
-    root_nav = project.get_root()
-    root_nav.page_template.announcement_bar = mk.MkMetadataBadges("websites")
-    nav = mk.MkNav("Get started", parent=root_nav)
-    get_started_section.router.register_nodes(nav)
-    root_nav += nav
-    manual.create_use_cases_section(root_nav)
-    doc = root_nav.add_doc(section_name="API", flatten_nav=True)
-    doc.collect_classes(recursive=True)
-    manual.create_cli_section(root_nav)
-    manual.create_development_section(root_nav)
-    return root_nav
+    nav = project.get_root()
+    build.on_theme(project.theme)
+    return build.on_root(nav) or nav
