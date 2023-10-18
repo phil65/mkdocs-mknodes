@@ -1,4 +1,4 @@
-INHERIT: mkdocs_basic.yml
+INHERIT: ../mkdocs_mknodes/resources/mkdocs_basic.yml
 
 site_name: MkDocstrings
 site_description: A MkDocstrings page created by MkNodes
@@ -7,8 +7,8 @@ site_url: https://phil65.github.io/mknodes/mkdocstrings/
 plugins:
 - mknodes:
     repo_path: https://github.com/mkdocstrings/mkdocstrings.git
-    build_fn: mknodes.navs.mkemptywebsite:MkEmptyWebsite.for_project
     clone_depth: 100
+    build_fn: mknodes.navs.mkemptywebsite:MkEmptyWebsite.for_project
     kwargs:
       static_pages:
         Development:

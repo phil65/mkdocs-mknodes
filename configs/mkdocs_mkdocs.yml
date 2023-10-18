@@ -1,4 +1,4 @@
-INHERIT: mkdocs_basic.yml
+INHERIT: ../mkdocs_mknodes/resources/mkdocs_basic.yml
 
 site_name: MkDocs
 site_description: A MkDocs page created by MkNodes
