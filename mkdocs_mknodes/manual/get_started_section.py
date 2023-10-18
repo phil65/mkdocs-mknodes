@@ -42,3 +42,8 @@ def _(page: mk.MkPage):
 def _(page: mk.MkPage):
     page += INTRO
     page += mk.MkTimeline(paths.RESOURCES / "timeline_data.toml")
+
+
+@router.route_page("Plugin flow", icon="dev-to")
+def _(page: mk.MkPage):
+    page += mk.MkPluginFlow()

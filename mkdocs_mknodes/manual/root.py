@@ -2,12 +2,9 @@ from __future__ import annotations
 
 import mknodes as mk
 
-from mkdocs_mknodes.manual import (
-    cli_section,
-    dev_section,
-    get_started_section,
-    use_cases_section,
-)
+from mknodes.manual import dev_section
+
+from mkdocs_mknodes.manual import cli_section, get_started_section, use_cases_section
 
 
 class Build:
