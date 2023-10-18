@@ -8,7 +8,7 @@ import typer as t
 
 from mknodes.utils import log, yamlhelpers
 
-from mkdocs_mknodes import paths
+from mkdocs_mknodes import buildcollector, paths
 from mkdocs_mknodes.cli import richstate
 from mkdocs_mknodes.commands import build_page, serve as serve_
 
@@ -151,7 +151,7 @@ def create_config(
     theme_name = theme or "material"
     config = {
         "site_name": "Not set",
-        "theme": theme_name,
+        "theme": {"name": theme_name, "custom_dir": "overrides"},
         "use_directory_urls": use_directory_urls,
         "extra": {},
         "plugins": [
@@ -173,7 +173,9 @@ def create_config(
         build_fn=build_fn,
         clone_depth=1,
     )
-    info = proj.build()
+    proj.build()
+    collector = buildcollector.BuildCollector([])
+    info = collector.collect(proj._root, skin)
     resources = info.resources
     info = proj.context.metadata
     config["markdown_extensions"] = resources.markdown_extensions

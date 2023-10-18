@@ -48,3 +48,9 @@ def test_serve_default(mock_build, mock_serve):
 
     assert result.exit_code == 0
     mock_build.assert_called_once()
+
+
+def test_create_config():
+    runner = CliRunner()
+    result = runner.invoke(cli.cli, ["create-config"], catch_exceptions=False)
+    assert result.exit_code == 0
