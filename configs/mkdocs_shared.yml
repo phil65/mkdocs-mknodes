@@ -1,11 +1,11 @@
 site_name: Not set
 repo_url: "https://github.com/phil65/mknodes/"
 site_url: https://phil65.github.io/mknodes/
-docs_dir: docs
-site_dir: site
+docs_dir: ../docs
+site_dir: ../site
 theme:
   name: material
-  custom_dir: overrides
+  custom_dir: ../overrides
   palette:
   - media: "(prefers-color-scheme: light)"
     scheme: default

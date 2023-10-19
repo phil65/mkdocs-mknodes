@@ -1,4 +1,4 @@
-INHERIT: ../mkdocs_mknodes/resources/mkdocs_basic.yml
+INHERIT: mkdocs_shared.yml
 
 plugins:
 - mknodes:

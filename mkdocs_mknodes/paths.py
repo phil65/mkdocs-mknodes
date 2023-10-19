@@ -7,5 +7,5 @@ import pathlib
 
 SRC_FOLDER = pathlib.Path(__file__).parent
 RESOURCES = SRC_FOLDER / "resources"
-CFG_DEFAULT = RESOURCES / "mkdocs_basic.yml"
+CFG_DEFAULT = "mkdocs.yml"
 DEFAULT_BUILD_FN = "mknodes:MkDefaultWebsite.for_project"

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 import logging
+from mknodes.info.mkdocsconfigfile import MkDocsConfigFile
 import typer as t
 
 from mknodes.utils import log, yamlhelpers
@@ -45,7 +46,7 @@ DEPTH_CMDS = "-c", "--clone-depth"
 CFG_PATH_CMDS = "-p", "--config-path"
 STRICT_CMDS = "-s", "--strict"
 THEME_CMDS = "-t", "--theme"
-USE_DIR_URLS_CMDS = "-u", "--use-dir-urls"
+USE_DIR_URLS_CMDS = "--use-directory-urls/--no-directory-urls", "-u"
 VERBOSE_CMDS = "-v", "--verbose"
 QUIET_CMDS = "-q", "--quiet"
 
@@ -145,22 +146,15 @@ def create_config(
     Further info here: https://phil65.github.io/mknodes/Development/CLI/
     """
     build_fn = build_fn or paths.DEFAULT_BUILD_FN
-    mknodes_plugin = dict(
-        mknodes={"repo_path": repo_path, "path": build_fn},
-    )
+
+    cfg = paths.RESOURCES / "mkdocs_basic.yml"
+    cfg_file = MkDocsConfigFile(cfg)
+    cfg_file.update_mknodes_section(repo_url=repo_path, build_fn=build_fn)
     theme_name = theme or "material"
-    config = {
-        "site_name": "Not set",
-        "theme": {"name": theme_name, "custom_dir": "overrides"},
-        "use_directory_urls": use_directory_urls,
-        "extra": {},
-        "plugins": [
-            "search",
-            "mkdocstrings",
-            "literate-nav",
-            mknodes_plugin,
-        ],
-    }
+    if theme_name != "material":
+        cfg_file["theme"] = dict(name=theme_name, override_dir="overrides")
+    cfg_file["use_directory_urls"] = use_directory_urls
+    config = cfg_file._data
 
     import mknodes as mk
 
@@ -180,7 +174,7 @@ def create_config(
     info = proj.context.metadata
     config["markdown_extensions"] = resources.markdown_extensions
     if social := info.social_info:
-        config["extra"]["social"] = social  # type: ignore[index]
+        config.setdefault("extra", {})["social"] = social  # type: ignore[index]
     config["repo_path"] = info.repository_url
     config["site_description"] = info.summary
     config["site_name"] = info.distribution_name
