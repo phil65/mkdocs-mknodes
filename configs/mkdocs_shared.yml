@@ -31,6 +31,6 @@ plugins:
 - search
 - literate-nav
 - mknodes:
-    build_fn: mknodes.navs.mkdefaultwebsite:MkDefaultWebsite.for_project
+    build_fn: mknodes:MkDefaultWebsite.for_project
     clone_depth: 100
 - mkdocstrings

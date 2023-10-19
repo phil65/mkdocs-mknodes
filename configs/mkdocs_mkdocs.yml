@@ -8,7 +8,7 @@ plugins:
 - mknodes:
     repo_path: https://github.com/mkdocs/mkdocs.git
     clone_depth: 100
-    build_fn: mknodes.navs.mkdefaultwebsite:MkDefaultWebsite.for_project
+    build_fn: mknodes:MkDefaultWebsite.for_project
     kwargs:
       static_pages:
         Usage:
