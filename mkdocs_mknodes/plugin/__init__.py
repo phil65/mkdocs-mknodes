@@ -63,7 +63,7 @@ class Build:
             clone_depth=clone_depth,
         )
 
-    def on_build_project(self, backends, show_page_info):
+    def build_project(self, backends, show_page_info):
         logger.info("Generating pages...")
         self.project.build()
 
@@ -211,6 +211,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         if not self.config.build_fn:
             return
         for template in self.build_info.resources.templates:
+            assert template.filename
             path = pathlib.Path(config.theme.custom_dir) / template.filename
             path.unlink(missing_ok=True)
 
