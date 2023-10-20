@@ -63,7 +63,7 @@ class Build:
             clone_depth=clone_depth,
         )
 
-    def build_project(self, backends, show_page_info):
+    def build_project(self, backends, show_page_info, render_all_pages):
         logger.info("Generating pages...")
         self.project.build()
 
@@ -71,6 +71,7 @@ class Build:
         collector = buildcollector.BuildCollector(
             backends=backends,
             show_page_info=show_page_info,
+            render_all_pages=render_all_pages,
         )
         assert self.project._root
         self.build_info = collector.collect(self.project._root, self.project.theme)
@@ -146,6 +147,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         collector = buildcollector.BuildCollector(
             backends=[mkdocs_backend, markdown_backend],
             show_page_info=self.config.show_page_info,
+            render_all_pages=self.config.render_all_pages,
         )
         assert self.project._root
         self.build_info = collector.collect(self.project._root, self.project.theme)
@@ -197,14 +199,6 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         files: Files,
     ) -> str | None:
         """During this phase links get replaced and `jinja2` stuff get rendered."""
-        node = self.build_info.page_mapping.get(page.file.src_uri)
-        if node is None:
-            return markdown
-        render_all_pages = self.config.render_all_pages
-        if (render := node.metadata.get("render_jinja")) is not None:
-            render_all_pages = render
-        if render_all_pages:
-            markdown = node.env.render_string(markdown)
         return self.link_replacer.replace(markdown, page.file.src_uri)
 
     def on_post_build(self, config: MkDocsConfig):

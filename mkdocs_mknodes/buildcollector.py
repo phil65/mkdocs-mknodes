@@ -106,15 +106,18 @@ class BuildCollector:
         self,
         backends: list[buildbackend.BuildBackend],
         show_page_info: bool = False,
+        render_all_pages: bool = True,
     ):
         """Constructor.
 
         Arguments:
             backends: A list of backends which should be used for building
             show_page_info: Add a admonition box containing page build info to each page
+            render_all_pages: Whether to resolve all MkPages with their environment
         """
         self.backends = backends
         self.show_page_info = show_page_info
+        self.render_all_pages = render_all_pages
         self.node_files: dict[str, str | bytes] = {}
         self.extra_files: dict[str, str | bytes] = {}
         self.node_counter: collections.Counter[str] = collections.Counter()
@@ -179,6 +182,12 @@ class BuildCollector:
         if show_info:
             add_page_info(page, req)
         md = page.to_markdown()
+        render_all_pages = self.render_all_pages
+        if (render := page.metadata.get("render_jinja")) is not None:
+            render_all_pages = render
+        if render_all_pages:
+            md = page.env.render_string(md)
+
         self.node_files[path] = md
 
     def collect_nav(self, nav: mk.MkNav):
