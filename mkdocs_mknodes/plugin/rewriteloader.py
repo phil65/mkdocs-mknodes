@@ -8,8 +8,9 @@ import jinja2
 
 
 class RewriteLoader(jinja2.BaseLoader):
-    def __init__(self, loader: jinja2.BaseLoader):
+    def __init__(self, loader: jinja2.BaseLoader, rewrite_fn):
         self.loader = loader
+        self.rewrite_fn = rewrite_fn
 
     def get_source(
         self,
@@ -21,11 +22,11 @@ class RewriteLoader(jinja2.BaseLoader):
         old_src = src
         assert filename is not None
         path = pathlib.Path(filename).as_posix()
-        src = adapt_template(path, src)
+        src = self.rewrite_fn(path, src)
         return src or old_src, filename, uptodate
 
 
-def adapt_template(path, src):
+def rewrite(path, src):
     if path.endswith("/material/templates/partials/nav-item.html"):
         src = src.replace(
             r'{% set is_expanded = "navigation.expand" in features %}',
