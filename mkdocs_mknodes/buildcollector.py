@@ -141,6 +141,7 @@ class BuildCollector:
         logger.debug("Setting default markdown extensions...")
         reqs = theme.get_resources()
         self.resources.merge(reqs)
+        self.resources.templates = [i for i in self.resources.templates if i]
         logger.debug("Adapting collected extensions to theme...")
         theme.adapt_extensions(self.resources.markdown_extensions)
         build_files = self.node_files | self.extra_files
