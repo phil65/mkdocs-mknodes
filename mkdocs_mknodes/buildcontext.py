@@ -5,6 +5,8 @@ from __future__ import annotations
 import collections
 import dataclasses
 
+import mknodes as mk
+
 from mknodes.info import contexts
 from mknodes.utils import log, resources
 
@@ -29,6 +31,9 @@ class BuildContext(contexts.Context):
     node_counter: collections.Counter = dataclasses.field(
         default_factory=collections.Counter,
     )
+    templates: list[mk.PageTemplate] = dataclasses.field(default_factory=list)
+    """A list of required templates."""
+
     """Counter containing the amount of creations for each node class."""
 
     # original_config: dict = dataclasses.field(default_factory=dict)

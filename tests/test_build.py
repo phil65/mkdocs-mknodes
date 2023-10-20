@@ -57,7 +57,7 @@ def test_templates():
     collector = buildcollector.BuildCollector(backends=[mkdocs_backend])
     assert project._root
     collector.collect(project._root, project.theme)
-    # assert len(build_info.resources.templates) == 1
+    # assert len(build_info.templates) == 1
 
 
 if __name__ == "__main__":

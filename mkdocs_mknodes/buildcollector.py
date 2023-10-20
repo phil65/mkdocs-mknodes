@@ -162,6 +162,7 @@ class BuildCollector:
             resources=self.resources,
             node_counter=self.node_counter,
             build_files=build_files,
+            templates=templates,
         )
 
     def collect_page(self, page: mk.MkPage):
