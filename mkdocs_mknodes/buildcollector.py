@@ -10,8 +10,9 @@ from typing import TYPE_CHECKING
 
 import mknodes as mk
 
-from mknodes.info import contexts
 from mknodes.utils import log, resources
+
+from mkdocs_mknodes import buildcontext
 
 
 if TYPE_CHECKING:
@@ -156,7 +157,7 @@ class BuildCollector:
         for backend in self.backends:
             logger.info("%s: Collecting data..", type(backend).__name__)
             backend.collect(build_files, self.resources, templates)
-        return contexts.BuildContext(
+        return buildcontext.BuildContext(
             page_mapping=self.mapping,
             resources=self.resources,
             node_counter=self.node_counter,
