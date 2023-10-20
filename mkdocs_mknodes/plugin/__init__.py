@@ -201,7 +201,11 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         node = self.build_info.page_mapping.get(page.file.src_uri)
         if node is None:
             return markdown
-        markdown = node.env.render_string(markdown)
+        render_all_pages = self.config.render_all_pages
+        if (render := node.metadata.get("render_jinja")) is not None:
+            render_all_pages = render
+        if render_all_pages:
+            markdown = node.env.render_string(markdown)
         return self.link_replacer.replace(markdown, page.file.src_uri)
 
     def on_post_build(self, config: MkDocsConfig):
