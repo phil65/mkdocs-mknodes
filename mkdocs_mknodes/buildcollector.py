@@ -151,6 +151,7 @@ class BuildCollector:
             i.template if isinstance(i, mk.MkPage) else i.page_template
             for i in self.mapping.values()
         ]
+        templates += theme.templates
         templates = [i for i in templates if i]
         for backend in self.backends:
             logger.info("%s: Collecting data..", type(backend).__name__)
