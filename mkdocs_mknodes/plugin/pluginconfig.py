@@ -58,4 +58,6 @@ class PluginConfig(base.Config):
     """Render all pages in the jinja environment.
 
     This allows to render jinja in the MkNodes environment outside of the MkJinja nodes.
+
+    This setting can be overridden by setting the page metadata field "render_jinja".
     """
