@@ -122,7 +122,7 @@ class BuildCollector:
         self.extra_files: dict[str, str | bytes] = {}
         self.node_counter: collections.Counter[str] = collections.Counter()
         self.resources = resources.Resources()
-        self.mapping: dict[str, mk.MkNode] = {}
+        self.mapping: dict[str, mk.MkPage | mk.MkNav] = {}
 
     def collect(self, root: mk.MkNode, theme: mk.Theme):
         """Collect build stuff from given node + theme.
@@ -144,13 +144,17 @@ class BuildCollector:
         logger.debug("Setting default markdown extensions...")
         reqs = theme.get_resources()
         self.resources.merge(reqs)
-        self.resources.templates = [i for i in self.resources.templates if i]
         logger.debug("Adapting collected extensions to theme...")
         theme.adapt_extensions(self.resources.markdown_extensions)
         build_files = self.node_files | self.extra_files
+        templates = [
+            i.template if isinstance(i, mk.MkPage) else i.page_template
+            for i in self.mapping.values()
+        ]
+        templates = [i for i in templates if i]
         for backend in self.backends:
             logger.info("%s: Collecting data..", type(backend).__name__)
-            backend.collect(build_files, self.resources)
+            backend.collect(build_files, self.resources, templates)
         return contexts.BuildContext(
             page_mapping=self.mapping,
             resources=self.resources,

@@ -7,12 +7,17 @@ logger = log.get_logger(__name__)
 
 
 class BuildBackend:
-    def collect(self, files: dict[str, str | bytes], reqs: resources.Resources):
+    def collect(
+        self,
+        files: dict[str, str | bytes],
+        reqs: resources.Resources,
+        templates: list,
+    ):
         self.collect_extensions(reqs.markdown_extensions)
         self.collect_js_links(reqs.js_links)
         self.collect_js_files(reqs.js_files)
         self.collect_css(reqs.css)
-        self.collect_templates(reqs.templates)
+        self.collect_templates(templates)
         self.collect_files(files)
         self.collect_assets(reqs.assets)
 
