@@ -68,9 +68,17 @@ class PluginConfig(base.Config):
 
     Examples:
         ``` yaml
-        loaders:
+        jinja_loaders:
           - name: fsspec
             protocol: github
             repo: mknodes
             org: phil65
+    """
+    jinja_extensions = c.Optional(c.ListOfItems(c.Type(str)))
+    """List containing additional jinja extensions to use.
+
+    Examples:
+        ``` yaml
+        jinja_extensions:
+          - jinja2_ansible_filters.AnsibleCoreFiltersExtension
     """

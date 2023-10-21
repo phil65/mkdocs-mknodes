@@ -133,7 +133,7 @@ class Config:
 
     def get_loaders(self) -> Sequence[jinja2.BaseLoader]:
         jinja_loaders: list[jinja2.BaseLoader] = [loaders.FileSystemLoader(self.docs_dir)]
-        for loader_dct in self.mknodes_config.get("loaders", []):
+        for loader_dct in self.mknodes_config.get("jinja_loaders", []):
             dct = loader_dct.copy()
             kls = loaders.LOADERS[dct.pop("name")]
             loader = kls(**dct)
