@@ -6,6 +6,10 @@ import re
 
 import jinja2
 
+from mknodes.utils import log
+
+
+logger = log.get_logger(__name__)
 
 MKDOCS_TOC_PRE = """\
                 {%- block content %}
@@ -46,8 +50,10 @@ class RewriteLoader(jinja2.BaseLoader):
 
 def rewrite(path, src):
     if path.endswith("mkdocs/themes/mkdocs/base.html"):
+        logger.debug("Modifying %r", path)
         src = src.replace(MKDOCS_TOC_PRE, MKDOCS_TOC_AFTER)
     if path.endswith("/material/templates/partials/nav-item.html"):
+        logger.debug("Modifying %r", path)
         src = src.replace(
             r'{% set is_expanded = "navigation.expand" in features %}',
             r'{% set is_expanded = "navigation.expand" in features or (page and page.meta'
@@ -59,6 +65,7 @@ def rewrite(path, src):
             r" and page.meta.nav_sections) %}",
         )
     if "/material/templates/" in path:
+        logger.debug("Modifying %r", path)
         return re.sub(
             r"{% include \"\.icons/\" ~ (.*) ~ \"\.svg\" %}",
             r"{{ \g<1> | get_icon_svg }}",
