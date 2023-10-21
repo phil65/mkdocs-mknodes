@@ -19,7 +19,7 @@ def _(page: mk.MkPage):
     page += mk.MkJinjaTemplate("index.jinja")
 
 
-@router.route_page("What is MkNodes?")
+@router.route_page("What is MkNodes?", hide="toc")
 def _(page: mk.MkPage):
     page += mk.MkJinjaTemplate("why_should_i_use_mknodes.jinja")
 
@@ -44,6 +44,6 @@ def _(page: mk.MkPage):
     page += mk.MkTimeline(paths.RESOURCES / "timeline_data.toml")
 
 
-@router.route_page("Plugin flow", icon="dev-to")
+@router.route_page("Plugin flow", icon="dev-to", hide="toc")
 def _(page: mk.MkPage):
     page += mk.MkPluginFlow()
