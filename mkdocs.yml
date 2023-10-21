@@ -9,7 +9,7 @@ theme:
   name: material
   custom_dir: overrides
   icon:
-    logo: mdi:graph-outline
+    logo: material/graph-outline
   palette:
   # Palette toggle for light mode
   - media: "(prefers-color-scheme: light)"
