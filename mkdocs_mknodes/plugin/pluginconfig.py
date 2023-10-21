@@ -61,3 +61,16 @@ class PluginConfig(base.Config):
 
     This setting can be overridden by setting the page metadata field "render_jinja".
     """
+    jinja_loaders = c.Optional(c.ListOfItems(c.Type(dict)))
+    """List containing additional jinja loaders to use.
+
+    Dictionaries must have the name key set to either "filesystem" or "fsspec".
+
+    Examples:
+        ``` yaml
+        loaders:
+          - name: fsspec
+            protocol: github
+            repo: mknodes
+            org: phil65
+    """

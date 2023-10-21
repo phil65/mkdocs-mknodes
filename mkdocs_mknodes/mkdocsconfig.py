@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 import contextlib
 
 from datetime import datetime
@@ -11,11 +11,14 @@ import pathlib
 from typing import Any
 from urllib import parse
 
+import jinja2
+
 from mkdocs import config as _config
 from mkdocs.commands import get_deps
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
 from mknodes.info import contexts
+from mknodes.jinja import loaders
 from mknodes.mdlib import mdconverter
 from mknodes.utils import pathhelpers
 
@@ -127,6 +130,15 @@ class Config:
             # edit_path = str(edit_path.relative_to(root_path))
             rel_path = edit_path
         return parse.urljoin(base_url, rel_path)
+
+    def get_loaders(self) -> Sequence[jinja2.BaseLoader]:
+        jinja_loaders: list[jinja2.BaseLoader] = [loaders.FileSystemLoader(self.docs_dir)]
+        for loader_dct in self.mknodes_config.get("loaders", []):
+            dct = loader_dct.copy()
+            kls = loaders.LOADERS[dct.pop("name")]
+            loader = kls(**dct)
+            jinja_loaders.append(loader)
+        return jinja_loaders
 
     def get_install_candidates(self) -> list[str]:
         """Return a list of installation candidates for this config."""
