@@ -7,6 +7,24 @@ import re
 import jinja2
 
 
+MKDOCS_TOC_PRE = """\
+                {%- block content %}
+                    <div class="col-md-3">{% include "toc.html" %}</div>
+                    <div class="col-md-9" role="main">{% include "content.html" %}</div>
+                {%- endblock %}
+"""
+
+
+MKDOCS_TOC_AFTER = """\
+                {% set hide_toc = page.meta and page.meta.hide and "toc" in page.meta.hide %}
+                {%- block content %}
+                    {% if not hide_toc %}<div class="col-md-3">{% include "toc.html" %}</div>{% endif %}
+                    <div class="col-md-{{"12" if hide_toc else "9"}}" role="main">{% include "content.html" %}</div>
+                {%- endblock %}
+
+"""  # noqa: E501
+
+
 class RewriteLoader(jinja2.BaseLoader):
     def __init__(self, loader: jinja2.BaseLoader, rewrite_fn):
         self.loader = loader
@@ -27,6 +45,8 @@ class RewriteLoader(jinja2.BaseLoader):
 
 
 def rewrite(path, src):
+    if path.endswith("mkdocs/themes/mkdocs/base.html"):
+        src = src.replace(MKDOCS_TOC_PRE, MKDOCS_TOC_AFTER)
     if path.endswith("/material/templates/partials/nav-item.html"):
         src = src.replace(
             r'{% set is_expanded = "navigation.expand" in features %}',
