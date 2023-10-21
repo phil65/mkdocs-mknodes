@@ -82,6 +82,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         super().__init__(**kwargs)
         self.link_replacer = linkreplacer.LinkReplacer()
         logger.debug("Finished initializing plugin")
+        jinjahelpers.set_markdown_exec_namespace(jinjahelpers.get_globals())
 
     def on_startup(self, command: CommandStr, dirty: bool = False):
         """Activates new-style MkDocs plugin lifecycle."""
@@ -168,8 +169,8 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
 
     def on_env(self, env: jinja2.Environment, config: MkDocsConfig, files: Files):
         """Add our own info to the MkDocs environment."""
-        env.globals["mknodes"] = jinjahelpers.ENV_GLOBALS
-        env.filters |= jinjahelpers.ENV_FILTERS
+        env.globals["mknodes"] = jinjahelpers.get_globals()
+        env.filters |= jinjahelpers.get_filters()
         logger.debug("Added macros / filters to MkDocs jinja2 environment.")
         if self.config.rewrite_theme_templates:
             assert env.loader
