@@ -20,7 +20,7 @@ MKDOCS_TOC_PRE = """\
 
 
 MKDOCS_TOC_AFTER = """\
-                {% set hide_toc = page.meta and page.meta.hide and "toc" in page.meta.hide %}
+                {% set hide_toc = (page.meta and page.meta.hide and "toc" in page.meta.hide) or not page.toc %}
                 {%- block content %}
                     {% if not hide_toc %}<div class="col-md-3">{% include "toc.html" %}</div>{% endif %}
                     <div class="col-md-{{"12" if hide_toc else "9"}}" role="main">{% include "content.html" %}</div>
