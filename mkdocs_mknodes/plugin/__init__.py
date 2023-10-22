@@ -63,10 +63,7 @@ class Build:
             clone_depth=clone_depth,
         )
 
-    def build_project(self, backends, show_page_info, render_all_pages):
-        logger.info("Generating pages...")
-        self.project.build()
-
+    def collect_build_data(self, backends, show_page_info, render_all_pages):
         logger.info("Setting up build backends...")
         collector = buildcollector.BuildCollector(
             backends=backends,
