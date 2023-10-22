@@ -24,7 +24,7 @@ class BuildContext(contexts.Context):
         default_factory=resources.Resources,
     )
     """All resources (JS, CSS, extensions) inferred from the build."""
-    node_stats: list[contexts.NodeBuildStats] = dataclasses.field(default_factory=list)
+    # node_stats: list[contexts.NodeBuildStats] = dataclasses.field(default_factory=list)
     """Some stats about nodes construction."""
     build_files: dict = dataclasses.field(default_factory=dict)
     """A mapping of filepaths -> Markdown."""
