@@ -167,6 +167,7 @@ def create_config(
         build_fn=build_fn,
         clone_depth=1,
     )
+    skin.ctx = proj.context
     proj.build()
     collector = buildcollector.BuildCollector([])
     info = collector.collect(proj._root, skin)

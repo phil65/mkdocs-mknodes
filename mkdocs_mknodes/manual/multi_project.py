@@ -12,6 +12,6 @@ def build(project: mk.Project[mk.MaterialTheme]):
     )
     for k, v in websites.items():
         subproject = mk.Project.for_path(v)
-        website_nav = mk.MkDefaultWebsite(section=k, project=subproject)
+        website_nav = mk.MkDefaultWebsite(section=k, context=subproject.context)
         nav += website_nav
         index_page += mk.MkLink(target=website_nav, title=k, icon="link")

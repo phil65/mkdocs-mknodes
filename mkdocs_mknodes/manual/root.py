@@ -19,8 +19,7 @@ class Build:
         get_started_section.router.register_nodes(get_started_nav)
         nav += get_started_nav
         nav += use_cases_section.nav
-        doc = nav.add_doc(section_name="API", flatten_nav=True)
-        doc.collect_classes(recursive=True)
+        nav.add_doc(section_name="API", flatten_nav=True, recursive=True)
         nav += cli_section.nav
         nav += dev_section.nav
         return nav

@@ -21,7 +21,7 @@ def build_page(path, repo_path: str = ".", build_fn: str = paths.DEFAULT_BUILD_F
     )
     proj.build()
     proj.env.add_template(path)
-    node = mk.MkJinjaTemplate(path, project=proj)
+    node = mk.MkJinjaTemplate(path, context=proj.context)
     return str(node)
 
 

@@ -37,5 +37,5 @@ def sub_websites(nav: mk.MkNav):
     page += mk.MkJinjaTemplate("use_case_subwebsites.jinja")
     # page += mk.MkCode.for_object(sub_websites)
     proj = mk.Project.for_path("https://github.com/mkdocstrings/mkdocstrings.git")
-    website_nav = mk.MkDefaultWebsite(section="MkDocStrings", project=proj)
+    website_nav = mk.MkDefaultWebsite(section="MkDocStrings", context=proj.context)
     nav += website_nav
