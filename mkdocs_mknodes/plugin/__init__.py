@@ -125,7 +125,19 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             return files
 
         logger.info("Generating pages...")
-        self.project.build()
+        build_fn = self.config.get_builder()
+        build_fn(project=self.project)
+        logger.debug("Finished building page.")
+        if not self.project._root:
+            msg = "No root for project created."
+            raise RuntimeError(msg)
+        paths = [
+            pathlib.Path(node.resolved_file_path).stem
+            for _level, node in self.project._root.iter_nodes()
+            if hasattr(node, "resolved_file_path")
+        ]
+        self.project.linkprovider.set_excludes(paths)
+
         # now we add our stuff to the MkDocs build environment
         cfg = mkdocsconfig.Config(config)
 

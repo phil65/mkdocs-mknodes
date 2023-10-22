@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+import functools
+
 from mkdocs.config import base, config_options as c
+from mknodes.utils import classhelpers
 
 
 class PluginConfig(base.Config):
@@ -82,3 +86,8 @@ class PluginConfig(base.Config):
         jinja_extensions:
           - jinja2_ansible_filters.AnsibleCoreFiltersExtension
     """
+
+    def get_builder(self) -> Callable:
+        build_fn = classhelpers.to_callable(self.build_fn)
+        build_kwargs = self.kwargs or {}
+        return functools.partial(build_fn, **build_kwargs)
