@@ -170,6 +170,7 @@ def create_config(
     skin.ctx = proj.context
     proj.build()
     collector = buildcollector.BuildCollector([])
+    assert proj._root
     info = collector.collect(proj._root, skin)
     resources = info.resources
     info = proj.context.metadata
