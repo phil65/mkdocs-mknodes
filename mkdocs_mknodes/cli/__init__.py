@@ -7,7 +7,7 @@ import logging
 from mknodes.info.mkdocsconfigfile import MkDocsConfigFile
 import typer as t
 
-from mknodes.utils import log, yamlhelpers
+from mknodes.utils import classhelpers, log, yamlhelpers
 
 from mkdocs_mknodes import buildcollector, paths
 from mkdocs_mknodes.cli import richstate
@@ -167,8 +167,8 @@ def create_config(
         build_fn=build_fn,
         clone_depth=1,
     )
-    skin.ctx = proj.context
-    proj.build()
+    builder = classhelpers.to_callable(build_fn)
+    builder(project=proj)
     collector = buildcollector.BuildCollector([])
     assert proj._root
     info = collector.collect(proj._root, skin)
