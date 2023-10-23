@@ -19,8 +19,7 @@ A minimum example for a **MkNodes** website:
 
 ``` py
 def build(project: mk.Project):
-    root = project.get_root()
-    index_page = root.get_index_page(hide="toc")
+    index_page = project.root.get_index_page(hide="toc")
     index += mk.MkAdmonition("Hello world!")
 ```
 

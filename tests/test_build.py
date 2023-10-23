@@ -15,7 +15,6 @@ build_folder = pathlib.Path(_dir.name)
 
 def test_build(mkdocs_mknodes_project):
     project = mkdocs_mknodes_project
-    project.build()
     cfg = mkdocsconfig.Config()
     cfg.update_from_context(project.context)
     mkdocs_backend = mkdocsbackend.MkDocsBackend(
@@ -31,23 +30,21 @@ def test_build(mkdocs_mknodes_project):
         backends=[mkdocs_backend, markdown_backend],
         show_page_info=True,
     )
-    assert project._root
-    build_info = collector.collect(project._root, project.theme)
+    build_info = collector.collect(project.root, project.theme)
     assert build_info
 
 
 def build(project):
-    root = project.get_root()
     sub_nav = mk.MkNav("Sub nav")
     sub_nav.page_template.announcement_bar = "Hello"
     sub_nav += mk.MkPage("Test page")
-    root += sub_nav
+    project.root += sub_nav
 
 
 def test_templates():
     theme = mk.MaterialTheme()
-    project = mk.Project(theme=theme, repo=".", build_fn=build)
-    project.build()
+    project = mk.Project(theme=theme, repo=".")
+    build(project)
     cfg = mkdocsconfig.Config()
     cfg.update_from_context(project.context)
     mkdocs_backend = mkdocsbackend.MkDocsBackend(
@@ -55,8 +52,7 @@ def test_templates():
         directory=build_folder,
     )
     collector = buildcollector.BuildCollector(backends=[mkdocs_backend])
-    assert project._root
-    collector.collect(project._root, project.theme)
+    collector.collect(project.root, project.theme)
     # assert len(build_info.templates) == 1
 
 

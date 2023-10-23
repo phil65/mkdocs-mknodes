@@ -63,8 +63,7 @@ def serve_node(node, repo_path: str = "."):
     import mknodes
 
     def build(project):
-        root = project.get_root()
-        page = root.add_page(is_index=True, hide="toc")
+        page = project.root.add_page(is_index=True, hide="toc")
         page += '''{node!s}'''
 
 

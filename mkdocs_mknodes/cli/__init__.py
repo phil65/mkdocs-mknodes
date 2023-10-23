@@ -162,8 +162,7 @@ def create_config(
     builder = classhelpers.to_callable(build_fn)
     builder(project=proj)
     collector = buildcollector.BuildCollector([])
-    assert proj._root
-    info = collector.collect(proj._root, skin)
+    info = collector.collect(proj.root, skin)
     resources = info.resources
     info = proj.context.metadata
     config["markdown_extensions"] = resources.markdown_extensions

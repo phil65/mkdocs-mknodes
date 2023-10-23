@@ -28,6 +28,5 @@ class Build:
 def build(project: mk.Project[mk.MaterialTheme]) -> mk.MkNav:
     build = Build()
     project.env.add_template_path("mkdocs_mknodes/resources")
-    nav = project.get_root()
     build.on_theme(project.theme)
-    return build.on_root(nav) or nav
+    return build.on_root(project.root) or project.root

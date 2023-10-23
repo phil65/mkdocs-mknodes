@@ -68,8 +68,7 @@ class Build:
             show_page_info=show_page_info,
             render_all_pages=render_all_pages,
         )
-        assert self.project._root
-        self.build_info = collector.collect(self.project._root, self.project.theme)
+        self.build_info = collector.collect(self.project.root, self.project.theme)
 
 
 class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
@@ -122,12 +121,9 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         build_fn = self.config.get_builder()
         build_fn(project=self.project)
         logger.debug("Finished building page.")
-        if not self.project._root:
-            msg = "No root for project created."
-            raise RuntimeError(msg)
         paths = [
             pathlib.Path(node.resolved_file_path).stem
-            for _level, node in self.project._root.iter_nodes()
+            for _level, node in self.project.root.iter_nodes()
             if hasattr(node, "resolved_file_path")
         ]
         self.project.linkprovider.set_excludes(paths)
@@ -155,8 +151,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             show_page_info=self.config.show_page_info,
             render_all_pages=self.config.render_all_pages,
         )
-        assert self.project._root
-        self.build_info = collector.collect(self.project._root, self.project.theme)
+        self.build_info = collector.collect(self.project.root, self.project.theme)
         return mkdocs_backend.files
 
     def on_nav(

@@ -214,12 +214,12 @@ class BuildCollector:
 
 
 if __name__ == "__main__":
-    project = mk.Project.for_mknodes()
+    theme = mk.MaterialTheme()
+    project = mk.Project(theme=theme)
     from mkdocs_mknodes.manual import root
 
     log.basic()
     root.build(project)
-    if project._root:
-        collector = BuildCollector([])
-        ctx = collector.collect(project._root, project.theme)
-        print(ctx)
+    collector = BuildCollector([])
+    ctx = collector.collect(project.root, project.theme)
+    print(ctx)
