@@ -49,7 +49,6 @@ class Build:
         base_url,
         use_directory_urls: bool = True,
         clone_depth: int = 100,
-        **kwargs,
     ):
         if not build_fn:
             return
@@ -59,7 +58,6 @@ class Build:
             theme=theme,
             repo=repo_path,
             build_fn=build_fn,
-            build_kwargs=kwargs,
             clone_depth=clone_depth,
         )
 
@@ -103,8 +101,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             use_directory_urls=config.use_directory_urls,
             theme=skin,
             repo=self.config.repo_path,
-            build_fn=self.config.build_fn,
-            build_kwargs=self.config.kwargs,
+            build_fn=self.config.get_builder(),
             clone_depth=self.config.clone_depth,
         )
 
@@ -213,9 +210,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
 
     def on_post_build(self, config: MkDocsConfig):
         """Delete the temporary template files."""
-        if not config.theme.custom_dir:
-            return
-        if not self.config.build_fn:
+        if not config.theme.custom_dir or not self.config.build_fn:
             return
         for template in self.build_info.templates:
             assert template.filename
