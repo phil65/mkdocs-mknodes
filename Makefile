@@ -1,4 +1,4 @@
-.PHONY: help clean lint test docs serve release bump
+.PHONY: help clean test lint format docs serve update
 .DEFAULT_GOAL := help
 
 define PRINT_HELP_PYSCRIPT
@@ -21,8 +21,11 @@ clean: ## remove all build, test, coverage and Python artifacts
 test: ## run tests
 	hatch run test
 
-mypy: ## run mypy type checking
+lint: ## run mypy type checking
 	hatch run lint-check
+
+format: ## run mypy type checking
+	hatch run lint
 
 docs: ## builds the documentation
 	hatch run mkdocs build -v
