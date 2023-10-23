@@ -135,7 +135,7 @@ class Config:
         jinja_loaders: list[jinja2.BaseLoader] = [loaders.FileSystemLoader(self.docs_dir)]
         for loader_dct in self.mknodes_config.get("jinja_loaders", []):
             dct = loader_dct.copy()
-            kls = loaders.LOADERS[dct.pop("name")]
+            kls = loaders.LOADERS[dct.pop("type")]
             loader = kls(**dct)
             jinja_loaders.append(loader)
         return jinja_loaders

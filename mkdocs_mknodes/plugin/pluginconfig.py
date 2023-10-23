@@ -68,12 +68,12 @@ class PluginConfig(base.Config):
     jinja_loaders = c.Optional(c.ListOfItems(c.Type(dict)))
     """List containing additional jinja loaders to use.
 
-    Dictionaries must have the name key set to either "filesystem" or "fsspec".
+    Dictionaries must have the `type` key set to either "filesystem" or "fsspec".
 
     Examples:
         ``` yaml
         jinja_loaders:
-          - name: fsspec
+          - type: fsspec
             protocol: github
             repo: mknodes
             org: phil65
