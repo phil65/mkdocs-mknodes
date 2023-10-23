@@ -5,9 +5,11 @@ from __future__ import annotations
 from datetime import datetime
 import logging
 from mknodes.info.mkdocsconfigfile import MkDocsConfigFile
+
 import typer as t
 
 from mknodes.utils import classhelpers, log, yamlhelpers
+import mknodes as mk
 
 from mkdocs_mknodes import buildcollector, paths
 from mkdocs_mknodes.cli import richstate
@@ -155,18 +157,8 @@ def create_config(
         cfg_file["theme"] = dict(name=theme_name, override_dir="overrides")
     cfg_file["use_directory_urls"] = use_directory_urls
     config = cfg_file._data
-
-    import mknodes as mk
-
     skin = mk.Theme(theme_name)
-    proj = mk.Project(
-        base_url="",
-        use_directory_urls=True,
-        theme=skin,
-        repo=repo_path,
-        build_fn=build_fn,
-        clone_depth=1,
-    )
+    proj = mk.Project(theme=skin, repo=repo_path, build_fn=build_fn, clone_depth=1)
     builder = classhelpers.to_callable(build_fn)
     builder(project=proj)
     collector = buildcollector.BuildCollector([])
