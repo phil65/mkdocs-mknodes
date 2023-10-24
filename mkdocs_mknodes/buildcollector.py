@@ -214,7 +214,7 @@ class BuildCollector:
         Arguments:
             nav: Nav to collect the data from.
         """
-        logger.info("Processing section %r...", nav.section)
+        logger.info("Processing section %r...", nav.section or "[ROOT]")
         path = nav.resolved_file_path
         self.mapping[path] = nav
         req = nav.get_node_resources()
