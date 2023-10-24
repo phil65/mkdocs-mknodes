@@ -45,7 +45,7 @@ class PluginConfig(base.Config):
     - Metadata
     - Resources
     - Code which created the page (needs the page to be created via decorators, or
-    the `generated_by` attribute of the MkPage needs to be set manually)
+    the `generated_by` attribute of the `MkPage` needs to be set manually)
     """
     rewrite_theme_templates = c.Type(bool, default=True)
     """Add additional functionality to themes by rewriting template files.
@@ -53,15 +53,17 @@ class PluginConfig(base.Config):
     MkNodes can rewrite the HTML templates of Themes in order to add additional
     functionality.
 
-    Right now, setting this feature allows these options for the Material-MkDocs theme:
-    - use iconify icons instead of the Material-MkDocs icons
+    Right now, enabling this feature allows these options for the **Material-MkDocs**
+    theme:
+    - use iconify icons instead of the **Material-MkDocs** icons
     - setting the theme features "navigation.indexes" and "navigation.expand" via
       page metadata.
     """
     render_all_pages = c.Type(bool, default=True)
     """Render all pages in the jinja environment.
 
-    This allows to render jinja in the MkNodes environment outside of the MkJinja nodes.
+    This allows to render jinja in the **MkNodes** environment outside of the `MkJinja`
+    nodes.
 
     This setting can be overridden by setting the page metadata field "render_jinja".
     """
@@ -72,19 +74,25 @@ class PluginConfig(base.Config):
 
     Examples:
         ``` yaml
-        jinja_loaders:
-          - type: fsspec
-            protocol: github
-            repo: mknodes
-            org: phil65
+        plugins:
+        - mknodes:
+            jinja_loaders:
+            - type: fsspec
+              protocol: github
+              repo: mknodes
+              org: phil65
+        ```
     """
     jinja_extensions = c.Optional(c.ListOfItems(c.Type(str)))
     """List containing additional jinja extensions to use.
 
     Examples:
         ``` yaml
-        jinja_extensions:
-          - jinja2_ansible_filters.AnsibleCoreFiltersExtension
+        plugins:
+        - mknodes:
+            jinja_extensions:
+            - jinja2_ansible_filters.AnsibleCoreFiltersExtension
+        ```
     """
 
     def get_builder(self) -> Callable:

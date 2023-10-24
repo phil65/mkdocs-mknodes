@@ -35,3 +35,4 @@ serve: ## run html server watching file changes in realtime
 
 update: ## update all packages
 	hatch run python -m pip --disable-pip-version-check list --outdated --format=json | python -c "import json, sys; print('\n'.join([x['name'] for x in json.load(sys.stdin)]))" | xargs -n1 hatch run python -m pip install -U
+	hatch run python -m pip install -e .
