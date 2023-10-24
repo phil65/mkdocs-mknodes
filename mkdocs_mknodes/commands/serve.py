@@ -35,6 +35,7 @@ def serve(
     repo_path: str = ".",
     build_fn: str = paths.DEFAULT_BUILD_FN,
     clone_depth: int = 100,
+    theme: str | None = None,
     **kwargs: Any,
 ):
     """Serve a MkNodes-based website.
@@ -44,6 +45,7 @@ def serve(
         repo_path: Path to the repository a page should be built for
         build_fn: Callable to use for creating the webpage
         clone_depth: If repository is remote, the amount of commits to fetch
+        theme: Theme to use
         kwargs: Optional config values (overrides value from config)
     """
     config = mkdocsconfigfile.MkDocsConfigFile(config_path)
@@ -52,6 +54,10 @@ def serve(
         build_fn=build_fn,
         clone_depth=clone_depth,
     )
+    if theme and theme != "material":
+        config.remove_plugin("social")
+        config.remove_plugin("tags")
+        kwargs["theme"] = theme
     text = yamlhelpers.dump_yaml(dict(config))
     stream = io.StringIO(text)
     stream.name = str(config_path)
