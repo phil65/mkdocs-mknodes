@@ -133,8 +133,7 @@ class BuildCollector:
             theme: A theme to collect build stuff from.
         """
         logger.debug("Collecting theme resources...")
-        iterator = itertools.chain(theme.iter_nodes(), root.iter_nodes())
-        for _, node in iterator:
+        for _, node in itertools.chain(theme.iter_nodes(), root.iter_nodes()):
             self.node_counter.update([node.__class__.__name__])
             self.extra_files |= node.files
             match node:
@@ -142,6 +141,12 @@ class BuildCollector:
                     self.collect_page(page)
                 case mk.MkNav() as nav:
                     self.collect_nav(nav)
+        for node in self.mapping.values():
+            match node:
+                case mk.MkPage() as page:
+                    self.render_page(page)
+                case mk.MkNav() as nav:
+                    self.render_nav(nav)
         logger.debug("Setting default markdown extensions...")
         reqs = theme.get_resources()
         self.resources.merge(reqs)
@@ -184,10 +189,16 @@ class BuildCollector:
         self.resources.merge(req)
         update_page_template(page)
         show_info = page.resolved_metadata.get("show_page_info")
-        if show_info is None:
-            show_info = self.show_page_info
+        show_info = self.show_page_info if show_info is None else show_info
         if show_info:
             add_page_info(page, req)
+
+    def render_page(self, page: mk.MkPage):
+        """Convert a page to markdown/HTML.
+
+        Arguments:
+            page: Page to render.
+        """
         md = page.to_markdown()
         render_all_pages = self.render_all_pages
         if (render := page.metadata.get("render_jinja")) is not None:
@@ -195,7 +206,7 @@ class BuildCollector:
         if render_all_pages:
             md = page.env.render_string(md)
 
-        self.node_files[path] = md
+        self.node_files[page.resolved_file_path] = md
 
     def collect_nav(self, nav: mk.MkNav):
         """Preprocess nav and collect its data.
@@ -209,8 +220,15 @@ class BuildCollector:
         req = nav.get_node_resources()
         self.resources.merge(req)
         update_nav_template(nav)
+
+    def render_nav(self, nav: mk.MkNav):
+        """Convert a nav to markdown/HTML.
+
+        Arguments:
+            nav: Nav to render.
+        """
         md = nav.to_markdown()
-        self.node_files[path] = md
+        self.node_files[nav.resolved_file_path] = md
 
 
 if __name__ == "__main__":
