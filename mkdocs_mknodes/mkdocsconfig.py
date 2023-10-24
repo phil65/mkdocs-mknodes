@@ -20,7 +20,7 @@ from mkdocs.plugins import get_plugin_logger
 from mknodes.info import contexts
 from mknodes.jinja import loaders
 from mknodes.mdlib import mdconverter
-from mknodes.utils import pathhelpers
+from mknodes.utils import pathhelpers, reprhelpers
 
 
 logger = get_plugin_logger(__name__)
@@ -62,6 +62,9 @@ class Config:
 
     def __getattr__(self, name):
         return getattr(self._config, name)
+
+    def __repr__(self):
+        return reprhelpers.get_repr(self, self._config)
 
     @property
     def site_url(self) -> str:
