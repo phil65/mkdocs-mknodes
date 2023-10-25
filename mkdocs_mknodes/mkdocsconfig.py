@@ -133,7 +133,7 @@ class Config:
             case str() | os.PathLike() as path:
                 self._config = load_config(str(path))
             case None:
-                if file := pathhelpers.find_file_in_folder_or_parent("mkdocs.yml"):
+                if file := pathhelpers.find_cfg_for_folder("mkdocs.yml"):
                     self._config = load_config(str(file))
                 else:
                     msg = "Could not find config file"
