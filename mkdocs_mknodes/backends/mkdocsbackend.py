@@ -12,7 +12,7 @@ from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure import files as files_
 from mknodes.utils import mergehelpers, pathhelpers, resources
 
-from mkdocs_mknodes import mkdocsconfig, paths
+from mkdocs_mknodes import mkdocsconfig
 from mkdocs_mknodes.backends import buildbackend
 from mkdocs_mknodes.plugin import mkdocsbuilder, mkdocshelpers
 
@@ -173,11 +173,4 @@ if __name__ == "__main__":
     import mknodes as mk
 
     skin = mk.Theme("material")
-    proj = mk.Project(
-        base_url="",
-        use_directory_urls=True,
-        theme=skin,
-        repo=".",
-        build_fn=paths.DEFAULT_BUILD_FN,
-        clone_depth=1,
-    )
+    proj = mk.Project(theme=skin, clone_depth=1)

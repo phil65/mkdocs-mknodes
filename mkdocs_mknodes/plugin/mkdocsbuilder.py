@@ -135,4 +135,4 @@ class MkDocsBuilder:
 
 
 if __name__ == "__main__":
-    cfg = MkDocsBuilder()
+    builder = MkDocsBuilder()
