@@ -100,7 +100,6 @@ requires-python = ">=3.11"
 dependencies = [
     # MkDocs
     "mkdocs >=1.5",
-    "mkdocs-literate-nav",
     "mkdocs-material >= 9.4",
     "mkdocstrings[python]",
     "mknodes",

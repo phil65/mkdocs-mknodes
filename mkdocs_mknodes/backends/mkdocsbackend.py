@@ -67,6 +67,8 @@ class MkDocsBackend(buildbackend.BuildBackend):
 
     def collect_files(self, files):
         for k, v in files.items():
+            if pathlib.Path(k).name == "SUMMARY.md":
+                continue
             logger.debug("%s: Writing file to %r", type(self).__name__, str(k))
             path = pathlib.Path(k).as_posix()
             # self._files[path] = v

@@ -152,6 +152,15 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             render_all_pages=self.config.render_all_pages,
         )
         self.build_info = collector.collect(self.project.root, self.project.theme)
+        if nav_dict := self.project.root.nav.to_nav_dict():
+            match config.nav:
+                case list():
+                    for k, v in nav_dict.items():
+                        config.nav.append({k: v})
+                case dict():
+                    config.nav |= nav_dict
+                case None:
+                    config.nav = nav_dict
         return mkdocs_backend.files
 
     def on_nav(

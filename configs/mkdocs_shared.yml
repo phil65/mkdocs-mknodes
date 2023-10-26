@@ -29,7 +29,6 @@ theme:
 
 plugins:
 - search
-- literate-nav
 - mknodes:
     build_fn: mknodes:MkDefaultWebsite.for_project
     clone_depth: 100

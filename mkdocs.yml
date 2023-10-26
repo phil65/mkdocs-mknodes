@@ -50,7 +50,6 @@ theme:
 
 plugins:
 - search
-- literate-nav
 - mknodes:
     build_fn: mkdocs_mknodes.manual.root:build
     show_page_info: true
