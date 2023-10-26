@@ -61,12 +61,12 @@ class Build:
             clone_depth=clone_depth,
         )
 
-    def collect_build_data(self, backends, show_page_info, render_all_pages):
+    def collect_build_data(self, backends, show_page_info, render_by_default):
         logger.info("Setting up build backends...")
         collector = buildcollector.BuildCollector(
             backends=backends,
             show_page_info=show_page_info,
-            render_all_pages=render_all_pages,
+            render_by_default=render_by_default,
         )
         self.build_info = collector.collect(self.project.root, self.project.theme)
 
@@ -149,7 +149,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         collector = buildcollector.BuildCollector(
             backends=[mkdocs_backend, markdown_backend],
             show_page_info=self.config.show_page_info,
-            render_all_pages=self.config.render_all_pages,
+            render_by_default=self.config.render_by_default,
         )
         self.build_info = collector.collect(self.project.root, self.project.theme)
         if nav_dict := self.project.root.nav.to_nav_dict():

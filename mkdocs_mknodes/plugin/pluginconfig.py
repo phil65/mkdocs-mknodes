@@ -59,13 +59,13 @@ class PluginConfig(base.Config):
     - setting the theme features "navigation.indexes" and "navigation.expand" via
       page metadata.
     """
-    render_all_pages = c.Type(bool, default=True)
+    render_by_default = c.Type(bool, default=True)
     """Render all pages in the jinja environment.
 
     This allows to render jinja in the **MkNodes** environment outside of the `MkJinja`
     nodes.
 
-    This setting can be overridden by setting the page metadata field "render_jinja".
+    This setting can be overridden by setting the page metadata field "render_macros".
     """
     jinja_loaders = c.Optional(c.ListOfItems(c.Type(dict)))
     """List containing additional jinja loaders to use.
