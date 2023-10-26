@@ -15,7 +15,6 @@ virtual = ".hatch"
 python = "3.11"
 dependencies = [
     # Linting
-    "black",
     "mypy",
     "ruff",
 
@@ -27,6 +26,8 @@ dependencies = [
     "pymdown-extensions",
     "mkdocs-material >= 9.4",
     "mkdocstrings[python]",
+    # used for formatting signature
+    "black",
     "pygments",
     "mkdocs-mknodes",
 
@@ -45,12 +46,12 @@ test-cov-xml = "pytest --cov-report=xml"
 test-cov-html = "pytest --cov-report=html"
 lint = [
   "hatch run ruff --fix .",
-  "hatch run black .",
+  "hatch run ruff format .",
   "hatch run mypy mkdocs_mknodes/",
 ]
 lint-check = [
   "hatch run ruff .",
-  "hatch run black --check .",
+  "hatch run ruff format --check .",
   "hatch run mypy mkdocs_mknodes/",
 ]
 
