@@ -25,7 +25,8 @@ dependencies = [
 
     # Docs
     "pymdown-extensions",
-    "markdown-exec[ansi]",
+    "mkdocs-material >= 9.4",
+    "mkdocstrings[python]",
     "pygments",
     "mkdocs-mknodes",
 
@@ -100,8 +101,6 @@ requires-python = ">=3.11"
 dependencies = [
     # MkDocs
     "mkdocs >=1.5",
-    "mkdocs-material >= 9.4",
-    "mkdocstrings[python]",
     "mknodes",
 
     # CLI
@@ -110,7 +109,6 @@ dependencies = [
 
     # Tools
     "jinja2",
-    "deepmerge",
 ]
 license = "MIT"
 
