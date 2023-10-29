@@ -11,6 +11,7 @@ from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure import files as files_
 from mknodes.utils import mergehelpers, pathhelpers, resources
+import upath
 
 from mkdocs_mknodes import mkdocsconfig
 from mkdocs_mknodes.backends import buildbackend
@@ -41,7 +42,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 self._config = config
             case _:
                 self._config = mkdocsconfig.Config(config)._config
-        self.directory = pathlib.Path(directory or ".")
+        self.directory = upath.UPath(directory or ".")
         files_map = {pathlib.PurePath(f.src_path).as_posix(): f for f in files or []}
         self._mk_files: collections.ChainMap[str, files_.File] = collections.ChainMap(
             {},
@@ -70,14 +71,12 @@ class MkDocsBackend(buildbackend.BuildBackend):
             if pathlib.Path(k).name == "SUMMARY.md":
                 continue
             logger.debug("%s: Writing file to %r", type(self).__name__, str(k))
-            path = pathlib.Path(k).as_posix()
-            # self._files[path] = v
-            self._write_file(path, v)
+            self._write_file(k, v)
 
     def collect_assets(self, assets):
         for asset in assets:
             if asset.target_dir == "docs_dir":
-                abs_path = pathlib.Path(self._config.docs_dir) / asset.filename
+                abs_path = upath.UPath(self._config.docs_dir) / asset.filename
                 logger.info("Writing asset %s...", abs_path)
                 pathhelpers.write_file(asset.content, abs_path)
             else:
@@ -108,7 +107,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             val.defer = file.defer
             val.type = file.typ
             self._config.extra_javascript.append(path)
-            abs_path = pathlib.Path(self._config.site_dir) / path
+            abs_path = upath.UPath(self._config.site_dir) / path
             logger.info("Registering js file %s...", abs_path)
             pathhelpers.write_file(file.content, abs_path)
 
@@ -127,7 +126,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
         if not self._config.theme.custom_dir:
             logger.warning("Cannot write template. No custom_dir set in config.")
             return
-        path = pathlib.Path(self._config.theme.custom_dir)
+        path = upath.UPath(self._config.theme.custom_dir)
         for template in templates:
             md = self._get_parser()
             if html := template.build_html(md):
@@ -138,7 +137,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
     def _write_file(self, path: str | os.PathLike, content: str | bytes):
         path = pathlib.PurePath(path).as_posix()
         file_for_path = self.builder.get_file(path, src_dir=self.directory)
-        new_path = pathlib.Path(file_for_path.abs_src_path)
+        new_path = upath.UPath(file_for_path.abs_src_path)
         target_path = None
         if path not in self._mk_files:
             new_path.parent.mkdir(exist_ok=True, parents=True)
@@ -146,7 +145,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             target_path = new_path
 
         f = self._mk_files[path]
-        source_path = pathlib.Path(f.abs_src_path)
+        source_path = upath.UPath(f.abs_src_path)
         if source_path != new_path:
             self._mk_files[path] = file_for_path
             pathhelpers.copy(source_path, new_path)
@@ -164,7 +163,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
         """
         path = (pathlib.Path("assets") / filename).as_posix()
         self._config.extra_css.append(path)
-        abs_path = pathlib.Path(self._config.site_dir) / path
+        abs_path = upath.UPath(self._config.site_dir) / path
         logger.info("Registering css file %s...", abs_path)
         pathhelpers.write_file(css, abs_path)
 
