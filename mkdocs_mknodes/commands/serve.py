@@ -10,12 +10,8 @@ import tempfile
 from typing import TYPE_CHECKING, Any, Literal
 from urllib.parse import urlsplit
 
-import jinja2.exceptions
-
-
 # from mkdocs.commands import serve as serve_
 from mkdocs.config import load_config
-from mkdocs.exceptions import Abort
 from mkdocs.livereload import LiveReloadServer
 from mknodes.info import mkdocsconfigfile
 from mknodes.utils import log, yamlhelpers
@@ -83,13 +79,6 @@ def serve_node(node, repo_path: str = "."):
 def catch_exceptions(config, site_dir):
     try:
         yield
-    except jinja2.exceptions.TemplateError:
-        # This is a subclass of OSError, but shouldn't be suppressed.
-        raise
-    except OSError as e:  # pragma: no cover
-        # Avoid ugly, unhelpful traceback
-        msg = f"{type(e).__name__}: {e}"
-        raise Abort(msg) from e
     finally:
         config.plugins.on_shutdown()
         if pathlib.Path(site_dir).is_dir():
@@ -191,13 +180,6 @@ def _serve(
             logger.info("Shutting down...")
         finally:
             server.shutdown()
-    except jinja2.exceptions.TemplateError:
-        # This is a subclass of OSError, but shouldn't be suppressed.
-        raise
-    except OSError as e:  # pragma: no cover
-        # Avoid ugly, unhelpful traceback
-        msg = f"{type(e).__name__}: {e}"
-        raise Abort(msg) from None
     finally:
         config.plugins.on_shutdown()
         if site_dir.is_dir():
