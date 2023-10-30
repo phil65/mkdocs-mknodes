@@ -216,14 +216,10 @@ class Config:
             rel_path = edit_path
         return parse.urljoin(base_url, rel_path)
 
-    def get_loaders(self) -> Sequence[jinja2.BaseLoader]:
-        jinja_loaders: list[jinja2.BaseLoader] = [loaders.FileSystemLoader(self.docs_dir)]
-        for loader_dct in self.mknodes_config.get("jinja_loaders", []):
-            dct = loader_dct.copy()
-            kls = loaders.LOADERS[dct.pop("type")]
-            loader = kls(**dct)
-            jinja_loaders.append(loader)
-        return jinja_loaders
+    def get_jinja_config(self) -> Sequence[jinja2.BaseLoader]:
+        cfg = self.plugin.config.get_jinja_config()
+        cfg["loader"] |= loaders.FileSystemLoader(self.docs_dir)
+        return cfg
 
     def get_install_candidates(self) -> list[str]:
         """Return a list of installation candidates for this config."""

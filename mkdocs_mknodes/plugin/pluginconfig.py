@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 import functools
 
+import jinja2
+
 from mkdocs.config import base, config_options as c
+from mknodes.jinja import loaders
 from mknodes.utils import classhelpers
 
 
@@ -78,7 +81,7 @@ class PluginConfig(base.Config):
         - mknodes:
             jinja_loaders:
             - type: fsspec
-              protocol: github
+              path: github://
               repo: mknodes
               org: phil65
         ```
@@ -94,8 +97,37 @@ class PluginConfig(base.Config):
             - jinja2_ansible_filters.AnsibleCoreFiltersExtension
         ```
     """
+    jinja_block_start_string = c.Optional(c.Type(str))
+    """Jinja block start string."""
+    jinja_block_end_string = c.Optional(c.Type(str))
+    """Jinja block end string."""
+    jinja_variable_start_string = c.Optional(c.Type(str))
+    """Jinja variable start string."""
+    jinja_variable_end_string = c.Optional(c.Type(str))
+    """Jinja variable end string."""
+    jinja_on_undefined = c.Type(str, default="strict")
+    """Jinja undefined macro behavior."""
 
     def get_builder(self) -> Callable:
         build_fn = classhelpers.to_callable(self.build_fn)
         build_kwargs = self.kwargs or {}
         return functools.partial(build_fn, **build_kwargs)
+
+    def get_jinja_config(self) -> dict:
+        return dict(
+            block_start_string=self.jinja_block_start_string,
+            block_end_string=self.jinja_block_end_string,
+            variable_start_string=self.jinja_variable_start_string,
+            variable_end_string=self.jinja_variable_end_string,
+            undefined=self.jinja_on_undefined,
+            loader=loaders.ChoiceLoader(self.get_loaders()),
+        )
+
+    def get_loaders(self) -> Sequence[jinja2.BaseLoader]:
+        jinja_loaders: list[jinja2.BaseLoader] = []
+        for loader_dct in self.jinja_loaders or []:
+            dct = loader_dct.copy()
+            kls = loaders.LOADERS[dct.pop("type")]
+            loader = kls(**dct)
+            jinja_loaders.append(loader)
+        return jinja_loaders
