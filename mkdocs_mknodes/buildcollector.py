@@ -90,12 +90,12 @@ def update_nav_template(nav: mk.MkNav):
 def process_resources(page: mk.MkPage) -> resources.Resources:
     """Add resources from page to its template and return the "filtered" resources."""
     req = page.get_resources()
-    reqs = []
+    js_reqs = []
+    prefix = "../" * (len(page.resolved_parts) + 1)
     for i in req.js:
         if isinstance(i, resources.JSText):
-            prefix = "../" * (len(page.resolved_parts) + 1)
-            file = resources.JSFile(
-                link=prefix + "assets/" + i.resolved_filename,
+            js_file = resources.JSFile(
+                link=f"{prefix}assets/{i.resolved_filename}",
                 async_=i.async_,
                 defer=i.defer,
                 crossorigin=i.crossorigin,
@@ -103,10 +103,10 @@ def process_resources(page: mk.MkPage) -> resources.Resources:
                 is_library=i.is_library,
             )
         else:
-            file = i
-        reqs.append(file)
-    non_libs = [i for i in reqs if not i.is_library]
-    libs = [i for i in reqs if i.is_library]
+            js_file = i
+        js_reqs.append(js_file)
+    non_libs = [i for i in js_reqs if not i.is_library]
+    libs = [i for i in js_reqs if i.is_library]
     assets = [i.get_asset() for i in req.js if isinstance(i, resources.JSText)]
     req.assets += assets
     req.js = []
@@ -114,6 +114,18 @@ def process_resources(page: mk.MkPage) -> resources.Resources:
         page.template.libs.add_script_file(lib)
     for lib in non_libs:
         page.template.scripts.add_script_file(lib)
+    css_reqs = []
+    for i in req.css:
+        if isinstance(i, resources.CSSText):
+            css_file = resources.CSSFile(link=f"{prefix}assets/{i.resolved_filename}")
+        else:
+            css_file = i
+        css_reqs.append(css_file)
+    assets = [i.get_asset() for i in req.css if isinstance(i, resources.CSSText)]
+    req.assets += assets
+    req.css = []
+    for css_ in css_reqs:
+        page.template.styles.add_stylesheet(css_)
     return req
 
 
