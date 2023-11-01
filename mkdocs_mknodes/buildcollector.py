@@ -93,8 +93,9 @@ def process_resources(page: mk.MkPage) -> resources.Resources:
     reqs = []
     for i in req.js:
         if isinstance(i, resources.JSText):
+            prefix = "../" * (len(page.resolved_parts) + 1)
             file = resources.JSFile(
-                link="../../assets/" + i.resolved_filename,
+                link=prefix + "assets/" + i.resolved_filename,
                 async_=i.async_,
                 defer=i.defer,
                 crossorigin=i.crossorigin,
