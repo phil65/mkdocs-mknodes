@@ -80,7 +80,9 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 logger.info("Writing asset %s...", abs_path)
                 pathhelpers.write_file(asset.content, abs_path)
             else:
-                raise ValueError(asset.target_dir)
+                path = (pathlib.Path("assets") / asset.filename).as_posix()
+                abs_path = upath.UPath(self._config.site_dir) / path
+                pathhelpers.write_file(asset.content, abs_path)
 
     def collect_css(self, css_files):
         for css in css_files:

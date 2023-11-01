@@ -70,6 +70,15 @@ class PluginConfig(base.Config):
 
     This setting can be overridden by setting the page metadata field "render_macros".
     """
+    global_resources = c.Type(bool, default=True)
+    """Make resources globally available.
+
+    If True, then the resources inferred from the nodes will be put into all HTML pages.
+    (This reflects the "default" MkDocs mechanism of putting extra CSS / JS into the
+    config file)
+    If False, then MkNodes will put the CSS / JS only into the pages which need it.
+    (the resources will be moved into the appropriate page template blocks)
+    """
     jinja_loaders = c.Optional(c.ListOfItems(c.Type(dict)))
     """List containing additional jinja loaders to use.
 

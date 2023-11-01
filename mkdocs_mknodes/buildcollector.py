@@ -87,6 +87,35 @@ def update_nav_template(nav: mk.MkNav):
             nav.page_template.extends = extends
 
 
+def process_resources(page: mk.MkPage) -> resources.Resources:
+    """Add resources from page to its template and return the "filtered" resources."""
+    req = page.get_resources()
+    reqs = []
+    for i in req.js:
+        if isinstance(i, resources.JSText):
+            file = resources.JSFile(
+                link="../../assets/" + i.resolved_filename,
+                async_=i.async_,
+                defer=i.defer,
+                crossorigin=i.crossorigin,
+                typ=i.typ,
+                is_library=i.is_library,
+            )
+        else:
+            file = i
+        reqs.append(file)
+    non_libs = [i for i in reqs if not i.is_library]
+    libs = [i for i in reqs if i.is_library]
+    assets = [i.get_asset() for i in req.js if isinstance(i, resources.JSText)]
+    req.assets += assets
+    req.js = []
+    for lib in libs:
+        page.template.libs.add_script_file(lib)
+    for lib in non_libs:
+        page.template.scripts.add_script_file(lib)
+    return req
+
+
 def _get_extends_from_parent(node: mk.MkPage | mk.MkNav) -> str | None:
     """Check parent navs for a page template and return its path if one was found.
 
@@ -107,6 +136,7 @@ class BuildCollector:
         self,
         backends: list[buildbackend.BuildBackend],
         show_page_info: bool = False,
+        global_resources: bool = True,
         render_by_default: bool = True,
     ):
         """Constructor.
@@ -114,10 +144,13 @@ class BuildCollector:
         Arguments:
             backends: A list of backends which should be used for building
             show_page_info: Add a admonition box containing page build info to each page
+            global_resources: If False, make page resources non-global by moving them
+                              to the page template blocks
             render_by_default: Whether to resolve all MkPages with their environment
         """
         self.backends = backends
         self.show_page_info = show_page_info
+        self.global_resources = global_resources
         self.render_by_default = render_by_default
         self.node_files: dict[str, str | bytes] = {}
         self.extra_files: dict[str, str | bytes] = {}
@@ -180,12 +213,7 @@ class BuildCollector:
             return
         path = page.resolved_file_path
         self.mapping[path] = page
-        req = page.get_resources()
-
-        # libs = [i for i in req.js_files if i.is_library]
-        # req.remove(*libs)
-        # for lib in libs:
-        #     page.template.libs.add_script_file(lib)
+        req = page.get_resources() if self.global_resources else process_resources(page)
         self.resources.merge(req)
         update_page_template(page)
         show_info = page.resolved_metadata.get("show_page_info")

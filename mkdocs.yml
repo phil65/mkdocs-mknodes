@@ -53,6 +53,7 @@ plugins:
 - mknodes:
     build_fn: mkdocs_mknodes.manual.root:build
     show_page_info: true
+    global_resources: false
 - mkdocstrings:
     default_handler: python
     handlers:
