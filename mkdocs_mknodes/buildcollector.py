@@ -200,10 +200,10 @@ class BuildCollector:
             page: Page to render.
         """
         md = page.to_markdown()
-        render_by_default = self.render_by_default
+        do_render = self.render_by_default
         if (render := page.metadata.get("render_macros")) is not None:
-            render_by_default = render
-        if render_by_default:
+            do_render = render
+        if do_render:
             md = page.env.render_string(md)
 
         self.node_files[page.resolved_file_path] = md
