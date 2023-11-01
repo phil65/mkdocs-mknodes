@@ -10,7 +10,7 @@ CLI_PATH = "mkdocs_mknodes.cli:cli"
 @nav.route.page(is_index=True, hide="toc")
 def _(page: mk.MkPage):
     page += mk.MkBinaryImage.for_file("docs/assets/cli.gif")
-    page += mk.MkJinjaTemplate("cli_index.jinja")
+    page += mk.MkTemplate("cli_index.jinja")
 
 
 @nav.route.page("build", icon="wrench")

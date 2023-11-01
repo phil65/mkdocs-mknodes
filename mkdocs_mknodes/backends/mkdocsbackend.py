@@ -66,14 +66,14 @@ class MkDocsBackend(buildbackend.BuildBackend):
         files = sorted(self._mk_files.values(), key=mkdocshelpers.file_sorter)
         return files_.Files(files)
 
-    def collect_files(self, files):
+    def write_files(self, files):
         for k, v in files.items():
             if pathlib.Path(k).name == "SUMMARY.md":
                 continue
             logger.debug("%s: Writing file to %r", type(self).__name__, str(k))
             self._write_file(k, v)
 
-    def collect_assets(self, assets):
+    def write_assets(self, assets):
         for asset in assets:
             if asset.target_dir == "docs_dir":
                 abs_path = upath.UPath(self._config.docs_dir) / asset.filename
@@ -84,15 +84,19 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 abs_path = upath.UPath(self._config.site_dir) / path
                 pathhelpers.write_file(asset.content, abs_path)
 
-    def collect_css(self, css_files):
+    def write_css(self, css_files):
         for css in css_files:
             if isinstance(css, resources.CSSText):
-                self.add_css_file(css.resolved_filename, css.content)
+                path = (pathlib.Path("assets") / css.resolved_filename).as_posix()
+                self._config.extra_css.append(path)
+                abs_path = upath.UPath(self._config.site_dir) / path
+                logger.info("Registering css file %s...", abs_path)
+                pathhelpers.write_file(css.content, abs_path)
             else:
                 logger.debug("Adding remote CSS file %s", css)
                 self._config.extra_css.append(str(css))
 
-    def collect_js_links(self, js_links):
+    def write_js_links(self, js_links):
         for file in js_links:
             logger.debug("Adding remote JS file %s", str(file))
             val = config_options.ExtraScriptValue(str(file))
@@ -101,7 +105,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             val.type = file.typ
             self._config.extra_javascript.append(val)
 
-    def collect_js_files(self, js_files):
+    def write_js_files(self, js_files):
         for file in js_files:
             path = (pathlib.Path("assets") / file.resolved_filename).as_posix()
             val = config_options.ExtraScriptValue(str(path))
@@ -124,7 +128,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 extensions,
             )
 
-    def collect_templates(self, templates):
+    def write_templates(self, templates):
         if not self._config.theme.custom_dir:
             logger.warning("Cannot write template. No custom_dir set in config.")
             return
@@ -153,21 +157,6 @@ class MkDocsBackend(buildbackend.BuildBackend):
             pathhelpers.copy(source_path, new_path)
             target_path = new_path
         pathhelpers.write_file(content, target_path or source_path)
-
-    def add_css_file(self, filename: str | os.PathLike, css: str):
-        """Register a css file.
-
-        Writes file to build assets folder and registers extra_css in config
-
-        Arguments:
-            filename: Filename to write
-            css: file content
-        """
-        path = (pathlib.Path("assets") / filename).as_posix()
-        self._config.extra_css.append(path)
-        abs_path = upath.UPath(self._config.site_dir) / path
-        logger.info("Registering css file %s...", abs_path)
-        pathhelpers.write_file(css, abs_path)
 
 
 if __name__ == "__main__":

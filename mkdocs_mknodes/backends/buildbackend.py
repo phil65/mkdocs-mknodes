@@ -14,35 +14,35 @@ class BuildBackend:
         templates: list,
     ):
         self.collect_extensions(reqs.markdown_extensions)
-        self.collect_js_links(reqs.js_links)
-        self.collect_js_files(reqs.js_files)
-        self.collect_css(reqs.css)
-        self.collect_templates(templates)
-        self.collect_files(files)
-        self.collect_assets(reqs.assets)
+        self.write_js_links(reqs.js_links)
+        self.write_js_files(reqs.js_files)
+        self.write_css(reqs.css)
+        self.write_templates(templates)
+        self.write_files(files)
+        self.write_assets(reqs.assets)
 
-    def collect_files(self, files):
+    def write_files(self, files):
         pass
 
-    def collect_js_links(self, js_links):
+    def write_js_links(self, js_links):
         pass
 
-    def collect_js_files(self, js_files):
+    def write_js_files(self, js_files):
         pass
 
-    def collect_css(self, css):
+    def write_css(self, css):
         pass
 
-    # def collect_css_links(self, css):
+    # def write_css_links(self, css):
     #     pass
 
     def collect_extensions(self, extensions):
         pass
 
-    def collect_templates(self, templates):
+    def write_templates(self, templates):
         pass
 
-    def collect_assets(self, assets):
+    def write_assets(self, assets):
         pass
 
 

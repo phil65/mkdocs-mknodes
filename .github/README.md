@@ -137,7 +137,7 @@ graph LR
   2257954976128["mkinclude.MkInclude"]
   2257952115568["mkcallable.MkCallable"]
   2257952108736["mkcommandoutput.MkCommandOutput"]
-  2257952117520["mkjinjatemplate.MkJinjaTemplate"]
+  2257952117520["mkjinjatemplate.MkTemplate"]
   2257944740368 --> 2257944738416
   2257944740368 --> 2257955065920
   2257955065920 --> 2257991175136

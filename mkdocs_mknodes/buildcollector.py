@@ -38,14 +38,12 @@ def add_page_info(page: mk.MkPage, req: resources.Resources):
         details = mk.MkAdmonition(code, title=title, collapsible=True, typ="quote")
         adm += details
 
-    title = "Resources"
     pretty = mk.MkPrettyPrint(req)
-    details = mk.MkAdmonition(pretty, title=title, collapsible=True, typ="quote")
+    details = mk.MkAdmonition(pretty, title="Resources", collapsible=True, typ="quote")
     adm += details
 
-    title = "Metadata"
     code = mk.MkCode(str(page.resolved_metadata), language="yaml")
-    details = mk.MkAdmonition(code, title=title, collapsible=True, typ="quote")
+    details = mk.MkAdmonition(code, title="Metadata", collapsible=True, typ="quote")
     adm += details
 
     page += adm

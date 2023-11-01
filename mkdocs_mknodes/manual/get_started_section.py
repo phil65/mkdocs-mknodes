@@ -16,17 +16,17 @@ INTRO = (
 
 @router.route_page("MkNodes plugin for MkDocs", hide="toc", is_homepage=True)
 def _(page: mk.MkPage):
-    page += mk.MkJinjaTemplate("index.jinja")
+    page += mk.MkTemplate("index.jinja")
 
 
 @router.route_page("What is MkNodes?", hide="toc")
 def _(page: mk.MkPage):
-    page += mk.MkJinjaTemplate("why_should_i_use_mknodes.jinja")
+    page += mk.MkTemplate("why_should_i_use_mknodes.jinja")
 
 
 @router.route_page("Plugin configuration", hide="toc")
 def _(page: mk.MkPage):
-    page += mk.MkJinjaTemplate("plugin_configuration.jinja")
+    page += mk.MkTemplate("plugin_configuration.jinja")
     eps = page.ctx.metadata.entry_points.get("mkdocs.plugins", [])
     page += mk.MkDocStrings(
         eps[0].load().config_class,

@@ -27,7 +27,7 @@ class MarkdownBackend(buildbackend.BuildBackend):
         self.directory = upath.UPath(directory or ".")
         self._files: dict[str, str | bytes] = {}
 
-    def collect_files(self, files: dict[str, str | bytes]):
+    def write_files(self, files: dict[str, str | bytes]):
         for k, v in files.items():
             logger.debug("%s: Writing file to %r", type(self).__name__, str(k))
             target_path = (self.directory / k).with_suffix(self.extension)
