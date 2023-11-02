@@ -176,7 +176,7 @@ class BuildCollector:
             root: A node to collect build stuff from
             theme: A theme to collect build stuff from.
         """
-        logger.debug("Collecting theme resources...")
+        logger.debug("Collecting resources...")
         for _, node in itertools.chain(theme.iter_nodes(), root.iter_nodes()):
             self.node_counter.update([node.__class__.__name__])
             self.extra_files |= node.files
@@ -191,20 +191,22 @@ class BuildCollector:
                     self.render_page(page)
                 case mk.MkNav() as nav:
                     self.render_nav(nav)
-        logger.debug("Setting default markdown extensions...")
+        # theme
+        logger.debug("Collecting theme resources...")
         reqs = theme.get_resources()
         self.resources.merge(reqs)
         logger.debug("Adapting collected extensions to theme...")
         theme.adapt_extensions(self.resources.markdown_extensions)
-        build_files = self.node_files | self.extra_files
+        # templates
         templates = [
             i.template if isinstance(i, mk.MkPage) else i.page_template
             for i in self.mapping.values()
         ]
         templates += theme.templates
         templates = [i for i in templates if i]
+        build_files = self.node_files | self.extra_files
         for backend in self.backends:
-            logger.info("%s: Collecting data..", type(backend).__name__)
+            logger.info("%s: Writing data..", type(backend).__name__)
             backend.collect(build_files, self.resources, templates)
         return buildcontext.BuildContext(
             page_mapping=self.mapping,
@@ -253,7 +255,7 @@ class BuildCollector:
         Arguments:
             nav: Nav to collect the data from.
         """
-        logger.info("Processing section %r...", nav.section or "[ROOT]")
+        logger.info("Processing section %r...", nav.title or "[ROOT]")
         path = nav.resolved_file_path
         self.mapping[path] = nav
         req = nav.get_node_resources()
