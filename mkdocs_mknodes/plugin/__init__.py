@@ -107,7 +107,6 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             use_directory_urls=config.use_directory_urls,
             theme=skin,
             repo=self.config.repo_path,
-            build_fn=self.config.get_builder(),
             clone_depth=self.config.clone_depth,
         )
 
