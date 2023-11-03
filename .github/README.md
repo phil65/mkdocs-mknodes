@@ -45,7 +45,7 @@ def create_github_index_md() -> mk.MkPage:
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![PyUp](https://pyup.io/repos/github/phil65/mkdocs_mknodes/shield.svg)](https://pyup.io/repos/github/phil65/mkdocs_mknodes/)
 
-[Read the completely coded documentation!](https://phil65.github.io/mkdocs_mknodes/)
+[Read the completely coded documentation!](https://phil65.github.io/mkdocs-mknodes/)
 
 ## How to install
 

@@ -1,7 +1,7 @@
 import mknodes as mk
 
 
-DOC_URL = "https://phil65.github.io/mkdocs_mknodes/"
+DOC_URL = "https://phil65.github.io/mkdocs-mknodes/"
 
 
 def create_github_index_md() -> mk.MkPage:

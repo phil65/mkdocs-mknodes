@@ -22,7 +22,7 @@ cli = t.Typer(
     name="MkNodes",
     help=(
         " 🚀🚀🚀 MkNodes CLI interface. Build websites from command line! 🚀🚀🚀\n\n"
-        "Check out https://phil65.github.io/mkdocs_mknodes/ !"
+        "Check out https://phil65.github.io/mkdocs-mknodes/ !"
     ),
     no_args_is_help=True,
 )
@@ -85,7 +85,7 @@ def build(
     Runs the build script on given repository (either locally or a hosted one), adapts
     the config file automatically and creates the HTML website in given site dir.
 
-    Further info here: https://phil65.github.io/mkdocs_mknodes/CLI/
+    Further info here: https://phil65.github.io/mkdocs-mknodes/CLI/
     """
     build_page.build(
         config_path=config_path,
@@ -116,7 +116,7 @@ def serve(
     Runs the build script on given repository (either locally or a hosted one), adapts
     the config file automatically and serves a webpage on http://127.0.0.1/8000/.
 
-    Further info here: https://phil65.github.io/mkdocs_mknodes/CLI/
+    Further info here: https://phil65.github.io/mkdocs-mknodes/CLI/
     """
     serve_.serve(
         config_path=config_path,
@@ -145,7 +145,7 @@ def create_config(
     infers the required resources (CSS / JS / Md extensions) as well as metadata
     and creates a MkDocs config file.
 
-    Further info here: https://phil65.github.io/mkdocs_mknodes/CLI/
+    Further info here: https://phil65.github.io/mkdocs-mknodes/CLI/
     """
     build_fn = build_fn or paths.DEFAULT_BUILD_FN
 

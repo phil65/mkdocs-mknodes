@@ -121,7 +121,7 @@ mknodes = "mkdocs_mknodes.cli:cli"
 mknodes = "mkdocs_mknodes.plugin:MkNodesPlugin"
 
 [project.urls]
-Documentation = "https://phil65.github.io/mkdocs_mknodes/"
+Documentation = "https://phil65.github.io/mkdocs-mknodes/"
 Source = "https://github.com/phil65/mkdocs_mknodes"
 Gitter = "https://app.gitter.im/#/room/#mknodes:gitter.im"
 
