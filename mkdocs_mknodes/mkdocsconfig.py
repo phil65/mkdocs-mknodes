@@ -13,12 +13,12 @@ from typing import IO, Any
 from urllib import parse
 
 import jinja2
+import jinjarope
 
 from mkdocs.commands import get_deps
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
 from mknodes.info import contexts
-from mknodes.jinja import loaders
 from mknodes.mdlib import mdconverter
 from mknodes.utils import pathhelpers, reprhelpers
 
@@ -218,7 +218,7 @@ class Config:
 
     def get_jinja_config(self) -> Sequence[jinja2.BaseLoader]:
         cfg = self.plugin.config.get_jinja_config()
-        cfg["loader"] |= loaders.FileSystemLoader(self.docs_dir)
+        cfg["loader"] |= jinjarope.FileSystemLoader(self.docs_dir)
         return cfg
 
     def get_install_candidates(self) -> list[str]:

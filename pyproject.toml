@@ -110,6 +110,7 @@ dependencies = [
 
     # Tools
     "jinja2",
+    "jinjarope",
     "universal_pathlib",
 ]
 license = "MIT"
