@@ -88,7 +88,7 @@ def update_nav_template(nav: mk.MkNav):
 def process_resources(page: mk.MkPage) -> resources.Resources:
     """Add resources from page to its template and return the "filtered" resources."""
     req = page.get_resources()
-    js_reqs = []
+    js_reqs: list[resources.JSFile] = []
     prefix = "../" * (len(page.resolved_parts) + 1)
     for i in req.js:
         if isinstance(i, resources.JSText):
@@ -109,10 +109,14 @@ def process_resources(page: mk.MkPage) -> resources.Resources:
     req.assets += assets
     req.js = []
     for lib in libs:
+        msg = f"Adding {lib.link!r} lib to {page.resolved_file_path!r} template"
+        logger.info(msg)
         page.template.libs.add_script_file(lib)
     for lib in non_libs:
+        msg = f"Adding {lib.link!r} script to {page.resolved_file_path!r} template"
+        logger.info(msg)
         page.template.scripts.add_script_file(lib)
-    css_reqs = []
+    css_reqs: list[resources.CSSFile] = []
     for i in req.css:
         if isinstance(i, resources.CSSText):
             css_file = resources.CSSFile(link=f"{prefix}assets/{i.resolved_filename}")
@@ -123,6 +127,8 @@ def process_resources(page: mk.MkPage) -> resources.Resources:
     req.assets += assets
     req.css = []
     for css_ in css_reqs:
+        msg = f"Adding {css_.link!r} stylesheet to {page.resolved_file_path!r} template"
+        logger.info(msg)
         page.template.styles.add_stylesheet(css_)
     return req
 
