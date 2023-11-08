@@ -248,6 +248,10 @@ extend-exclude = [
 ]
 target-version = "py311"
 
+[tool.ruff.format]
+# Enable preview style formatting.
+preview = true
+
 [tool.ruff.flake8-quotes]
 docstring-quotes = "double"
 
