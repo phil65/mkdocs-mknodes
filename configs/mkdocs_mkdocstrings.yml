@@ -12,13 +12,13 @@ plugins:
     kwargs:
       static_pages:
         Development:
-          - Changelog: ->MkChangelog
-          - Code of conduct: ->MkCodeOfConduct
-          - Commit conventions: ->MkCommitConventions
-          - Pull requests: ->MkPullRequestGuidelines
-          - Development environment: ->MkDevEnvSetup
-          - Tools: ->MkDevTools
-          - Dependencies: ->MkDependencyTable
-          - Module overview: ->MkModuleOverview
-          - Plugin flow: ->MkPluginFlow
-          - License: ->MkLicense
+          - Changelog: "{{ mk.MkChangelog() }}"
+          - Code of conduct: "{{ mk.MkCodeOfConduct() }}"
+          - Commit conventions: "{{ mk.MkCommitConventions() }}"
+          - Pull requests: "{{ mk.MkPullRequestGuidelines() }}"
+          - Development environment: "{{ mk.MkDevEnvSetup() }}"
+          - Tools: "{{ mk.MkDevTools() }}"
+          - Dependencies: "{{ mk.MkDependencyTable() }}"
+          - Module overview: "{{ mk.MkModuleOverview() }}"
+          - Plugin flow: "{{ mk.MkPluginFlow() }}"
+          - License: "{{ mk.MkLicense() }}"
