@@ -208,7 +208,11 @@ class BuildCollector:
             i.template if isinstance(i, mk.MkPage) else i.page_template
             for i in self.mapping.values()
         ]
-        templates += theme.templates
+        if isinstance(theme.templates, dict):
+            vals = theme.templates.values()
+        else:
+            vals = theme.templates
+        templates += list(vals)
         templates = [i for i in templates if i]
         build_files = self.node_files | self.extra_files
         for backend in self.backends:
