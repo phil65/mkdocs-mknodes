@@ -21,7 +21,7 @@ from mkdocs.structure.files import InclusionLevel, _set_exclusions, get_files
 from mkdocs.structure.nav import get_navigation
 from mkdocs.structure.pages import Page
 from mknodes.info import mkdocsconfigfile
-from mknodes.utils import yamlhelpers
+from mknodes.utils import pathhelpers, yamlhelpers
 
 
 if TYPE_CHECKING:
@@ -34,7 +34,7 @@ logger = get_plugin_logger(__name__)
 def build(
     config_path: str | os.PathLike,
     repo_path: str,
-    build_fn,
+    build_fn: str | None,
     site_dir: str | None = None,
     clone_depth: int = 100,
     **kwargs,
@@ -133,7 +133,7 @@ def _build(
 
     if not dirty:
         logger.info("Cleaning site directory")
-        utils.clean_directory(config.site_dir)
+        pathhelpers.clean_directory(config.site_dir)
     else:  # pragma: no cover
         logger.warning("A 'dirty' build is being performed (for site dev purposes only)")
     if not live_server_url:  # pragma: no cover
