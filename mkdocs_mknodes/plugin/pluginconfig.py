@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable
 import functools
 
-import jinja2
-import jinjarope
-
-from jinjarope import loaders
 from mkdocs.config import base, config_options as c
 from mknodes.utils import classhelpers
 
@@ -130,14 +126,5 @@ class PluginConfig(base.Config):
             variable_start_string=self.jinja_variable_start_string,
             variable_end_string=self.jinja_variable_end_string,
             undefined=self.jinja_on_undefined,
-            loader=jinjarope.ChoiceLoader(self.get_loaders()),
+            loader=self.jinja_loaders,
         )
-
-    def get_loaders(self) -> Sequence[jinja2.BaseLoader]:
-        jinja_loaders: list[jinja2.BaseLoader] = []
-        for loader_dct in self.jinja_loaders or []:
-            dct = loader_dct.copy()
-            kls = loaders.LOADERS[dct.pop("type")]
-            loader = kls(**dct)
-            jinja_loaders.append(loader)
-        return jinja_loaders

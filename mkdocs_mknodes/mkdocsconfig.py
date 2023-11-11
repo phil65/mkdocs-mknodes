@@ -218,7 +218,7 @@ class Config:
 
     def get_jinja_config(self) -> Sequence[jinja2.BaseLoader]:
         cfg = self.plugin.config.get_jinja_config()
-        cfg["loader"] |= jinjarope.FileSystemLoader(self.docs_dir)
+        cfg["loader"].append(jinjarope.FileSystemLoader(self.docs_dir))
         return cfg
 
     def get_install_candidates(self) -> list[str]:
