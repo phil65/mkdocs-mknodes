@@ -15,14 +15,14 @@ def _(page: mk.MkPage):
 
 @nav.route.page("build", icon="wrench")
 def _(page: mk.MkPage):
-    page += mk.MkClickDoc(CLI_PATH, prog_name="build")
+    page += mk.MkCliDoc(CLI_PATH, prog_name="build")
 
 
 @nav.route.page("serve", icon="web")
 def _(page: mk.MkPage):
-    page += mk.MkClickDoc(CLI_PATH, prog_name="serve")
+    page += mk.MkCliDoc(CLI_PATH, prog_name="serve")
 
 
 @nav.route.page("create-config", icon="folder-wrench")
 def _(page: mk.MkPage):
-    page += mk.MkClickDoc(CLI_PATH, prog_name="create-config")
+    page += mk.MkCliDoc(CLI_PATH, prog_name="create-config")

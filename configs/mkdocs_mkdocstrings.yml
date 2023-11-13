@@ -19,6 +19,5 @@ plugins:
           - Development environment: "{{ mk.MkDevEnvSetup() }}"
           - Tools: "{{ mk.MkDevTools() }}"
           - Dependencies: "{{ mk.MkDependencyTable() }}"
-          - Module overview: "{{ mk.MkModuleOverview() }}"
           - Plugin flow: "{{ mk.MkPluginFlow() }}"
           - License: "{{ mk.MkLicense() }}"
