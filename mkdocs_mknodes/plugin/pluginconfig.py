@@ -59,6 +59,12 @@ class PluginConfig(base.Config):
     - setting the theme features "navigation.indexes" and "navigation.expand" via
       page metadata.
     """
+    auto_delete_generated_templates = c.Type(bool, default=True)
+    """Delete the generated HTML templates when build is finished.
+
+    MkNodes may generate HTML template overrides during the build process and
+    deletes them after build. Using this setting, the deletion can be prevented.
+    """
     render_by_default = c.Type(bool, default=True)
     """Render all pages in the jinja environment.
 

@@ -222,10 +222,11 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         """Delete the temporary template files."""
         if not config.theme.custom_dir or not self.config.build_fn:
             return
-        for template in self.build_info.templates:
-            assert template.filename
-            path = pathlib.Path(config.theme.custom_dir) / template.filename
-            path.unlink(missing_ok=True)
+        if self.config.auto_delete_generated_templates:
+            for template in self.build_info.templates:
+                assert template.filename
+                path = pathlib.Path(config.theme.custom_dir) / template.filename
+                path.unlink(missing_ok=True)
 
     def on_serve(
         self,
