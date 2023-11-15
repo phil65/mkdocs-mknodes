@@ -64,6 +64,7 @@ def update_page_template(page: mk.MkPage):
         node_path = None
     if node_path:
         html_path = node_path.with_suffix(".html").as_posix()
+        logger.debug("Updated template for MkPage %r: %r", page.title, html_path)
         page.metadata.template = html_path
         page.template.filename = html_path
         if extends := _get_extends_from_parent(page):
@@ -79,6 +80,7 @@ def update_nav_template(nav: mk.MkNav):
     if nav.page_template:
         path = pathlib.Path(nav.resolved_file_path)
         html_path = path.with_suffix(".html").as_posix()
+        logger.debug("Updated template for MkNav %r: %r", nav.title, html_path)
         nav.metadata.template = html_path
         nav.page_template.filename = html_path
         if extends := _get_extends_from_parent(nav):
