@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
 import pathlib
 import urllib.parse
 import tempfile
 from typing import TYPE_CHECKING, Literal
 
-from mkdocs import livereload
 from mkdocs.plugins import BasePlugin, get_plugin_logger
 import mknodes as mk
 from mknodes.utils import jinjahelpers, linkreplacer
@@ -30,52 +28,6 @@ if TYPE_CHECKING:
 logger = get_plugin_logger(__name__)
 
 CommandStr = Literal["build", "serve", "gh-deploy"]
-
-
-class Build:
-    def setup_build_folder(self, build_folder):
-        if build_folder:
-            self.build_folder = pathlib.Path(build_folder)
-        else:
-            self._dir = tempfile.TemporaryDirectory(prefix="mknodes_")
-            self.build_folder = pathlib.Path(self._dir.name)
-            logger.debug("Creating temporary dir %s", self._dir.name)
-
-    def setup_project(
-        self,
-        build_fn,
-        repo_path,
-        theme,
-        base_url,
-        use_directory_urls: bool = True,
-        clone_depth: int = 100,
-    ):
-        if not build_fn:
-            return
-        self.project = mk.Project(
-            base_url=base_url,
-            use_directory_urls=use_directory_urls,
-            theme=theme,
-            repo=repo_path,
-            build_fn=build_fn,
-            clone_depth=clone_depth,
-        )
-
-    def collect_build_data(
-        self,
-        backends: list,
-        show_page_info: bool,
-        global_resources: bool,
-        render_by_default: bool,
-    ):
-        logger.info("Setting up build backends...")
-        collector = buildcollector.BuildCollector(
-            backends=backends,
-            show_page_info=show_page_info,
-            global_resources=global_resources,
-            render_by_default=render_by_default,
-        )
-        self.build_info = collector.collect(self.project.root, self.project.theme)
 
 
 class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
@@ -223,17 +175,8 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         if not config.theme.custom_dir or not self.config.build_fn:
             return
         if self.config.auto_delete_generated_templates:
+            logger.debug("Deleting page templates...")
             for template in self.build_info.templates:
                 assert template.filename
                 path = pathlib.Path(config.theme.custom_dir) / template.filename
                 path.unlink(missing_ok=True)
-
-    def on_serve(
-        self,
-        server: livereload.LiveReloadServer,
-        config: MkDocsConfig,
-        builder: Callable,
-    ):
-        """Remove all watched paths in case MkNodes is used to build the website."""
-        if self.config.build_fn:
-            server._watched_paths = {}
