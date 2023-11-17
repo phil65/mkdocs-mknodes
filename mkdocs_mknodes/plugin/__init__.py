@@ -9,7 +9,9 @@ from typing import TYPE_CHECKING, Literal
 
 from mkdocs.plugins import BasePlugin, get_plugin_logger
 import mknodes as mk
-from mknodes.utils import jinjahelpers, linkreplacer
+from mknodes.utils import linkreplacer
+
+import jinjarope
 
 from mkdocs_mknodes import buildcollector, mkdocsconfig
 from mkdocs_mknodes.backends import markdownbackend, mkdocsbackend
@@ -35,7 +37,6 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         super().__init__(**kwargs)
         self.link_replacer = linkreplacer.LinkReplacer()
         logger.debug("Finished initializing plugin")
-        jinjahelpers.set_markdown_exec_namespace(jinjahelpers.get_globals())
 
     def on_startup(self, command: CommandStr, dirty: bool = False):
         """Activates new-style MkDocs plugin lifecycle."""
@@ -137,8 +138,9 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
 
     def on_env(self, env: jinja2.Environment, config: MkDocsConfig, files: Files):
         """Add our own info to the MkDocs environment."""
-        env.globals["mknodes"] = jinjahelpers.get_globals()
-        env.filters |= jinjahelpers.get_filters()
+        rope_env = jinjarope.Environment()
+        env.globals["mknodes"] = rope_env.globals
+        env.filters |= rope_env.filters
         logger.debug("Added macros / filters to MkDocs jinja2 environment.")
         if self.config.rewrite_theme_templates:
             assert env.loader
