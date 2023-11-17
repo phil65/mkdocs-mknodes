@@ -30,6 +30,6 @@ theme:
 plugins:
 - search
 - mknodes:
-    build_fn: mkdocs_mknodes:MkDefaultWebsite.for_project
+    build_fn: mknodes:parse
     clone_depth: 100
 - mkdocstrings

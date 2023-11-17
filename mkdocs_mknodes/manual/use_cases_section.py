@@ -29,13 +29,3 @@ def _(page: mk.MkPage):
     config = section.serialize("yaml")
     variables = dict(config=config)
     page += mk.MkTemplate("use_case_by_config.jinja", variables=variables)
-
-
-@nav.route.nav("Sub-Websites")
-def sub_websites(nav: mk.MkNav):
-    page = nav.add_page(is_index=True)
-    page += mk.MkTemplate("use_case_subwebsites.jinja")
-    # page += mk.MkCode.for_object(sub_websites)
-    proj = mk.Project.for_path("https://github.com/mkdocstrings/mkdocstrings.git")
-    website_nav = mk.MkDefaultWebsite(section="MkDocStrings", context=proj.context)
-    nav += website_nav

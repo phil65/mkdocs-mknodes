@@ -29,7 +29,4 @@ theme:
 
 plugins:
 - search
-- mknodes:
-    build_fn: mkdocs_mknodes:MkDefaultWebsite.for_project
-    clone_depth: 100
 - mkdocstrings

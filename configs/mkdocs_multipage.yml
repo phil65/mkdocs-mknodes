@@ -1,5 +1,0 @@
-INHERIT: mkdocs_shared.yml
-
-plugins:
-- mknodes:
-    build_fn: mkdocs_mknodes.manual.multi_project:build

@@ -43,7 +43,10 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         if self.config.build_folder:
             self.build_folder = pathlib.Path(self.config.build_folder)
         else:
-            self._dir = tempfile.TemporaryDirectory(prefix="mknodes_")
+            self._dir = tempfile.TemporaryDirectory(
+                prefix="mknodes_",
+                ignore_cleanup_errors=True,
+            )
             self.build_folder = pathlib.Path(self._dir.name)
             logger.debug("Creating temporary dir %s", self._dir.name)
 
