@@ -43,7 +43,7 @@ plugins:
         - title: Dependencies
           type: MkDependencyTable
         - title: MkDocs Plugins
-          condition: "{{ 'mkdocs.plugins' in metadata.entry_points }}"
+          condition: '{{ "mkdocs.plugins" in metadata.entry_points }}'
           type: MkPluginFlow
         - title: License
           type: MkLicense

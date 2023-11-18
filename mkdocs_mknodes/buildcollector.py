@@ -286,11 +286,12 @@ class BuildCollector:
 
 if __name__ == "__main__":
     theme = mk.MaterialTheme()
-    project = mk.Project(theme=theme)
     from mkdocs_mknodes.manual import root
 
     log.basic()
-    root.build(project)
+    build = root.Build()
+    nav = mk.MkNav.with_context()
+    build.on_root(nav)
     collector = BuildCollector([])
-    ctx = collector.collect(project.root, project.theme)
+    ctx = collector.collect(nav, mk.MaterialTheme())
     print(ctx)

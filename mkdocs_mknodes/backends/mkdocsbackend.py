@@ -161,8 +161,3 @@ class MkDocsBackend(buildbackend.BuildBackend):
 
 if __name__ == "__main__":
     backend = MkDocsBackend()
-
-    import mknodes as mk
-
-    skin = mk.Theme("material")
-    proj = mk.Project(theme=skin, clone_depth=1)
