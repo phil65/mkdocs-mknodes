@@ -5,7 +5,7 @@ import tempfile
 
 import mknodes as mk
 
-from mkdocs_mknodes import buildcollector, mkdocsconfig
+from mkdocs_mknodes import buildcollector, mkdocsconfig, project as project_
 from mkdocs_mknodes.backends import markdownbackend, mkdocsbackend
 
 
@@ -43,7 +43,7 @@ def build(project):
 
 def test_templates():
     theme = mk.MaterialTheme()
-    project = mk.Project(theme=theme, repo=".")
+    project = project_.Project(theme=theme, repo=".")
     build(project)
     cfg = mkdocsconfig.Config()
     cfg.update_from_context(project.context)

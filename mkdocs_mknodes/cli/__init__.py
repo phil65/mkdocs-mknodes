@@ -11,7 +11,7 @@ import typer as t
 from mknodes.utils import classhelpers, log, yamlhelpers
 import mknodes as mk
 
-from mkdocs_mknodes import buildcollector, paths
+from mkdocs_mknodes import buildcollector, paths, project
 from mkdocs_mknodes.cli import richstate
 from mkdocs_mknodes.commands import build_page, serve as serve_
 
@@ -158,7 +158,7 @@ def create_config(
     cfg_file["use_directory_urls"] = use_directory_urls
     config = cfg_file._data
     skin = mk.Theme(theme_name)
-    proj = mk.Project(theme=skin, repo=repo_path, build_fn=build_fn, clone_depth=1)
+    proj = project.Project(theme=skin, repo=repo_path, clone_depth=1)
     builder = classhelpers.to_callable(build_fn)
     builder(project=proj)
     collector = buildcollector.BuildCollector([])

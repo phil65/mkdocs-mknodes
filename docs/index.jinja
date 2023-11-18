@@ -18,7 +18,7 @@ This plugin acts as a bridge: It embeds **MkNodes** into the **MkDocs** event ho
 A minimum example for a **MkNodes** website:
 
 ``` py
-def build(project: mk.Project):
+def build(project: Project):
     index_page = project.root.get_index_page(hide="toc")
     index += mk.MkAdmonition("Hello world!")
 ```

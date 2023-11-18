@@ -13,7 +13,7 @@ from mknodes.utils import linkreplacer
 
 import jinjarope
 
-from mkdocs_mknodes import buildcollector, mkdocsconfig
+from mkdocs_mknodes import buildcollector, mkdocsconfig, project
 from mkdocs_mknodes.backends import markdownbackend, mkdocsbackend
 from mkdocs_mknodes.plugin import pluginconfig, rewriteloader
 
@@ -58,7 +58,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             theme_name=config.theme.name or "material",
             data=dict(config.theme),
         )
-        self.project = mk.Project(
+        self.project = project.Project(
             base_url=config.site_url or "",
             use_directory_urls=config.use_directory_urls,
             theme=skin,
