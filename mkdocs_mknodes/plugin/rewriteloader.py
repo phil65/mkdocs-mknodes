@@ -1,10 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-import pathlib
 import re
-
-import jinja2
 
 from mknodes.utils import log
 
@@ -27,25 +23,6 @@ MKDOCS_TOC_AFTER = """\
                 {%- endblock %}
 
 """  # noqa: E501
-
-
-class RewriteLoader(jinja2.BaseLoader):
-    def __init__(self, loader: jinja2.BaseLoader, rewrite_fn):
-        self.loader = loader
-        self.rewrite_fn = rewrite_fn
-
-    def get_source(
-        self,
-        environment: jinja2.Environment,
-        template: str,
-    ) -> tuple[str, str, Callable[[], bool] | None]:
-        src: str | None
-        src, filename, uptodate = self.loader.get_source(environment, template)
-        old_src = src
-        assert filename is not None
-        path = pathlib.Path(filename).as_posix()
-        src = self.rewrite_fn(path, src)
-        return src or old_src, filename, uptodate
 
 
 def rewrite(path, src):

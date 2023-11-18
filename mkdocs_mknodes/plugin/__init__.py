@@ -147,7 +147,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         logger.debug("Added macros / filters to MkDocs jinja2 environment.")
         if self.config.rewrite_theme_templates:
             assert env.loader
-            env.loader = rewriteloader.RewriteLoader(env.loader, rewriteloader.rewrite)
+            env.loader = jinjarope.RewriteLoader(env.loader, rewriteloader.rewrite)
             logger.debug("Injected Jinja2 Rewrite loader.")
         return env
 
