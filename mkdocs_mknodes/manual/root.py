@@ -25,7 +25,7 @@ class Build:
         return nav
 
 
-def build(project: mk.Project[mk.MaterialTheme]) -> mk.MkNav:
+def build(project) -> mk.MkNav:
     build = Build()
     build.on_theme(project.theme)
     return build.on_root(project.root) or project.root
