@@ -5,6 +5,7 @@ from __future__ import annotations
 import collections
 import itertools
 import pathlib
+import pprint
 
 from typing import TYPE_CHECKING
 
@@ -38,7 +39,7 @@ def add_page_info(page: mk.MkPage, req: resources.Resources):
         details = mk.MkAdmonition(code, title=title, collapsible=True, typ="quote")
         adm += details
 
-    pretty = mk.MkPrettyPrint(req)
+    pretty = mk.MkCode(pprint.pformat(req))
     details = mk.MkAdmonition(pretty, title="Resources", collapsible=True, typ="quote")
     adm += details
 
