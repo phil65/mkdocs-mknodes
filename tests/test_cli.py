@@ -16,18 +16,20 @@ build_folder = pathlib.Path(_dir.name)
 
 @mock.patch("mkdocs_mknodes.commands.build_page.build", autospec=True)
 def test_build(mock_build):
+    build_fn = "mkdocs_mknodes.MkDefaultWebsite"
+    cfg_file = "mkdocs.yml"
     runner = CliRunner()
     result = runner.invoke(
         cli.cli,
-        ["build", "--config-path", "mkdocs.yml"],
+        ["build", "--config-path", cfg_file, "--build-fn", build_fn],
         catch_exceptions=False,
     )
 
     assert result.exit_code == 0
     mock_build.assert_called_once_with(
-        config_path="mkdocs.yml",
+        config_path=cfg_file,
         repo_path=None,
-        build_fn=None,
+        build_fn=build_fn,
         clone_depth=None,
         site_dir="site",
         strict=False,
