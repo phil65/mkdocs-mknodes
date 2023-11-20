@@ -16,7 +16,7 @@ build_folder = pathlib.Path(_dir.name)
 
 @mock.patch("mkdocs_mknodes.commands.build_page.build", autospec=True)
 def test_build(mock_build):
-    build_fn = "mkdocs_mknodes.MkDefaultWebsite"
+    build_fn = "mkdocs_mknodes:MkDefaultWebsite"
     cfg_file = "mkdocs.yml"
     runner = CliRunner()
     result = runner.invoke(
@@ -53,6 +53,11 @@ def test_serve_default(mock_build, mock_serve):
 
 
 def test_create_config():
+    build_fn = "mkdocs_mknodes:MkDefaultWebsite"
     runner = CliRunner()
-    result = runner.invoke(cli.cli, ["create-config"], catch_exceptions=False)
+    result = runner.invoke(
+        cli.cli,
+        ["create-config", "--build-fn", build_fn],
+        catch_exceptions=False,
+    )
     assert result.exit_code == 0

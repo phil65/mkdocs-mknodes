@@ -160,7 +160,7 @@ def create_config(
     skin = mk.Theme(theme_name)
     proj = project.Project(theme=skin, repo=repo_path, clone_depth=1)
     builder = classhelpers.to_callable(build_fn)
-    builder(project=proj)
+    builder(context=proj.context)
     collector = buildcollector.BuildCollector([])
     info = collector.collect(proj.root, skin)
     resources = info.resources
