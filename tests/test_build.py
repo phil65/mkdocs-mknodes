@@ -13,10 +13,10 @@ _dir = tempfile.TemporaryDirectory(prefix="mknodes_")
 build_folder = pathlib.Path(_dir.name)
 
 
-def test_build(mkdocs_mknodes_project):
-    project = mkdocs_mknodes_project
+def test_build():
+    nav = mk.MkNav.with_context("Test")
     cfg = mkdocsconfig.Config()
-    cfg.update_from_context(project.context)
+    cfg.update_from_context(nav.ctx)
     mkdocs_backend = mkdocsbackend.MkDocsBackend(
         config=cfg,
         directory=build_folder,
@@ -30,7 +30,7 @@ def test_build(mkdocs_mknodes_project):
         backends=[mkdocs_backend, markdown_backend],
         show_page_info=True,
     )
-    build_info = collector.collect(project.root, project.theme)
+    build_info = collector.collect(nav, mk.MaterialTheme())
     assert build_info
 
 
