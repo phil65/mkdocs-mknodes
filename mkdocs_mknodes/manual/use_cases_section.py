@@ -19,13 +19,3 @@ def _(page: mk.MkPage):
     config = section.serialize("yaml")
     variables = dict(config=config)
     page += mk.MkTemplate("use_case_default_website.jinja", variables=variables)
-
-
-@nav.route.page("Set MkNode pages via config", hide="toc")
-def _(page: mk.MkPage):
-    """Create the "Creating a sample website via config" MkPage."""
-    file = mkdocsconfigfile.MkDocsConfigFile("configs/mkdocs_mkdocstrings.yml")
-    section = file.get_section("plugins", "mknodes", keep_path=True)
-    config = section.serialize("yaml")
-    variables = dict(config=config)
-    page += mk.MkTemplate("use_case_by_config.jinja", variables=variables)

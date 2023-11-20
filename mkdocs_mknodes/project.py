@@ -60,10 +60,3 @@ class Project(Generic[T]):
     def root(self, nav: mknav.MkNav):
         self._root = nav
         nav._ctx = self.context
-
-
-if __name__ == "__main__":
-    import mknodes as mk
-
-    theme = mk.MaterialTheme()
-    project = Project(theme=theme)
