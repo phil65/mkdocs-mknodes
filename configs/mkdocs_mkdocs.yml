@@ -6,7 +6,7 @@ repo_url: "https://github.com/mkdocs/mkdocs/"
 site_url: https://phil65.github.io/mknodes/mkdocs/
 plugins:
 - mknodes:
-    # repo_path: https://github.com/mkdocs/mkdocs.git
+    repo_path: https://github.com/mkdocs/mkdocs.git
     clone_depth: 100
     build_fn: mknodes:parse
     kwargs:
@@ -15,6 +15,19 @@ plugins:
         type: MkText
         text: "{{ metadata.description }}"
         is_index: true
+      - Usage:
+        - type: MkTemplate
+          title: Getting started
+          template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/getting-started.md
+        - type: MkTemplate
+          title: Configuration
+          template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/configuration.md
+        - type: MkTemplate
+          title: Deploying your docs
+          template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/deploying-your-docs.md
+        - type: MkTemplate
+          title: Installation
+          template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/installation.md
       - title: API
         type: MkDoc
         section_name: "API"
@@ -47,4 +60,3 @@ plugins:
           type: MkPluginFlow
         - title: License
           type: MkLicense
-
