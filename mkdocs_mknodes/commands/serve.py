@@ -110,10 +110,10 @@ def _serve(
     watch = watch or []
     site_dir = pathlib.Path(tempfile.mkdtemp(prefix="mkdocs_"))
 
-    def mount_path(config: MkDocsConfig):
+    def mount_path(config: MkDocsConfig) -> str:
         return urlsplit(config.site_url or "/").path
 
-    def get_config():
+    def get_config() -> MkDocsConfig:
         config = load_config(config_file=config_file, site_dir=str(site_dir), **kwargs)
         config.watch.extend(watch)
         config.site_url = f"http://{config.dev_addr}{mount_path(config)}"
@@ -143,7 +143,7 @@ def _serve(
         mount_path=mount_path(config),
     )
 
-    def error_handler(code) -> bytes | None:
+    def error_handler(code: int) -> bytes | None:
         if code not in (404, 500):
             return None
         error_page = site_dir / f"{code}.html"
