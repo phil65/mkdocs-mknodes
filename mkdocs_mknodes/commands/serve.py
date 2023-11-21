@@ -147,10 +147,7 @@ def _serve(
         if code not in (404, 500):
             return None
         error_page = site_dir / f"{code}.html"
-        if not error_page.is_file():
-            return None
-        with error_page.open("rb") as f:
-            return f.read()
+        return error_page.read_bytes() if error_page.is_file() else None
 
     server.error_handler = error_handler
 
@@ -184,54 +181,3 @@ def _serve(
         config.plugins.on_shutdown()
         if site_dir.is_dir():
             shutil.rmtree(site_dir)
-
-    # # Perform the initial build
-    # with catch_exceptions(config, site_dir):
-    #     builder(config)
-
-    # server = LiveReloadServer(
-    #     builder=builder,
-    #     host=host,
-    #     port=port,
-    #     root=site_dir,
-    #     mount_path=mount_path(config),
-    # )
-
-    # def error_handler(code) -> bytes | None:
-    #     if code not in (404, 500):
-    #         return None
-    #     error_page = pathlib.Path(site_dir) / f"{code}.html"
-    #     if not error_page.is_file():
-    #         return None
-    #     with error_page.open("rb") as f:
-    #         return f.read()
-
-    # # Run the server
-    # server.error_handler = error_handler
-    # with catch_exceptions(config, site_dir):
-    #     run_server(server, config, builder, livereload, watch_theme)
-
-
-# def run_server(server, config, builder, livereload, watch_theme):
-#     if livereload:
-#         # Watch the documentation files, the config file and the theme files.
-#         server.watch(config.docs_dir)
-#         if config.config_file_path:
-#             server.watch(config.config_file_path)
-
-#         if watch_theme:
-#             for d in config.theme.dirs:
-#                 server.watch(d)
-
-#         # Run `serve` plugin events.
-#         server = config.plugins.on_serve(server, config=config, builder=builder)
-
-#         for item in config.watch:
-#             server.watch(item)
-
-#     try:
-#         server.serve()
-#     except KeyboardInterrupt:
-#         logger.info("Shutting down...")
-#     finally:
-#         server.shutdown()
