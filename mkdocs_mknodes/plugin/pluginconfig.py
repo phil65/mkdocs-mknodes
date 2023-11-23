@@ -134,6 +134,5 @@ class PluginConfig(base.Config):
             variable_start_string=self.jinja_variable_start_string,
             variable_end_string=self.jinja_variable_end_string,
             # undefined=self.jinja_on_undefined,
-            loader=jinjarope.loaders.from_json(self.jinja_loaders)
-            or jinjarope.ChoiceLoader([]),
+            loader=jinjarope.loaders.from_json(self.jinja_loaders),
         )
