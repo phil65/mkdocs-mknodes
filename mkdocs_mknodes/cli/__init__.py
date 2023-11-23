@@ -11,7 +11,7 @@ import typer as t
 from mknodes.utils import classhelpers, log, yamlhelpers
 import mknodes as mk
 
-from mkdocs_mknodes import buildcollector, paths, project
+from mkdocs_mknodes import buildcollector, paths
 from mkdocs_mknodes.cli import richstate
 from mkdocs_mknodes.commands import build_page, serve as serve_
 
@@ -149,8 +149,7 @@ def create_config(
     """
     build_fn = build_fn or paths.DEFAULT_BUILD_FN
 
-    cfg = paths.RESOURCES / "mkdocs_basic.yml"
-    cfg_file = MkDocsConfigFile(cfg)
+    cfg_file = MkDocsConfigFile(paths.RESOURCES / "mkdocs_basic.yml")
     cfg_file.update_mknodes_section(repo_url=repo_path, build_fn=build_fn)
     theme_name = theme or "material"
     if theme_name != "material":
@@ -158,13 +157,13 @@ def create_config(
     cfg_file["use_directory_urls"] = use_directory_urls
     config = cfg_file._data
     skin = mk.Theme(theme_name)
-    proj = project.Project(theme=skin, repo=repo_path, clone_depth=1)
+    nav = mk.MkNav.with_context(repo_url=repo_path)
     builder = classhelpers.to_callable(build_fn)
-    builder(context=proj.context)
+    builder(context=nav.ctx)
     collector = buildcollector.BuildCollector([])
-    info = collector.collect(proj.root, skin)
+    info = collector.collect(nav, skin)
     resources = info.resources
-    info = proj.context.metadata
+    info = nav.ctx.metadata
     if social := info.social_info:
         config.setdefault("extra", {})["social"] = social  # type: ignore[index]
     config["markdown_extensions"] = resources.markdown_extensions
@@ -178,4 +177,4 @@ def create_config(
 
 
 if __name__ == "__main__":
-    cli(["build", "--help"])
+    cli(["create-config", "--build-fn", "mkdocs_mknodes:MkDefaultWebsite"])
