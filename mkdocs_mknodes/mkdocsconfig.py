@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Iterator, Mapping
 import contextlib
 
 from datetime import datetime
@@ -12,7 +12,6 @@ import sys
 from typing import IO, Any
 from urllib import parse
 
-import jinja2
 import jinjarope
 
 from mkdocs.commands import get_deps
@@ -216,9 +215,9 @@ class Config:
             rel_path = edit_path
         return parse.urljoin(base_url, rel_path)
 
-    def get_jinja_config(self) -> Sequence[jinja2.BaseLoader]:
+    def get_jinja_config(self) -> jinjarope.EnvConfig:
         cfg = self.plugin.config.get_jinja_config()
-        cfg["loader"].append(jinjarope.FileSystemLoader(self.docs_dir))
+        cfg.loader |= jinjarope.FileSystemLoader(self.docs_dir)
         return cfg
 
     def get_install_candidates(self) -> list[str]:
@@ -255,4 +254,4 @@ class Config:
 
 if __name__ == "__main__":
     test = Config()
-    print(test)
+    print(test.get_jinja_config())

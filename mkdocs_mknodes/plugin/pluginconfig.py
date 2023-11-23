@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Callable
 import functools
 
+import jinjarope
+
 from mkdocs.config import base, config_options as c
 from mknodes.utils import classhelpers
 
@@ -125,12 +127,13 @@ class PluginConfig(base.Config):
         build_kwargs = self.kwargs or {}
         return functools.partial(build_fn, **build_kwargs)
 
-    def get_jinja_config(self) -> dict:
-        return dict(
+    def get_jinja_config(self) -> jinjarope.EnvConfig:
+        return jinjarope.EnvConfig(
             block_start_string=self.jinja_block_start_string,
             block_end_string=self.jinja_block_end_string,
             variable_start_string=self.jinja_variable_start_string,
             variable_end_string=self.jinja_variable_end_string,
-            undefined=self.jinja_on_undefined,
-            loader=self.jinja_loaders,
+            # undefined=self.jinja_on_undefined,
+            loader=jinjarope.loaders.from_json(self.jinja_loaders)
+            or jinjarope.ChoiceLoader([]),
         )
