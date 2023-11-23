@@ -9,11 +9,12 @@ from typing import TYPE_CHECKING, Literal
 
 from mkdocs.plugins import BasePlugin, get_plugin_logger
 import mknodes as mk
+from mknodes.info import contexts, folderinfo, linkprovider, reporegistry
 from mknodes.utils import linkreplacer
 
 import jinjarope
 
-from mkdocs_mknodes import buildcollector, mkdocsconfig, project
+from mkdocs_mknodes import buildcollector, mkdocsconfig
 from mkdocs_mknodes.backends import markdownbackend, mkdocsbackend
 from mkdocs_mknodes.plugin import pluginconfig, rewriteloader
 
@@ -54,16 +55,27 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         """Create the project based on MkDocs config."""
         if not self.config.build_fn:
             return
-        skin = mk.Theme.get_theme(
+        self.linkprovider = linkprovider.LinkProvider(
+            base_url=config.site_url or "",
+            use_directory_urls=config.use_directory_urls,
+            include_stdlib=True,
+        )
+        self.theme = mk.Theme.get_theme(
             theme_name=config.theme.name or "material",
             data=dict(config.theme),
         )
-        self.project = project.Project(
-            base_url=config.site_url or "",
-            use_directory_urls=config.use_directory_urls,
-            theme=skin,
-            repo=self.config.repo_path,
+        git_repo = reporegistry.get_repo(
+            str(self.config.repo_path or "."),
             clone_depth=self.config.clone_depth,
+        )
+        self.folderinfo = folderinfo.FolderInfo(git_repo.working_dir)
+        self.context = contexts.ProjectContext(
+            metadata=self.folderinfo.context,
+            git=self.folderinfo.git.context,
+            # github=self.folderinfo.github.context,
+            theme=self.theme.context,
+            links=self.linkprovider,
+            env_config=self.config.get_jinja_config(),
         )
 
     def on_files(self, files: Files, config: MkDocsConfig) -> Files:
@@ -81,21 +93,22 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
 
         logger.info("Generating pages...")
         build_fn = self.config.get_builder()
-        build_fn(project=self.project)
+        self.root = mk.MkNav(context=self.context)
+        build_fn(theme=self.theme, root=self.root)
         logger.debug("Finished building page.")
         paths = [
             pathlib.Path(node.resolved_file_path).stem
-            for _level, node in self.project.root.iter_nodes()
+            for _level, node in self.root.iter_nodes()
             if hasattr(node, "resolved_file_path")
         ]
-        self.project.linkprovider.set_excludes(paths)
+        self.linkprovider.set_excludes(paths)
 
         # now we add our stuff to the MkDocs build environment
         cfg = mkdocsconfig.Config(config)
 
         logger.info("Updating MkDocs config metadata...")
-        cfg.update_from_context(self.project.context)
-        self.project.theme.adapt_extras(cfg.extra)
+        cfg.update_from_context(self.root.ctx)
+        self.theme.adapt_extras(cfg.extra)
 
         logger.info("Setting up build backends...")
         mkdocs_backend = mkdocsbackend.MkDocsBackend(
@@ -114,8 +127,8 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             global_resources=self.config.global_resources,
             render_by_default=self.config.render_by_default,
         )
-        self.build_info = collector.collect(self.project.root, self.project.theme)
-        if nav_dict := self.project.root.nav.to_nav_dict():
+        self.build_info = collector.collect(self.root, self.theme)
+        if nav_dict := self.root.nav.to_nav_dict():
             match config.nav:
                 case list():
                     for k, v in nav_dict.items():

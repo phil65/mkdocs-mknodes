@@ -8,6 +8,12 @@ from mkdocs_mknodes.manual import cli_section, get_started_section, use_cases_se
 
 
 class Build:
+    @classmethod
+    def build(cls, root, theme):
+        b = cls()
+        b.on_theme(theme)
+        return b.on_root(root)
+
     def on_theme(self, theme: mk.MaterialTheme):
         theme.error_page.content = mk.MkAdmonition("Page does not exist!")
         theme.content_area_width = 1300
@@ -23,9 +29,3 @@ class Build:
         nav += cli_section.nav
         nav += dev_section.nav
         return nav
-
-
-def build(project) -> mk.MkNav:
-    build = Build()
-    build.on_theme(project.theme)
-    return build.on_root(project.root) or project.root

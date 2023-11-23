@@ -51,7 +51,7 @@ theme:
 plugins:
 - search
 - mknodes:
-    build_fn: mkdocs_mknodes.manual.root:build
+    build_fn: mkdocs_mknodes.manual.root:Build.build
     show_page_info: true
     global_resources: false
 - mkdocstrings:
