@@ -9,7 +9,7 @@ import logging
 import os
 import time
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from urllib.parse import urljoin
 
 from mkdocs import utils
@@ -37,7 +37,7 @@ def build(
     build_fn: str | None,
     site_dir: str | None = None,
     clone_depth: int = 100,
-    **kwargs,
+    **kwargs: Any,
 ):
     """Build a MkNodes-based website.
 
