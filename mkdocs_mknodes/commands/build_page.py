@@ -169,13 +169,7 @@ def _build(
             "\n  - %s",
             excluded_str,
         )
-    # Run `env` plugin events.
     env = config.plugins.on_env(env, config=config, files=files)
-
-    # Start writing files to site_dir now that all data is gathered.
-    # Note that order matters. Files with lower precedence get written first
-    # so that files with higher precedence can overwrite them.
-
     logger.debug("Copying static assets.")
     files.copy_static_files(dirty=dirty, inclusion=inclusion)
 

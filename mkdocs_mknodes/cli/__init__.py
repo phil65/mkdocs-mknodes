@@ -165,15 +165,14 @@ def create_config(
     info = collector.collect(proj.root, skin)
     resources = info.resources
     info = proj.context.metadata
-    config["markdown_extensions"] = resources.markdown_extensions
     if social := info.social_info:
         config.setdefault("extra", {})["social"] = social  # type: ignore[index]
+    config["markdown_extensions"] = resources.markdown_extensions
     config["repo_path"] = info.repository_url
     config["site_description"] = info.summary
     config["site_name"] = info.distribution_name
     config["site_author"] = info.author_name
-    text = f"Copyright © {datetime.now().year} {info.author_name}"
-    config["copyright"] = text
+    config["copyright"] = f"Copyright © {datetime.now().year} {info.author_name}"
     result = yamlhelpers.dump_yaml(config)
     print(result)
 
