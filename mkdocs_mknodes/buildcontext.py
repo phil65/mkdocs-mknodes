@@ -6,7 +6,6 @@ import collections
 import dataclasses
 
 import mknodes as mk
-
 from mknodes.info import contexts
 from mknodes.utils import log, resources
 

@@ -6,11 +6,9 @@ import collections
 import itertools
 import pathlib
 import pprint
-
 from typing import TYPE_CHECKING
 
 import mknodes as mk
-
 from mknodes.utils import log, resources
 
 from mkdocs_mknodes import buildcontext

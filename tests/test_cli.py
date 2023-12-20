@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pathlib
 import tempfile
-
 from unittest import mock
 
 from typer.testing import CliRunner

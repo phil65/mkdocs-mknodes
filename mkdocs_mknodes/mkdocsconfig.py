@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections.abc import Iterator, Mapping
 import contextlib
-
 from datetime import datetime
 import functools
 import io
@@ -13,7 +12,6 @@ from typing import IO, Any
 from urllib import parse
 
 import jinjarope
-
 from mkdocs.commands import get_deps
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger

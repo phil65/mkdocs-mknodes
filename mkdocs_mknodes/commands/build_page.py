@@ -8,7 +8,6 @@ import io
 import logging
 import os
 import time
-
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urljoin
 

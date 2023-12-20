@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import mknodes as mk
-
 from mknodes.manual import dev_section
 
 from mkdocs_mknodes.manual import cli_section, get_started_section, use_cases_section

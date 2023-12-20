@@ -6,7 +6,6 @@ from collections.abc import Callable
 import functools
 
 import jinjarope
-
 from mkdocs.config import base, config_options as c
 from mknodes.utils import classhelpers
 

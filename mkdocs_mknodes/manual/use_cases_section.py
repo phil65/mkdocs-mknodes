@@ -1,5 +1,4 @@
 import mknodes as mk
-
 from mknodes.info import mkdocsconfigfile
 
 

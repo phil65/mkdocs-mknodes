@@ -5,7 +5,6 @@ import os
 import pathlib
 
 import markdown
-
 from mkdocs.config import config_options
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
