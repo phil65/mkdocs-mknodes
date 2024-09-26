@@ -16,7 +16,7 @@ from mkdocs.commands import build as mkdocs_build
 from mkdocs.config import load_config
 from mkdocs.exceptions import Abort, BuildError
 from mkdocs.plugins import get_plugin_logger
-from mkdocs.structure.files import InclusionLevel, _set_exclusions, get_files
+from mkdocs.structure.files import InclusionLevel, set_exclusions, get_files
 from mkdocs.structure.nav import get_navigation
 from mkdocs.structure.pages import Page
 from mknodes.info import mkdocsconfigfile
@@ -126,7 +126,7 @@ def _build(
         live_server_url: An optional URL of the live server to use
         dirty: Do a dirty build
     """
-    inclusion = InclusionLevel.all if live_server_url else InclusionLevel.is_included
+    inclusion = InclusionLevel.is_in_serve if live_server_url else InclusionLevel.is_included
     config = config.plugins.on_config(config)
     config.plugins.on_pre_build(config=config)
 
@@ -146,7 +146,7 @@ def _build(
     files.add_files_from_theme(env, config)
     files = config.plugins.on_files(files, config=config)
     # If plugins have added files without setting inclusion level, calculate it again.
-    _set_exclusions(files._files, config)
+    set_exclusions(files._files, config)
     nav = get_navigation(files, config)
     # Run `nav` plugin events.
     nav = config.plugins.on_nav(nav, config=config, files=files)
@@ -154,8 +154,8 @@ def _build(
     excluded = []
     for file in files.documentation_pages(inclusion=inclusion):
         logger.debug("Reading: %s", file.src_uri)
-        if file.page is None and file.inclusion.is_excluded():
-            if live_server_url:
+        if file.page is None and file.inclusion.is_not_in_nav():
+            if live_server_url and file.inclusion.is_excluded():
                 excluded.append(urljoin(live_server_url, file.url))
             Page(None, file, config)
         assert file.page is not None
@@ -164,7 +164,7 @@ def _build(
         excluded_str = "\n  - ".join(excluded)
         logger.info(
             "The following pages are being built only for the preview "
-            "but will be excluded from `mkdocs build` per `exclude_docs`:"
+            "but will be excluded from `mkdocs build` per `draft_docs` config:"
             "\n  - %s",
             excluded_str,
         )
@@ -184,5 +184,9 @@ def _build(
         excl = file.inclusion.is_excluded()
         mkdocs_build._build_page(file.page, config, doc_files, nav, env, dirty, excl)
 
+    log_level = config.validation.links.anchors
+    for file in doc_files:
+        assert file.page is not None
+        file.page.validate_anchor_links(files=files, log_level=log_level)
     # Run `post_build` plugin events.
     config.plugins.on_post_build(config=config)
