@@ -13,7 +13,7 @@ repos:
       pass_filenames: false
       always_run: true
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.6.0
+  rev: v5.0.0
   hooks:
     # - id: trailing-whitespace
     # - id: check-ast
@@ -36,7 +36,7 @@ repos:
       additional_dependencies: [mkdocs]
 
 - repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: v0.6.8
+  rev: v0.6.9
   hooks:
     - id: ruff
     - id: ruff-format
