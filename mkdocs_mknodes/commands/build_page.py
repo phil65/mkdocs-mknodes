@@ -126,7 +126,9 @@ def _build(
         live_server_url: An optional URL of the live server to use
         dirty: Do a dirty build
     """
-    inclusion = InclusionLevel.is_in_serve if live_server_url else InclusionLevel.is_included
+    inclusion = (
+        InclusionLevel.is_in_serve if live_server_url else InclusionLevel.is_included
+    )
     config = config.plugins.on_config(config)
     config.plugins.on_pre_build(config=config)
 
