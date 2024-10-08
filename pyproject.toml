@@ -45,19 +45,19 @@ test = "pytest -vv"
 test-cov-xml = "pytest --cov-report=xml"
 test-cov-html = "pytest --cov-report=html"
 lint = [
-  "hatch run ruff --fix .",
-  "hatch run ruff format .",
-  "hatch run mypy mkdocs_mknodes/",
+    "hatch run ruff check --fix .",
+    "hatch run ruff format .",
+    "hatch run mypy mkdocs_mknodes/",
 ]
 lint-check = [
-  "hatch run ruff .",
-  "hatch run ruff format --check .",
-  "hatch run mypy mkdocs_mknodes/",
+    "hatch run ruff check .",
+    "hatch run ruff format --check .",
+    "hatch run mypy mkdocs_mknodes/",
 ]
 
 docs-build-test = [
-  "hatch run mkdocs build -v",
-  "hatch run mknodes build -d ../site/mkdocs -p configs/mkdocs_mkdocs.yml -v --clone-depth 100",
+    "hatch run mkdocs build -v",
+    "hatch run mknodes build -d ../site/mkdocs -p configs/mkdocs_mkdocs.yml -v --clone-depth 100",
 ]
 
 [build-system]
