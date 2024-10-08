@@ -4,12 +4,13 @@ import collections
 import os
 import pathlib
 
+from jinjarope import serializefilters
 import markdown
 from mkdocs.config import config_options
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure import files as files_
-from mknodes.utils import mergehelpers, pathhelpers, resources
+from mknodes.utils import pathhelpers, resources
 import upath
 
 from mkdocs_mknodes import mkdocsconfig
@@ -122,7 +123,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 if ext_name not in self._config.markdown_extensions:
                     logger.info("Adding %s to extensions", ext_name)
                     self._config.markdown_extensions.append(ext_name)
-            self._config.mdx_configs = mergehelpers.merge_dicts(
+            self._config.mdx_configs = serializefilters.merge(
                 self._config.mdx_configs,
                 extensions,
             )
