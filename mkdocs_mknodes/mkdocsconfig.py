@@ -12,7 +12,7 @@ from typing import IO, Any
 from urllib import parse
 
 import jinjarope
-from mkdocs.commands import get_deps
+from mkdocs.__main__ import get_deps_command
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.plugins import get_plugin_logger
 from mknodes.info import contexts
@@ -223,7 +223,7 @@ class Config:
         path = "https://raw.githubusercontent.com/mkdocs/catalog/main/projects.yaml"
         buffer = io.StringIO()
         with contextlib.redirect_stdout(buffer):
-            get_deps.get_deps(path, self._config.config_file_path)
+            get_deps_command(path, self._config.config_file_path)
         return [i for i in buffer.getvalue().split("\n") if i]
 
     def add_js(
