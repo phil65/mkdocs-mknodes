@@ -42,7 +42,7 @@ class MkNodesConfig:
     """The directory containing the documentation markdown."""
     site_dir: pathlib.Path | str = "site"
     """The directory where the site will be built to"""
-    copyright: str | None = None  # noqa: A003
+    copyright: str | None = None
     """A copyright notice to add to the footer of documentation."""
     dev_addr: str = "127.0.0.1:8000"
     """The address on which to serve the live reloading docs server."""
