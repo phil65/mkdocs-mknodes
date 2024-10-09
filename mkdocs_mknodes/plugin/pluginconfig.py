@@ -128,10 +128,10 @@ class PluginConfig(base.Config):
 
     def get_jinja_config(self) -> jinjarope.EnvConfig:
         return jinjarope.EnvConfig(
-            block_start_string=self.jinja_block_start_string,
-            block_end_string=self.jinja_block_end_string,
-            variable_start_string=self.jinja_variable_start_string,
-            variable_end_string=self.jinja_variable_end_string,
+            block_start_string=self.jinja_block_start_string or "{%",
+            block_end_string=self.jinja_block_end_string or "%}",
+            variable_start_string=self.jinja_variable_start_string or r"{{",
+            variable_end_string=self.jinja_variable_end_string or r"}}",
             # undefined=self.jinja_on_undefined,
             loader=jinjarope.loaders.from_json(self.jinja_loaders),
         )

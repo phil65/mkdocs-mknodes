@@ -147,6 +147,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
     ) -> Navigation | None:
         """Populate LinkReplacer and build path->MkPage mapping for following steps."""
         for file_ in files:
+            assert file_.abs_src_path
             filename = pathlib.Path(file_.abs_src_path).name
             url = urllib.parse.unquote(file_.src_uri)
             self.link_replacer.mapping[filename].append(url)
