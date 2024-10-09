@@ -2,25 +2,21 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
-import functools
 import io
-import logging
 import os
-import time
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urljoin
 
-from mkdocs import utils
 from mkdocs.commands import build as mkdocs_build
 from mkdocs.config import load_config
-from mkdocs.exceptions import Abort, BuildError
 from mkdocs.plugins import get_plugin_logger
-from mkdocs.structure.files import InclusionLevel, set_exclusions, get_files
+from mkdocs.structure.files import InclusionLevel, get_files, set_exclusions
 from mkdocs.structure.nav import get_navigation
 from mkdocs.structure.pages import Page
 from mknodes.info import mkdocsconfigfile
 from mknodes.utils import pathhelpers, yamlhelpers
+
+from mkdocs_mknodes.commands import utils
 
 
 if TYPE_CHECKING:
@@ -67,50 +63,8 @@ def build(
     config.plugins.run_event("shutdown")
 
 
-def count_warnings(fn: Callable) -> Callable:
-    @functools.wraps(fn)
-    def wrapped(config: MkDocsConfig, *args, **kwargs):
-        start = time.monotonic()
-        warning_counter = utils.CountHandler()
-        warning_counter.setLevel(logging.WARNING)
-        if config.strict:
-            logging.getLogger("mkdocs").addHandler(warning_counter)
-        result = fn(config, *args, **kwargs)
-        counts = warning_counter.get_counts()
-        if counts:
-            msg = ", ".join(f"{v} {k.lower()}s" for k, v in counts)
-            msg = f"Aborted with {msg} in strict mode!"
-            raise Abort(msg)
-        duration = time.monotonic() - start
-        logger.info("Documentation built in %.2f seconds", duration)
-        logging.getLogger("mkdocs").removeHandler(warning_counter)
-
-        return result
-
-    return wrapped
-
-
-def handle_exceptions(fn: Callable) -> Callable:
-    @functools.wraps(fn)
-    def wrapped(config: MkDocsConfig, *args, **kwargs):
-        try:
-            return fn(config, *args, **kwargs)
-        except Exception as e:
-            # Run `build_error` plugin events.
-            config.plugins.on_build_error(error=e)
-            if isinstance(e, BuildError):
-                msg = "Aborted with a BuildError!"
-                logger.exception(msg)
-                raise Abort(msg) from e
-            raise
-        # finally:
-        # logging.getLogger("mkdocs").removeHandler(warning_counter)
-
-    return wrapped
-
-
-@handle_exceptions
-@count_warnings
+@utils.handle_exceptions
+@utils.count_warnings
 def _build(
     config: MkDocsConfig,
     live_server_url: str | None = None,
