@@ -1,5 +1,3 @@
-[tool.hatch]
-
 [tool.hatch.metadata]
 allow-direct-references = true
 
@@ -32,26 +30,6 @@ dev-dependencies = [
   # Material Social addon
   "cairosvg",
   "pillow",
-]
-
-[tool.hatch.envs.default.scripts]
-test = "pytest -vv"
-test-cov-xml = "pytest --cov-report=xml"
-test-cov-html = "pytest --cov-report=html"
-lint = [
-    "hatch run ruff check --fix .",
-    "hatch run ruff format .",
-    "hatch run mypy mkdocs_mknodes/",
-]
-lint-check = [
-    "hatch run ruff check .",
-    "hatch run ruff format --check .",
-    "hatch run mypy mkdocs_mknodes/",
-]
-
-docs-build-test = [
-    "hatch run mkdocs build -v",
-    "hatch run mknodes build -d ../site/mkdocs -p configs/mkdocs_mkdocs.yml -v --clone-depth 100",
 ]
 
 [build-system]
@@ -244,17 +222,17 @@ target-version = "py311"
 # Enable preview style formatting.
 preview = true
 
-[tool.ruff.flake8-quotes]
+[tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 lines-after-imports = 2
 lines-between-types = 1
 # atomic = true
 force-sort-within-sections = true
 combine-as-imports = true
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402", "I001"]
 
 [tool.black]

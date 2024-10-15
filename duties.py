@@ -5,7 +5,7 @@ import json
 from duty import duty
 
 
-ENV_PREFIX = "hatch run "
+ENV_PREFIX = "uv run "
 
 PARAMS = ["--disable-pip-version-check", "--outdated", "--format=json"]
 UPDATE_CMD = f"""{ENV_PREFIX}python -m pip list {" ".join(PARAMS)}"""
@@ -67,6 +67,14 @@ def lint_check(ctx):
     ctx.run("uv run ruff check .")
     ctx.run("uv run ruff format --check .")
     ctx.run("uv run mypy mkdocs_mknodes/")
+
+
+@duty(capture=False)
+def docs_test_build(ctx):
+    """Build some test pages."""
+    ctx.run("uv run mkdocs build -v")
+    opts = "-d ../site/mkdocs -p configs/mkdocs_mkdocs.yml -v --clone-depth 100"
+    ctx.run(f"uv run mknodes build {opts}")
 
 
 @duty(capture=False)
