@@ -121,6 +121,12 @@ pretty = true
 
 [tool.ruff]
 line-length = 90
+extend-exclude = [
+    'docs',
+]
+target-version = "py311"
+
+[tool.ruff.lint]
 select = [
     "A",    # Flake8-builtins
     # "ANN",  # Flake8-Annotations
@@ -187,6 +193,7 @@ ignore = [
     "B905",    # zip() without an explicit strict= parameter
     "C901",    # {name} is too complex ({complexity} > {max_complexity})
     # "CPY001", # Missing copyright notice at top of file
+    "COM812",
     "D100",    # Missing docstring in public module
     "D101",    # Missing docstring in public class
     "D102",    # Missing docstring in public method
@@ -207,16 +214,13 @@ ignore = [
     "D408",    # Section underline should be in the line following the section's name ("{name}")
     "D409",    # Section underline should match the length of its name ("{name}")
     "D413",    # Missing blank line after last section ("{name}")
+    "ISC001",
     "PLR0912", # Too many branches
     "PLR0913", # Too many arguments to function call
     "PLR0915", # Too many statements
     "SLF001",  # Private member accessed
     "TRY003",  # Avoid specifying long messages outside the exception class
 ]
-extend-exclude = [
-    'docs',
-]
-target-version = "py311"
 
 [tool.ruff.format]
 # Enable preview style formatting.
@@ -227,7 +231,7 @@ docstring-quotes = "double"
 
 [tool.ruff.lint.isort]
 lines-after-imports = 2
-lines-between-types = 1
+# lines-between-types = 1
 # atomic = true
 force-sort-within-sections = true
 combine-as-imports = true
