@@ -11,33 +11,27 @@ path = "mkdocs_mknodes/__init__.py"
 [tool.hatch.dirs.env]
 virtual = ".hatch"
 
-[tool.hatch.envs.default]
-python = "3.11"
-dependencies = [
-    # Linting
-    "mypy",
-    "ruff",
-
-    # Testing
-    "pytest",
-    "pytest-cov",
-
-    # Docs
-    "pymdown-extensions",
-    "mkdocs-material >= 9.4",
-    "mkdocstrings[python]",
-    # used for formatting signature
-    "black",
-    "pygments",
-    "mkdocs-mknodes",
-
-    # Material Social addon
-    "cairosvg",
-    "pillow",
-
-    # Debugging
-    "pyreadline3",
-    "pyinstrument",
+[tool.uv]
+dev-dependencies = [
+  # lint
+  "ruff",
+  "mypy",
+  # test
+  "pytest",
+  "pytest-cov",
+  # docs
+  "mkdocs-material >= 9.4",
+  "pymdown-extensions",
+  "mkdocstrings[python]",
+  # dev
+  "pyreadline3",
+  "pyinstrument",
+  # used for formatting signature
+  "black",
+  "pygments",
+  # Material Social addon
+  "cairosvg",
+  "pillow",
 ]
 
 [tool.hatch.envs.default.scripts]
@@ -75,7 +69,6 @@ dynamic = ["version"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",

@@ -55,14 +55,18 @@ def update(ctx, *args: str):
 
 @duty(capture=False)
 def lint(ctx):
-    """Update all environment packages using pip directly."""
-    ctx.run(f"{ENV_PREFIX}lint")
+    """Lint the code and fix issues if possible."""
+    ctx.run("uv run ruff check --fix .")
+    ctx.run("uv run ruff format .")
+    ctx.run("uv run mypy mkdocs_mknodes/")
 
 
 @duty(capture=False)
 def lint_check(ctx):
-    """Update all environment packages using pip directly."""
-    ctx.run(f"{ENV_PREFIX}lint-check")
+    """Lint the code."""
+    ctx.run("uv run ruff check .")
+    ctx.run("uv run ruff format --check .")
+    ctx.run("uv run mypy mkdocs_mknodes/")
 
 
 @duty(capture=False)
