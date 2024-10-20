@@ -25,8 +25,8 @@ class MkDocsBackend(buildbackend.BuildBackend):
     def __init__(
         self,
         files: files_.Files | None = None,
-        config: mkdocsconfig.Config | MkDocsConfig | str | os.PathLike | None = None,
-        directory: str | os.PathLike | None = None,
+        config: mkdocsconfig.Config | MkDocsConfig | str | os.PathLike[str] | None = None,
+        directory: str | os.PathLike[str] | None = None,
     ):
         """Constructor.
 
@@ -140,7 +140,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 logger.info("Creating %s...", target_path.as_posix())
                 pathhelpers.write_file(html, target_path)
 
-    def _write_file(self, path: str | os.PathLike, content: str | bytes):
+    def _write_file(self, path: str | os.PathLike[str], content: str | bytes):
         path = pathlib.PurePath(path).as_posix()
         file_for_path = self.builder.get_file(path, src_dir=self.directory)
         new_path = upath.UPath(file_for_path.abs_src_path)

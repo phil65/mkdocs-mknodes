@@ -26,7 +26,7 @@ logger = log.get_logger(__name__)
 
 
 def serve(
-    config_path: str | os.PathLike = paths.CFG_DEFAULT,
+    config_path: str | os.PathLike[str] = paths.CFG_DEFAULT,
     repo_path: str = ".",
     build_fn: str = paths.DEFAULT_BUILD_FN,
     clone_depth: int = 100,

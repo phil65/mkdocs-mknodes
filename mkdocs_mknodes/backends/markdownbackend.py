@@ -14,7 +14,7 @@ logger = log.get_logger(__name__)
 class MarkdownBackend(buildbackend.BuildBackend):
     def __init__(
         self,
-        directory: str | os.PathLike | None = None,
+        directory: str | os.PathLike[str] | None = None,
         extension: str = ".md",
     ):
         """Constructor.

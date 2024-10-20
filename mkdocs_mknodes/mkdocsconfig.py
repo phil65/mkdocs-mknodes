@@ -8,7 +8,7 @@ import io
 import os
 import pathlib
 import sys
-from typing import IO, Any
+from typing import Any, TextIO
 from urllib import parse
 
 import jinjarope
@@ -24,7 +24,9 @@ logger = get_plugin_logger(__name__)
 
 
 @contextlib.contextmanager
-def _open_config_file(config_file: str | os.PathLike | IO | None) -> Iterator[IO]:
+def _open_config_file(
+    config_file: str | os.PathLike[str] | TextIO | None,
+) -> Iterator[TextIO]:
     """A context manager which yields an open file descriptor ready to be read.
 
     Accepts a filename as a string, an open or closed file descriptor, or None.
@@ -73,7 +75,7 @@ def _open_config_file(config_file: str | os.PathLike | IO | None) -> Iterator[IO
 
 @functools.cache
 def load_config(
-    config_file: str | IO | None = None,
+    config_file: str | TextIO | None = None,
     *,
     config_file_path: str | None = None,
     **kwargs,
@@ -116,7 +118,7 @@ def load_config(
 class Config:
     """MkDocs config file wrapper."""
 
-    def __init__(self, config: Mapping | str | os.PathLike | None = None):
+    def __init__(self, config: Mapping | str | os.PathLike[str] | None = None):
         """Constructor.
 
         Arguments:

@@ -27,7 +27,7 @@ logger = get_plugin_logger(__name__)
 
 
 def build(
-    config_path: str | os.PathLike,
+    config_path: str | os.PathLike[str],
     repo_path: str,
     build_fn: str | None,
     site_dir: str | None = None,

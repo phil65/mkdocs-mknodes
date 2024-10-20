@@ -33,7 +33,7 @@ class MkDocsPage(pages.Page):
 class MkDocsBuilder:
     def __init__(
         self,
-        config: mkdocsconfig.Config | MkDocsConfig | str | os.PathLike | None = None,
+        config: mkdocsconfig.Config | MkDocsConfig | str | os.PathLike[str] | None = None,
     ):
         """Constructor.
 
@@ -51,9 +51,9 @@ class MkDocsBuilder:
 
     def get_file(
         self,
-        path: str | os.PathLike,
-        src_dir: str | os.PathLike | None = None,
-        dest_dir: str | os.PathLike | None = None,
+        path: str | os.PathLike[str],
+        src_dir: str | os.PathLike[str] | None = None,
+        dest_dir: str | os.PathLike[str] | None = None,
         inclusion_level: files_.InclusionLevel = files_.InclusionLevel.UNDEFINED,
     ) -> files_.File:
         """Return a MkDocs File for given path.
@@ -78,7 +78,7 @@ class MkDocsBuilder:
     def get_section_page(
         self,
         title: str,
-        path: str | os.PathLike,
+        path: str | os.PathLike[str],
         children: list[pages.Page | nav.Section | nav.Link],
         inclusion_level: files_.InclusionLevel = files_.InclusionLevel.UNDEFINED,
     ) -> pages.Page:

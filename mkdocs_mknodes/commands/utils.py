@@ -6,7 +6,7 @@ from collections.abc import Callable
 import functools
 import logging
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from mkdocs import utils
 from mkdocs.exceptions import Abort, BuildError
@@ -43,9 +43,12 @@ def count_warnings(fn: Callable) -> Callable:
     return wrapped
 
 
-def handle_exceptions(fn: Callable) -> Callable:
+T = TypeVar("T")
+
+
+def handle_exceptions(fn: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(fn)
-    def wrapped(config: MkDocsConfig, *args, **kwargs):
+    def wrapped(config: MkDocsConfig, *args, **kwargs) -> T:
         try:
             return fn(config, *args, **kwargs)
         except Exception as e:
