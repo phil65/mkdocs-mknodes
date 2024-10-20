@@ -120,6 +120,12 @@ class PluginConfig(base.Config):
     """Jinja variable end string."""
     jinja_on_undefined = c.Type(str, default="strict")
     """Jinja undefined macro behavior."""
+    llm_base_url = c.Type(str, default="http://localhost:11434")
+    """Base URL for LLM usage."""
+    llm_token = c.Optional(c.Type(str))
+    """(Optional) token for the LLM API."""
+    llm_model_name = c.Optional(c.Type(str))
+    """LLM model name to use."""
 
     def get_builder(self) -> Callable:
         build_fn = classhelpers.to_callable(self.build_fn)
