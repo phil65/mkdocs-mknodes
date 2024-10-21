@@ -39,7 +39,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         self.link_replacer = linkreplacer.LinkReplacer()
         logger.debug("Finished initializing plugin")
 
-    def on_startup(self, command: CommandStr, dirty: bool = False):
+    def on_startup(self, *, command: CommandStr, dirty: bool):
         """Activates new-style MkDocs plugin lifecycle."""
         if self.config.build_folder:
             self.build_folder = pathlib.Path(self.config.build_folder)
@@ -78,7 +78,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             env_config=self.config.get_jinja_config(),
         )
 
-    def on_files(self, files: Files, config: MkDocsConfig) -> Files:
+    def on_files(self, files: Files, *, config: MkDocsConfig) -> Files:
         """Create the node tree and write files to build folder.
 
         In this step we aggregate all files and info we need to build the website.
@@ -142,8 +142,10 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
     def on_nav(
         self,
         nav: Navigation,
-        files: Files,
+        /,
+        *,
         config: MkDocsConfig,
+        files: Files,
     ) -> Navigation | None:
         """Populate LinkReplacer and build path->MkPage mapping for following steps."""
         for file_ in files:
@@ -153,7 +155,14 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             self.link_replacer.mapping[filename].append(url)
         return nav
 
-    def on_env(self, env: jinja2.Environment, config: MkDocsConfig, files: Files):
+    def on_env(
+        self,
+        env: jinja2.Environment,
+        /,
+        *,
+        config: MkDocsConfig,
+        files: Files,
+    ) -> jinja2.Environment | None:
         """Add our own info to the MkDocs environment."""
         rope_env = jinjarope.Environment()
         env.globals["mknodes"] = rope_env.globals
@@ -168,6 +177,8 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
     def on_pre_page(
         self,
         page: Page,
+        /,
+        *,
         config: MkDocsConfig,
         files: Files,
     ) -> Page | None:
@@ -182,6 +193,8 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
     def on_page_markdown(
         self,
         markdown: str,
+        /,
+        *,
         page: Page,
         config: MkDocsConfig,
         files: Files,
@@ -189,7 +202,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         """During this phase links get replaced and `jinja2` stuff get rendered."""
         return self.link_replacer.replace(markdown, page.file.src_uri)
 
-    def on_post_build(self, config: MkDocsConfig):
+    def on_post_build(self, *, config: MkDocsConfig) -> None:
         """Delete the temporary template files."""
         if not config.theme.custom_dir or not self.config.build_fn:
             return
