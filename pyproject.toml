@@ -235,6 +235,7 @@ combine-as-imports = true
 [tool.pyright]
 reportUnusedCallResult = false
 reportUnknownVariableType = false
+reportImplicitOverride = false
 
 [tool.mknodes]
 allowed-commit-types = [
