@@ -101,3 +101,6 @@ class MkNodesConfig:
     watch: list[pathlib.Path] = dataclasses.field(default_factory=list)
     """A list of extra paths to watch while running `mkdocs serve`."""
     validation: dict = dataclasses.field(default_factory=dict)
+    llm_base_url: str = "http://localhost:11434"
+    llm_token: str = ""
+    llm_model: str = ""
