@@ -146,3 +146,9 @@ def _build(
         file.page.validate_anchor_links(files=files, log_level=log_level)
     # Run `post_build` plugin events.
     config.plugins.on_post_build(config=config)
+
+
+if __name__ == "__main__":
+    config = mkdocsconfigfile.MkDocsConfigFile("mkdocs.yml")
+    print(config.dump_config())
+    build("mkdocs.yml", ".", "mkdocs_mknodes.manual.root:Build.build")
