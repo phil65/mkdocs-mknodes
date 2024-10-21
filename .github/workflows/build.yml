@@ -10,26 +10,34 @@ jobs:
         python_version: ["3.11", "3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python_version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python_version }}
+
       - name: Install uv
         uses: yezz123/setup-uv@v4
+
       - name: Setup Graphviz
         uses: ts-graphviz/setup-graphviz@v2
+
       - name: Install dependencies
         run: |
           uv sync --all-extras
+
       - name: Lint and typecheck
         run: |
           uv run ruff check .
           uv run ruff format --check .
           uv run mypy mkdocs_mknodes/
+
       - name: Test
         run: |
           uv run pytest --cov-report=xml
+
       - uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -45,22 +53,28 @@ jobs:
       id-token: write
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
       - name: Install uv
         uses: yezz123/setup-uv@v4
-      - name: Build
+
+      - name: Build package
         run: |
           uv build
-      - name: Publish on PyPI
+
+      - name: Publish package on PyPI
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.UV_PUBLISH_TOKEN }}
         run: |
           uv publish
-      - name: Create release
+
+      - name: Publish package on GitHub
         uses: ncipollo/release-action@v1
         with:
           draft: true
