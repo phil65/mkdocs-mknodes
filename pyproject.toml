@@ -78,6 +78,7 @@ dev-dependencies = [
   "mkdocs-material >= 9.5",
   "pymdown-extensions",
   "mkdocstrings[python]",
+  "griffe-fieldz",
   # dev
   "pyreadline3",
   "pyinstrument",
