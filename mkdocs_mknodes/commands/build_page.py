@@ -10,7 +10,7 @@ from urllib.parse import urljoin
 from mkdocs.commands import build as mkdocs_build
 from mkdocs.config import load_config
 from mkdocs.plugins import get_plugin_logger
-from mkdocs.structure.files import InclusionLevel, get_files, set_exclusions
+from mkdocs.structure.files import InclusionLevel
 from mkdocs.structure.nav import get_navigation
 from mkdocs.structure.pages import Page
 from mknodes.info import mkdocsconfigfile
@@ -97,17 +97,17 @@ def _build(
             logger.info("The directory contains stale files. Use --clean to remove them.")
     # First gather all data from all files/pages to ensure all data is
     # consistent across all pages.
-    files = get_files(config)
+    files = utils.get_files(config)
     env = config.theme.get_env()
     files.add_files_from_theme(env, config)
     files = config.plugins.on_files(files, config=config)
     # If plugins have added files without setting inclusion level, calculate it again.
-    set_exclusions(files._files, config)
+    utils.set_exclusions(files._files, config)
     nav = get_navigation(files, config)
     # Run `nav` plugin events.
     nav = config.plugins.on_nav(nav, config=config, files=files)
     logger.debug("Reading markdown pages.")
-    excluded = []
+    excluded: list[str] = []
     for file in files.documentation_pages(inclusion=inclusion):
         logger.debug("Reading: %s", file.src_uri)
         if file.page is None and file.inclusion.is_not_in_nav():

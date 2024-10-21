@@ -34,6 +34,7 @@ requires-python = ">=3.11"
 dependencies = [
     # MkDocs
     "mkdocs >=1.5",
+    "pathspec",
     "mknodes",
     # CLI
     "rich",
