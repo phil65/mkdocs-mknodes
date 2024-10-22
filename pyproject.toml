@@ -237,6 +237,7 @@ combine-as-imports = true
 reportUnusedCallResult = false
 reportUnknownVariableType = false
 reportImplicitOverride = false
+reportAny = false
 
 [tool.mknodes]
 allowed-commit-types = [
