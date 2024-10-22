@@ -8,6 +8,7 @@ import pathlib
 import pprint
 from typing import TYPE_CHECKING
 
+import logfire
 import mknodes as mk
 from mknodes.utils import log, resources
 
@@ -227,6 +228,7 @@ class BuildCollector:
             templates=templates,
         )
 
+    @logfire.instrument("collect_page: {page.title}")
     def collect_page(self, page: mk.MkPage):
         """Preprocess page and collect its data.
 
@@ -245,6 +247,7 @@ class BuildCollector:
         if show_info:
             add_page_info(page, req)
 
+    @logfire.instrument("render_page: {page.title}")
     def render_page(self, page: mk.MkPage):
         """Convert a page to markdown/HTML.
 
@@ -260,6 +263,7 @@ class BuildCollector:
 
         self.node_files[page.resolved_file_path] = md
 
+    @logfire.instrument("collect_nav: {nav.title}")
     def collect_nav(self, nav: mk.MkNav):
         """Preprocess nav and collect its data.
 
@@ -273,6 +277,7 @@ class BuildCollector:
         self.resources.merge(req)
         update_nav_template(nav)
 
+    @logfire.instrument("render_nav: {nav.title}")
     def render_nav(self, nav: mk.MkNav):
         """Convert a nav to markdown/HTML.
 

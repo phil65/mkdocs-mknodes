@@ -14,8 +14,12 @@ import logfire
 
 
 def setup_logfire():
-    logfire.configure()
-
+    code_source = logfire.CodeSource(
+        repository="https://github.com/phil65/mkdocs_mknodes",
+        revision="main",
+        root_path=".",
+    )
+    logfire.configure(code_source=code_source)
     logger = logging.getLogger()
     handler = logfire.LogfireLoggingHandler()
     handler.setLevel(logging.DEBUG)
