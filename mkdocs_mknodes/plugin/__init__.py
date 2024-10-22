@@ -7,14 +7,14 @@ import urllib.parse
 import tempfile
 from typing import TYPE_CHECKING, Literal
 
-from mkdocs.plugins import BasePlugin, get_plugin_logger
+from mkdocs.plugins import BasePlugin
 import mknodes as mk
 from mknodes.info import contexts, folderinfo, linkprovider, reporegistry
 from mknodes.utils import linkreplacer
 
 import jinjarope
 
-from mkdocs_mknodes import buildcollector, mkdocsconfig
+from mkdocs_mknodes import buildcollector, mkdocsconfig, telemetry
 from mkdocs_mknodes.backends import markdownbackend, mkdocsbackend
 from mkdocs_mknodes.plugin import pluginconfig, rewriteloader
 
@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     # from mkdocs.utils.templates import TemplateContext
 
 
-logger = get_plugin_logger(__name__)
+logger = telemetry.get_plugin_logger(__name__)
 
 CommandStr = Literal["build", "serve", "gh-deploy"]
 
