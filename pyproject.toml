@@ -12,8 +12,8 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Software Development :: Documentation",
     "Topic :: Software Development :: User Interfaces",
@@ -30,7 +30,7 @@ keywords = [
     "markdown",
 ]
 
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     # MkDocs
     "mkdocs >=1.5",
@@ -109,7 +109,7 @@ exclude_lines = [
 ]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 disable_error_code = ["assignment", "misc", "import", "has-type"]
 pretty = true
 
@@ -118,7 +118,7 @@ line-length = 90
 extend-exclude = [
     'docs',
 ]
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = [
