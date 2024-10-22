@@ -20,7 +20,11 @@ def setup_logfire():
         root_path=".",
     )
     # console_opts = logfire.ConsoleOptions()
-    logfire.configure(code_source=code_source, console=False)
+    logfire.configure(
+        code_source=code_source,
+        console=False,
+        send_to_logfire="if-token-present",
+    )
     # logger = logging.getLogger("mkdocs")
     # handler = logfire.LogfireLoggingHandler()
     # handler.setLevel(logging.DEBUG)
