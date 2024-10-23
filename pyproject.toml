@@ -1,7 +1,7 @@
 [project]
 name = "mkdocs-mknodes"
 authors = [
-  { name = "Philipp Temminghoff", email = "philipptemminghoff@gmail.com" }
+    { name = "Philipp Temminghoff", email = "philipptemminghoff@gmail.com" },
 ]
 description = "Don't write docs. Code them."
 readme = "README.md"
@@ -73,26 +73,26 @@ path = "mkdocs_mknodes/__init__.py"
 
 [tool.uv]
 dev-dependencies = [
-  # lint
-  "ruff",
-  "mypy",
-  # test
-  "pytest",
-  "pytest-cov",
-  # docs
-  "mkdocs-material >= 9.5",
-  "pymdown-extensions",
-  "mkdocstrings[python]",
-  "griffe-fieldz",
-  # dev
-  "pyreadline3",
-  "pyinstrument",
-  # used for formatting signature
-  "black",
-  "pygments",
-  # Material Social addon
-  "cairosvg",
-  "pillow",
+    # lint
+    "ruff",
+    "mypy[faster-cache]",
+    # test
+    "pytest",
+    "pytest-cov",
+    # docs
+    "mkdocs-material >= 9.5",
+    "pymdown-extensions",
+    "mkdocstrings[python]",
+    "griffe-fieldz",
+    # dev
+    "pyreadline3",
+    "pyinstrument",
+    # used for formatting signature
+    "black",
+    "pygments",
+    # Material Social addon
+    "cairosvg",
+    "pillow",
 ]
 
 [tool.pytest.ini_options]
@@ -110,7 +110,7 @@ exclude_lines = [
     "if TYPE_CHECKING:",
     "@overload",
     "except ImportError",
-    'if __name__ == "__main__":'
+    'if __name__ == "__main__":',
 ]
 
 [tool.mypy]
@@ -120,77 +120,75 @@ pretty = true
 
 [tool.ruff]
 line-length = 90
-extend-exclude = [
-    'docs',
-]
+extend-exclude = ['docs']
 target-version = "py312"
 
 [tool.ruff.lint]
 select = [
-    "A",    # Flake8-builtins
+    "A", # Flake8-builtins
     # "ANN",  # Flake8-Annotations
     # "ASYNC",  # Flake8-Async
     # "ARG",  # # Flake8-Unused-Arguments
-    "B",    # flake8-bugbear
-    "BLE",  # Flake8-blind-except
+    "B",   # flake8-bugbear
+    "BLE", # Flake8-blind-except
     "C",
-    "C4",   # flake8-comprehensions
+    "C4",  # flake8-comprehensions
     # "C90",  # MCCabe
-    "COM",  #  Flake8-commas
+    "COM", #  Flake8-commas
     # "CPY",  #  Copyright-related rules
-    "D",    # PyDocStyle
+    "D", # PyDocStyle
     # "DTZ",  # Flake8- Datetimez
-    "E",    # PyCodeStyle Error
-    "EM",   # flake8-errmsg
+    "E",  # PyCodeStyle Error
+    "EM", # flake8-errmsg
     # "ERA",  #  Eradicate
-    "EXE",  # flake8-executable
-    "F",    # PyFlakes
+    "EXE", # flake8-executable
+    "F",   # PyFlakes
     "FA",  # flake8-future-annotations
     # "FBT",  # flake8-boolean-trap
     # "FIX",  # flake8-fixme
-    "FLY",  # flynt
-    "G",    #  flake8-logging-format
-    "I",    # ISort
-    "ICN",  # Flake8-import-conventions
-    "INP",  # flake8-no-pep420
-    "INT",  # flake8-gettext
-    "ISC",  # flake8-implicit-str-concat
-    "N",    # pep8-naming
+    "FLY", # flynt
+    "G",   #  flake8-logging-format
+    "I",   # ISort
+    "ICN", # Flake8-import-conventions
+    "INP", # flake8-no-pep420
+    "INT", # flake8-gettext
+    "ISC", # flake8-implicit-str-concat
+    "N",   # pep8-naming
     # "NPY",  # numpy-specific rules
     # "PD",   # pandas-vet
     "PERF", # perflint
     # "PGH",  # pygrep-hooks
-    "PIE",  # flake8-pie
-    "PLE",  # PyLint Error
-    "PLC",  # PyLint convention
+    "PIE", # flake8-pie
+    "PLE", # PyLint Error
+    "PLC", # PyLint convention
     # "PLW",  # PyLint Warning
-    "PLR",  # PyLint refactor
-    "PT",   # flake8-pytest-style
-    "PTH",  # flake8-use-pathlib
-    "PYI",  # flake8-pyi
-    "Q",    # flake8-quotes
-    "RET",  # flake8-return
-    "RSE",  # flake8-raise
-    "RUF",  # ruff-specific rules
+    "PLR", # PyLint refactor
+    "PT",  # flake8-pytest-style
+    "PTH", # flake8-use-pathlib
+    "PYI", # flake8-pyi
+    "Q",   # flake8-quotes
+    "RET", # flake8-return
+    "RSE", # flake8-raise
+    "RUF", # ruff-specific rules
     # "S",    # flake8-bandit
     "SIM",  # flake8-simplify
     "SLF",  # flake8-self
-    "SLOT",  # flake8-slots
+    "SLOT", # flake8-slots
     # "T",
     # "TD",   # flake8-todos
-    "T10",  # flake8-debugger
+    "T10", # flake8-debugger
     # "T20",  # flake8-print
     # "TCH",  # flake8-type-checking
-    "TID",  # flake8-tidy-imports
-    "TRY",  # tryceratops
-    "UP",   # PyUpgrade
-    "W",    # PyCodeStyle warning
-    "YTT",  # flake8-2020
+    "TID", # flake8-tidy-imports
+    "TRY", # tryceratops
+    "UP",  # PyUpgrade
+    "W",   # PyCodeStyle warning
+    "YTT", # flake8-2020
 ]
 ignore = [
-    "C408",    # Unnecessary {obj_type} call (rewrite as a literal)
-    "B905",    # zip() without an explicit strict= parameter
-    "C901",    # {name} is too complex ({complexity} > {max_complexity})
+    "C408", # Unnecessary {obj_type} call (rewrite as a literal)
+    "B905", # zip() without an explicit strict= parameter
+    "C901", # {name} is too complex ({complexity} > {max_complexity})
     # "CPY001", # Missing copyright notice at top of file
     "COM812",
     "D100",    # Missing docstring in public module
