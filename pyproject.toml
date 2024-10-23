@@ -43,7 +43,7 @@ dependencies = [
     "jinja2",
     "jinjarope",
     "universal_pathlib",
-    "logfire[requests,httpx,aiohttp,system-metrics]",
+    "logfire[requests,aiohttp,system-metrics]",
     "opentelemetry-instrumentation-urllib3",
     # "opentelemetry-instrumentation-sqlite3",
     "opentelemetry-instrumentation-urllib",
@@ -243,6 +243,7 @@ reportUnusedCallResult = false
 reportUnknownVariableType = false
 reportImplicitOverride = false
 reportAny = false
+pythonVersion = "3.12"
 
 [tool.mknodes]
 allowed-commit-types = [
