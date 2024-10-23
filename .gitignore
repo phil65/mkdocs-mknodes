@@ -41,5 +41,8 @@ ENV/
 # .vscode
 .vscode/
 
+# PyCharm
+.idea/
+
 # OS files
 .DS_Store
