@@ -13,16 +13,17 @@ import time
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from mkdocs import exceptions
-from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.files import File, Files, InclusionLevel, _file_sort_key
 import pathspec
+
+from mkdocs_mknodes import telemetry
 
 
 if TYPE_CHECKING:
     from mkdocs.config.defaults import MkDocsConfig
 
 
-logger = get_plugin_logger(__name__)
+logger = telemetry.get_plugin_logger(__name__)
 
 _default_exclude = pathspec.gitignore.GitIgnoreSpec.from_lines([".*", "/templates/"])
 

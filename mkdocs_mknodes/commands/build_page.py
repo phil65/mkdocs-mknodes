@@ -11,13 +11,13 @@ import logfire
 from mkdocs import exceptions
 from mkdocs.commands import build as mkdocs_build
 from mkdocs.config import load_config
-from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.files import InclusionLevel
 from mkdocs.structure.nav import get_navigation
 from mkdocs.structure.pages import Page
 from mknodes.info import mkdocsconfigfile
 from mknodes.utils import pathhelpers, yamlhelpers
 
+from mkdocs_mknodes import telemetry
 from mkdocs_mknodes.commands import utils
 
 
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from mkdocs.structure.files import Files
 
 
-logger = get_plugin_logger(__name__)
+logger = telemetry.get_plugin_logger(__name__)
 
 
 def build(

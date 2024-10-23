@@ -4,16 +4,15 @@ import os
 from typing import TYPE_CHECKING
 
 from mkdocs.config.defaults import MkDocsConfig
-from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure import files as files_, nav, pages
 
-from mkdocs_mknodes import mkdocsconfig
+from mkdocs_mknodes import mkdocsconfig, telemetry
 
 
 if TYPE_CHECKING:
     import mknodes as mk
 
-logger = get_plugin_logger(__name__)
+logger = telemetry.get_plugin_logger(__name__)
 
 
 class MkDocsPage(pages.Page):

@@ -8,17 +8,16 @@ from jinjarope import serializefilters
 import markdown
 from mkdocs.config import config_options
 from mkdocs.config.defaults import MkDocsConfig
-from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure import files as files_
 from mknodes.utils import pathhelpers, resources
 import upath
 
-from mkdocs_mknodes import mkdocsconfig
+from mkdocs_mknodes import mkdocsconfig, telemetry
 from mkdocs_mknodes.backends import buildbackend
 from mkdocs_mknodes.plugin import mkdocsbuilder, mkdocshelpers
 
 
-logger = get_plugin_logger(__name__)
+logger = telemetry.get_plugin_logger(__name__)
 
 
 class MkDocsBackend(buildbackend.BuildBackend):

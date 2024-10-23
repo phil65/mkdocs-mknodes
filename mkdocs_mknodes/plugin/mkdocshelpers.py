@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import pathlib
 
-from mkdocs.plugins import get_plugin_logger
 from mkdocs.structure.files import File, Files
 
+from mkdocs_mknodes import telemetry
 
-logger = get_plugin_logger(__name__)
+
+logger = telemetry.get_plugin_logger(__name__)
 
 
 def file_sorter(f: File):

@@ -14,13 +14,14 @@ from urllib import parse
 import jinjarope
 from mkdocs.__main__ import get_deps_command
 from mkdocs.config.defaults import MkDocsConfig
-from mkdocs.plugins import get_plugin_logger
 from mknodes.info import contexts
 from mknodes.mdlib import mdconverter
 from mknodes.utils import pathhelpers, reprhelpers
 
+from mkdocs_mknodes import telemetry
 
-logger = get_plugin_logger(__name__)
+
+logger = telemetry.get_plugin_logger(__name__)
 
 
 @contextlib.contextmanager
