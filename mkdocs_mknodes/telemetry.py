@@ -37,9 +37,10 @@ def setup_logfire():
     # URLLibInstrumentor().instrument()
     logfire.instrument_requests()
     logfire.instrument_system_metrics()
-    logfire.instrument_httpx()
     logfire.instrument_aiohttp_client()
+    # logfire.instrument_httpx()
     # logfire.install_auto_tracing("mkdocs")
+
     # litellm.success_callback = ["logfire"]
     # litellm.callbacks = ["logfire"]
 
