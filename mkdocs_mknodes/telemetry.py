@@ -24,6 +24,7 @@ def setup_logfire():
         code_source=code_source,
         console=False,
         send_to_logfire="if-token-present",
+        service_name="mkdocs-mknodes",
     )
     # logger = logging.getLogger("mkdocs")
     # handler = logfire.LogfireLoggingHandler()
