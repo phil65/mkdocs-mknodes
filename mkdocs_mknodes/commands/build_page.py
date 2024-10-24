@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import os
+import pathlib
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urljoin
 
@@ -105,7 +106,7 @@ def _build(
         logger.warning("A 'dirty' build is being performed (for site dev purposes only)")
     if not live_server_url:  # pragma: no cover
         logger.info("Building documentation to directory: %s", config.site_dir)
-        if dirty and mkdocs_build.site_directory_contains_stale_files(config.site_dir):
+        if dirty and contains_files(config.site_dir):
             logger.info("The directory contains stale files. Use --clean to remove them.")
     # First gather all data from all files/pages to ensure all data is
     # consistent across all pages.
@@ -214,6 +215,16 @@ def _populate_page(
         raise
     finally:
         config._current_page = None
+
+
+def contains_files(folder: str | os.PathLike[str]) -> bool:
+    """Check if given path exists and contains any files or folders.
+
+    Args:
+        folder: The folder to check
+    """
+    path = pathlib.Path(folder)
+    return path.exists() and any(path.iterdir())
 
 
 if __name__ == "__main__":
