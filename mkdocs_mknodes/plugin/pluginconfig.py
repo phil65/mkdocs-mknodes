@@ -11,7 +11,7 @@ from mknodes.utils import classhelpers
 
 
 class PluginConfig(base.Config):
-    build_fn = c.Optional(c.Type(str))
+    build_fn = c.Type(str, default="mkdocs_mknodes:parse")
     """Path to the build script / callable.
 
     Possible formats:
