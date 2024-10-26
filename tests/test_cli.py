@@ -4,6 +4,7 @@ import pathlib
 import tempfile
 from unittest import mock
 
+import pytest
 from typer.testing import CliRunner
 
 from mkdocs_mknodes import cli
@@ -60,3 +61,7 @@ def test_create_config():
         catch_exceptions=False,
     )
     assert result.exit_code == 0
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

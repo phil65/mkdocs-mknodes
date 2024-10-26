@@ -4,6 +4,7 @@ import pathlib
 import tempfile
 
 import mknodes as mk
+import pytest
 
 from mkdocs_mknodes import buildcollector, mkdocsconfig
 from mkdocs_mknodes.backends import markdownbackend, mkdocsbackend
@@ -56,4 +57,4 @@ def test_templates():
 
 
 if __name__ == "__main__":
-    test_templates()
+    pytest.main([__file__])
