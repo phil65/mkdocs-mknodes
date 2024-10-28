@@ -41,8 +41,14 @@ ENV/
 # .vscode
 .vscode/
 
+# aider
+.aider
+
 # PyCharm
 .idea/
 
 # OS files
 .DS_Store
+
+# uv
+uv.lock
