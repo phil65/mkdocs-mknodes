@@ -72,6 +72,8 @@ plugins:
           options:
             extensions:
               - griffe_fieldz: { include_inherited: true }
+              # - griffe_pydantic:
+              #     schema: true
             # https://mkdocstrings.github.io/python/usage/
             show_signature_annotations: true
             show_symbol_type_toc: true
