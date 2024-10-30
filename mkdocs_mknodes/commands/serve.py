@@ -75,13 +75,18 @@ def serve_node(node, repo_path: str = "."):
 
 
 @contextlib.contextmanager
-def catch_exceptions(config, site_dir):
+def catch_exceptions(config: MkDocsConfig):
+    """Context manager used to clean up in case of build error.
+
+    Args:
+        config: Build config.
+    """
     try:
         yield
     finally:
         config.plugins.on_shutdown()
-        if pathlib.Path(site_dir).is_dir():
-            shutil.rmtree(site_dir)
+        if pathlib.Path(config.site_dir).is_dir():
+            shutil.rmtree(config.site_dir)
 
 
 def _serve(
@@ -150,7 +155,7 @@ def _serve(
 
     server.error_handler = error_handler
 
-    try:
+    with catch_exceptions(config):
         # Perform the initial build
         builder(config)
 
@@ -176,7 +181,3 @@ def _serve(
             logger.info("Shutting down...")
         finally:
             server.shutdown()
-    finally:
-        config.plugins.on_shutdown()
-        if site_dir.is_dir():
-            shutil.rmtree(site_dir)
