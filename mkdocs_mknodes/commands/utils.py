@@ -5,11 +5,13 @@ from __future__ import annotations
 import collections
 from collections.abc import Callable, Iterable
 import contextlib
+import datetime
 import functools
 import gzip
 import logging
 import os
 import pathlib
+import re
 import time
 from typing import TYPE_CHECKING, Any, TypeVar
 
@@ -177,3 +179,24 @@ def write_gzip(output_path: str | os.PathLike[str], output: str, timestamp: int)
         gzip.GzipFile(gz_filename, fileobj=f, mode="wb", mtime=timestamp) as gz_buf,
     ):
         gz_buf.write(output.encode())
+
+
+def get_build_datetime() -> datetime.datetime:
+    """Returns an aware datetime object.
+
+    Support SOURCE_DATE_EPOCH environment variable for reproducible builds.
+    See https://reproducible-builds.org/specs/source-date-epoch/
+    """
+    source_date_epoch = os.environ.get("SOURCE_DATE_EPOCH")
+    if source_date_epoch is None:
+        return datetime.datetime.now(datetime.UTC)
+
+    return datetime.datetime.fromtimestamp(int(source_date_epoch), datetime.UTC)
+
+
+_ERROR_TEMPLATE_RE = re.compile(r"^\d{3}\.html?$")
+
+
+def is_error_template(path: str) -> bool:
+    """Return True if the given file path is an HTTP error template."""
+    return bool(_ERROR_TEMPLATE_RE.match(path))

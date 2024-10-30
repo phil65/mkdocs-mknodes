@@ -7,7 +7,6 @@ from datetime import UTC, datetime
 import io
 import os
 import pathlib
-import re
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urljoin, urlsplit
 
@@ -300,7 +299,7 @@ def _build_template(
     # Run `pre_template` plugin events.
     template = config.plugins.on_pre_template(template, template_name=name, config=config)
 
-    if is_error_template(name):
+    if utils.is_error_template(name):
         # Force absolute URLs in the nav of error pages and account for the
         # possibility that the docs root might be different than the server root.
         # See https://github.com/mkdocs/mkdocs/issues/77.
@@ -379,29 +378,8 @@ def get_build_timestamp(*, pages: Collection[Page] | None = None) -> int:
         date_string = max(p.update_date for p in pages)
         dt = datetime.fromisoformat(date_string).replace(tzinfo=UTC)
     else:
-        dt = get_build_datetime()
+        dt = utils.get_build_datetime()
     return int(dt.timestamp())
-
-
-def get_build_datetime() -> datetime:
-    """Returns an aware datetime object.
-
-    Support SOURCE_DATE_EPOCH environment variable for reproducible builds.
-    See https://reproducible-builds.org/specs/source-date-epoch/
-    """
-    source_date_epoch = os.environ.get("SOURCE_DATE_EPOCH")
-    if source_date_epoch is None:
-        return datetime.now(UTC)
-
-    return datetime.fromtimestamp(int(source_date_epoch), UTC)
-
-
-_ERROR_TEMPLATE_RE = re.compile(r"^\d{3}\.html?$")
-
-
-def is_error_template(path: str) -> bool:
-    """Return True if the given file path is an HTTP error template."""
-    return bool(_ERROR_TEMPLATE_RE.match(path))
 
 
 if __name__ == "__main__":
