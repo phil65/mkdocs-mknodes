@@ -12,7 +12,7 @@ from urllib.parse import urljoin, urlsplit
 
 import jinja2
 from jinja2.exceptions import TemplateNotFound
-from jinjarope import htmlfilters
+from jinjarope import envtests, htmlfilters
 import logfire
 from mkdocs import exceptions
 from mkdocs.commands import build as mkdocs_build
@@ -46,6 +46,7 @@ def build(
     config_path: str | os.PathLike[str],
     repo_path: str,
     build_fn: str | None,
+    *,
     site_dir: str | None = None,
     clone_depth: int = 100,
     **kwargs: Any,
@@ -118,7 +119,7 @@ def _build(
         logger.warning("A 'dirty' build is being performed (for site dev purposes only)")
     if not live_server_url:  # pragma: no cover
         logger.info("Building documentation to directory: %s", config.site_dir)
-        if dirty and contains_files(config.site_dir):
+        if dirty and envtests.contains_files(config.site_dir):
             logger.info("The directory contains stale files. Use --clean to remove them.")
     # First gather all data from all files/pages to ensure all data is
     # consistent across all pages.
@@ -278,16 +279,6 @@ def _build_page(
         config._current_page = None
 
 
-def contains_files(folder: str | os.PathLike[str]) -> bool:
-    """Check if given path exists and contains any files or folders.
-
-    Args:
-        folder: The folder to check
-    """
-    path = pathlib.Path(folder)
-    return path.exists() and any(path.iterdir())
-
-
 def _build_template(
     name: str,
     template: jinja2.Template,
@@ -372,6 +363,12 @@ def get_build_timestamp(*, pages: Collection[Page] | None = None) -> int:
 
     In reality this is just today's date because that's how pages' update time
     is populated.
+
+    Args:
+        pages: Optional collection of pages to determine timestamp from
+
+    Returns:
+        Unix timestamp as integer
     """
     if pages:
         # Lexicographic comparison is OK for ISO date.
