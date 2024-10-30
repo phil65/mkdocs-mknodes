@@ -38,7 +38,7 @@ def test_build(mock_build):
     )
 
 
-@mock.patch("mkdocs.livereload.LiveReloadServer.serve", autospec=True)
+@mock.patch("mkdocs_mknodes.liveserver.LiveServer.serve", autospec=True)
 @mock.patch("mkdocs_mknodes.commands.build_page._build", autospec=True)
 def test_serve_default(mock_build, mock_serve):
     runner = CliRunner()

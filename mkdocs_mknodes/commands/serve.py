@@ -11,11 +11,10 @@ from urllib.parse import urlsplit
 
 # from mkdocs.commands import serve as serve_
 from mkdocs.config import load_config
-from mkdocs.livereload import LiveReloadServer
 from mknodes.info import mkdocsconfigfile
 from mknodes.utils import log, yamlhelpers
 
-from mkdocs_mknodes import paths
+from mkdocs_mknodes import liveserver, paths
 from mkdocs_mknodes.commands import build_page
 
 
@@ -139,7 +138,7 @@ def _serve(
             config = get_config()
         build_page._build(config, live_server_url=url, dirty=is_dirty)
 
-    server = LiveReloadServer(
+    server = liveserver.LiveServer(
         builder=builder,
         host=host,
         port=port,
@@ -170,7 +169,7 @@ def _serve(
                     server.watch(d)
 
             # Run `serve` plugin events.
-            server = config.plugins.on_serve(server, config=config, builder=builder)
+            server = config.plugins.on_serve(server, config=config, builder=builder)  # type: ignore[arg-type]
 
             for item in config.watch:
                 server.watch(item)
