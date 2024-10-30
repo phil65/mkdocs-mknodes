@@ -127,21 +127,15 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         super().__init__((host, port), _Handler, bind_and_activate=False)
         self.set_app(self.serve_request)
 
-        self._wanted_epoch = (
-            _timestamp()
-        )  # The version of the site that started building.
-        self._visible_epoch = (
-            self._wanted_epoch
-        )  # Latest fully built version of the site.
-        self._epoch_cond = (
-            threading.Condition()
-        )  # Must be held when accessing _visible_epoch.
-
+        self._wanted_epoch = _timestamp()
+        """Version of the site that started building."""
+        self._visible_epoch = self._wanted_epoch
+        """Latest fully built version of the site."""
+        self._epoch_cond = threading.Condition()
+        """Hold this lock when accessing _visible_epoch."""
         self._want_rebuild: bool = False
-        self._rebuild_cond = (
-            threading.Condition()
-        )  # Must be held when accessing _want_rebuild.
-
+        self._rebuild_cond = threading.Condition()
+        """Hold this lock when accessing _want_rebuild."""
         self._shutdown = False
         self.serve_thread = threading.Thread(
             target=lambda: self.serve_forever(shutdown_delay)
