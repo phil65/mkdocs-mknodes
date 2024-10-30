@@ -53,13 +53,13 @@ def build(
 ):
     """Build a MkNodes-based website.
 
-    Arguments:
-        config_path: The path to the config file to use
-        repo_path: Path to the repository a page should be built for
-        build_fn: Callable to use for creating the webpage
-        site_dir: Path for the website build
-        clone_depth: If repository is remote, the amount of commits to fetch
-        kwargs: Optional config values (overrides value from config)
+    Args:
+        config_path: Path to the MkDocs config file
+        repo_path: Repository path/URL to build docs for
+        build_fn: Fully qualified name of build function to use
+        site_dir: Output directory for built site
+        clone_depth: Number of commits to fetch for Git repos
+        kwargs: Additional config overrides passed to MkDocs
     """
 
     def build_config():
