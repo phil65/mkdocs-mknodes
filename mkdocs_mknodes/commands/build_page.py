@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Collection, Sequence
 from datetime import UTC, datetime
-import gzip
 import io
 import os
 import pathlib
@@ -339,17 +338,10 @@ def _build_theme_template(
     if output.strip():
         output_path = pathlib.Path(config.site_dir) / template_name
         pathhelpers.write_file(output.encode(), output_path)
-
         if template_name == "sitemap.xml":
-            logger.debug("Gzipping template: %s", template_name)
-            gz_filename = pathlib.Path(f"{output_path}.gz")
             docs = files.documentation_pages()
             ts = get_build_timestamp(pages=[f.page for f in docs if f.page is not None])
-            with (
-                gz_filename.open("wb") as f,
-                gzip.GzipFile(gz_filename, fileobj=f, mode="wb", mtime=ts) as gz_buf,
-            ):
-                gz_buf.write(output.encode())
+            utils.write_gzip(f"{output_path}.gz", output, timestamp=ts)
     else:
         logger.info("Template skipped: '%s' generated empty output.", template_name)
 

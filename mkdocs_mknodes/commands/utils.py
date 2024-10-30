@@ -6,6 +6,7 @@ import collections
 from collections.abc import Callable, Iterable
 import contextlib
 import functools
+import gzip
 import logging
 import os
 import pathlib
@@ -157,3 +158,22 @@ def get_files(config: MkDocsConfig) -> Files:
             with contextlib.suppress(ValueError):
                 files.remove(b)
     return Files(files)
+
+
+def write_gzip(output_path: str | os.PathLike[str], output: str, timestamp: int):
+    """Build a gzipped version of the sitemap.
+
+    Args:
+        output_path: Path to the sitemap
+        output: File content
+        timestamp: Optional numeric timestamp to be written to the last modification time
+                   field in the stream when compressing.
+                   If omitted or None, the current time is used.
+    """
+    logger.debug("Gzipping %r", output_path)
+    gz_filename = pathlib.Path(output_path)
+    with (
+        gz_filename.open("wb") as f,
+        gzip.GzipFile(gz_filename, fileobj=f, mode="wb", mtime=timestamp) as gz_buf,
+    ):
+        gz_buf.write(output.encode())
