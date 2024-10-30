@@ -25,6 +25,7 @@ import webbrowser
 import wsgiref.simple_server
 import wsgiref.util
 
+from jinjarope import htmlfilters
 from mknodes.utils import log
 import watchdog.events
 import watchdog.observers.polling
@@ -78,21 +79,6 @@ livereload(${epoch}, ${request_id});
 _SCRIPT_TEMPLATE = string.Template(_SCRIPT_TEMPLATE_STR)
 
 logger = log.get_logger(__name__)
-
-
-def _inject_js_into_html(content: bytes, epoch: int) -> bytes:
-    try:
-        body_end = content.rindex(b"</body>")
-    except ValueError:
-        body_end = len(content)
-    # Page will reload if the livereload poller returns a newer epoch than what it knows.
-    # The other timestamp becomes just a unique identifier for the initiating page.
-    script = _SCRIPT_TEMPLATE.substitute(epoch=epoch, request_id=_timestamp())
-    return b"%b<script>%b</script>%b" % (
-        content[:body_end],
-        script.encode(),
-        content[body_end:],
-    )
 
 
 # class _LoggerAdapter(logging.LoggerAdapter):
@@ -363,7 +349,8 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         if self._watched_paths and file_path.suffix == ".html":
             with file:
                 content = file.read()
-            content = _inject_js_into_html(content, epoch)
+            script = _SCRIPT_TEMPLATE.substitute(epoch=epoch, request_id=_timestamp())
+            content = htmlfilters.inject_javascript(content, script)
             file = io.BytesIO(content)
             content_len = len(content)
         else:
