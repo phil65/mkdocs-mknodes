@@ -182,10 +182,13 @@ def write_gzip(output_path: str | os.PathLike[str], output: str, timestamp: int)
 
 
 def get_build_datetime() -> datetime.datetime:
-    """Returns an aware datetime object.
+    """Get the build datetime, respecting SOURCE_DATE_EPOCH if set.
 
     Support SOURCE_DATE_EPOCH environment variable for reproducible builds.
     See https://reproducible-builds.org/specs/source-date-epoch/
+
+    Returns:
+        Aware datetime object
     """
     source_date_epoch = os.environ.get("SOURCE_DATE_EPOCH")
     if source_date_epoch is None:
@@ -198,5 +201,12 @@ _ERROR_TEMPLATE_RE = re.compile(r"^\d{3}\.html?$")
 
 
 def is_error_template(path: str) -> bool:
-    """Return True if the given file path is an HTTP error template."""
+    """Check if a template path is an error code template (like "404.html").
+
+    Args:
+        path: Template path to check
+
+    Returns:
+        True if path matches error template pattern
+    """
     return bool(_ERROR_TEMPLATE_RE.match(path))
