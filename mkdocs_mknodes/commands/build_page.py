@@ -6,7 +6,6 @@ from collections.abc import Collection, Sequence
 from datetime import UTC, datetime
 import io
 import os
-import pathlib
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urljoin, urlsplit
 
@@ -22,6 +21,7 @@ from mkdocs.structure.nav import Navigation, get_navigation
 from mkdocs.structure.pages import Page
 from mknodes.info import mkdocsconfigfile
 from mknodes.utils import pathhelpers, yamlhelpers
+import upath
 
 from mkdocs_mknodes import telemetry
 from mkdocs_mknodes.commands import utils
@@ -287,12 +287,10 @@ def _build_template(
     nav: Navigation,
 ) -> str:
     """Return rendered output for given template as a string."""
-    # Run `pre_template` plugin events.
     template = config.plugins.on_pre_template(template, template_name=name, config=config)
 
     if utils.is_error_template(name):
-        # Force absolute URLs in the nav of error pages and account for the
-        # possibility that the docs root might be different than the server root.
+        # Force absolute URLs for error pages. Docs root & server root might differ.
         # See https://github.com/mkdocs/mkdocs/issues/77.
         # However, if site_url is not set, assume the docs root and server root
         # are the same. See https://github.com/mkdocs/mkdocs/issues/1598.
@@ -300,10 +298,8 @@ def _build_template(
     else:
         base_url = htmlfilters.relative_url_mkdocs(".", name)
     context = mkdocs_build.get_context(nav, files, config, base_url=base_url)
-    # Run `template_context` plugin events.
     ctx = config.plugins.on_template_context(context, template_name=name, config=config)
     output = template.render(ctx)
-    # Run `post_template` plugin events.
     return config.plugins.on_post_template(output, template_name=name, config=config)
 
 
@@ -326,7 +322,7 @@ def _build_theme_template(
     output = _build_template(template_name, template, files, config, nav)
 
     if output.strip():
-        output_path = pathlib.Path(config.site_dir) / template_name
+        output_path = upath.UPath(config.site_dir) / template_name
         pathhelpers.write_file(output.encode(), output_path)
         if template_name == "sitemap.xml":
             docs = files.documentation_pages()
