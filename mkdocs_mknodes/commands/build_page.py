@@ -66,10 +66,10 @@ def build(
     cfg_builder.add_config_file(config_path)
     config = cfg_builder.build_mkdocs_config(site_dir=site_dir, **kwargs)
     with logfire.span("plugins callback: on_startup", config=config):
-        config.plugins.run_event("startup", command="build", dirty=False)
+        config.plugins.on_startup(command="build", dirty=False)
     _build(config)
     with logfire.span("plugins callback: shutdown", config=config):
-        config.plugins.run_event("shutdown")
+        config.plugins.on_shutdown()
 
 
 @utils.handle_exceptions
