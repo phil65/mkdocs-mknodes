@@ -56,7 +56,7 @@ def lint_check(ctx):
 @duty(capture=False)
 def docs_test_build(ctx):
     """Build some test pages."""
-    ctx.run("uv run mkdocs build -v")
+    ctx.run("uv run mknodes build -v")
     opts = "-d ../site/mkdocs -p configs/mkdocs_mkdocs.yml -v --clone-depth 100"
     ctx.run(f"uv run mknodes build {opts}")
 
