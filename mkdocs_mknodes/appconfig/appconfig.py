@@ -234,7 +234,7 @@ if __name__ == "__main__":
     import devtools
     import yaml
 
-    text = pathlib.Path("mkdocs.yml").read_text()
+    text = pathlib.Path("mkdocs.yml").read_text("utf-8")
     cfg = yaml.unsafe_load(text)
     config = AppConfig(**cfg)
 
