@@ -104,9 +104,6 @@ def _build(
         live_server_url: An optional URL of the live server to use
         dirty: Do a dirty build
     """
-    inclusion = (
-        InclusionLevel.is_in_serve if live_server_url else InclusionLevel.is_included
-    )
     with logfire.span("plugins callback: on_config", config=config):
         config = config.plugins.on_config(config)
     with logfire.span("plugins callback: on_pre_build", config=config):
@@ -136,6 +133,9 @@ def _build(
         nav = config.plugins.on_nav(nav, config=config, files=files)
     logger.debug("Reading markdown pages.")
     excluded: list[str] = []
+    inclusion = (
+        InclusionLevel.is_in_serve if live_server_url else InclusionLevel.is_included
+    )
     with logfire.span("populate pages"):
         for file in files.documentation_pages(inclusion=inclusion):
             with logfire.span(f"populate page for {file.src_uri}", file=file):
