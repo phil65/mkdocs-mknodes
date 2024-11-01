@@ -8,7 +8,8 @@ from mknodes.info.mkdocsconfigfile import MkDocsConfigFile
 
 import typer as t
 
-from mknodes.utils import classhelpers, log, yamlhelpers
+from jinjarope import yamltools
+from mknodes.utils import classhelpers, log
 import mknodes as mk
 
 from mkdocs_mknodes import buildcollector, paths
@@ -170,7 +171,7 @@ def create_config(
     config["site_name"] = info.distribution_name
     config["site_author"] = info.author_name
     config["copyright"] = f"Copyright © {datetime.now().year} {info.author_name}"
-    result = yamlhelpers.dump_yaml(config)
+    result = yamltools.dump_yaml(config)
     print(result)
 
 

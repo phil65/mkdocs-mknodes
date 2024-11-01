@@ -4,10 +4,10 @@ import io
 import os
 from typing import Any
 
+from jinjarope import yamltools
 from mkdocs.config import load_config
 from mkdocs.config.defaults import MkDocsConfig
 from mknodes.info import mkdocsconfigfile
-from mknodes.utils import yamlhelpers
 
 from mkdocs_mknodes import telemetry
 
@@ -35,7 +35,7 @@ class ConfigBuilder:
     def build_mkdocs_config(self, **kwargs: Any) -> MkDocsConfig:
         cfg = self.configs[0]
         cfg = {**cfg, **kwargs}
-        text = yamlhelpers.dump_yaml(cfg)
+        text = yamltools.dump_yaml(cfg)
         buffer = io.StringIO(text)
         buffer.name = self.configs[0].path
         config = load_config(buffer, **kwargs)
