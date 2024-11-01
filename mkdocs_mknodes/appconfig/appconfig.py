@@ -84,7 +84,7 @@ class PluginConfig(BaseModel):
 class AppConfig(BaseModel):
     """Represents the full configuration for a MkDocs project."""
 
-    # config_file_path: str | None = Field(None, description="Path to the config file.")
+    config_file_path: str | None = Field(None, description="Path to the config file.")
 
     # Site information
     site_name: str = Field(..., description="The name of the project documentation.")
