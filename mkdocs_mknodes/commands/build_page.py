@@ -316,7 +316,7 @@ def _build_theme_template(
     try:
         template = env.get_template(template_name)
     except TemplateNotFound:
-        logger.warning("Template skipped: '%s' not found in theme dirs.", template_name)
+        logger.warning("Template skipped: %r not found in theme dirs.", template_name)
         return
 
     output = _build_template(template_name, template, files, config, nav)
@@ -329,7 +329,7 @@ def _build_theme_template(
             ts = get_build_timestamp(pages=[f.page for f in docs if f.page is not None])
             utils.write_gzip(f"{output_path}.gz", output, timestamp=ts)
     else:
-        logger.info("Template skipped: '%s' generated empty output.", template_name)
+        logger.info("Template skipped: %r generated empty output.", template_name)
 
 
 def _build_extra_template(
@@ -340,18 +340,18 @@ def _build_extra_template(
 
     file = files.get_file_from_path(template_name)
     if file is None:
-        logger.warning("Template skipped: '%s' not found in docs_dir.", template_name)
+        logger.warning("Template skipped: %r not found in docs_dir.", template_name)
         return
     try:
         template = jinja2.Template(file.content_string)
     except Exception as e:  # noqa: BLE001
-        logger.warning("Error reading template '%s': %s", template_name, e)
+        logger.warning("Error reading template %r: %s", template_name, e)
         return
     output = _build_template(template_name, template, files, config, nav)
     if output.strip():
         pathhelpers.write_file(output.encode(), file.abs_dest_path)
     else:
-        logger.info("Template skipped: '%s' generated empty output.", template_name)
+        logger.info("Template skipped: %r generated empty output.", template_name)
 
 
 def get_build_timestamp(*, pages: Collection[Page] | None = None) -> int:
