@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Collection, Sequence
 from datetime import UTC, datetime
-import io
 import os
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urljoin, urlsplit
@@ -15,15 +14,15 @@ from jinjarope import envtests, htmlfilters
 import logfire
 from mkdocs import exceptions
 from mkdocs.commands import build as mkdocs_build
-from mkdocs.config import load_config
 from mkdocs.structure.files import InclusionLevel
 from mkdocs.structure.nav import Navigation, get_navigation
 from mkdocs.structure.pages import Page
 from mknodes.info import mkdocsconfigfile
-from mknodes.utils import pathhelpers, yamlhelpers
+from mknodes.utils import pathhelpers
 import upath
 
 from mkdocs_mknodes import telemetry
+from mkdocs_mknodes.builders import configbuilder
 from mkdocs_mknodes.commands import utils
 
 
@@ -61,25 +60,11 @@ def build(
         clone_depth: Number of commits to fetch for Git repos
         kwargs: Additional config overrides passed to MkDocs
     """
-
-    def build_config():
-        cfg = mkdocsconfigfile.MkDocsConfigFile(config_path)
-        cfg.update_mknodes_section(
-            repo_url=repo_path,
-            build_fn=build_fn,
-            clone_depth=clone_depth,
-        )
-        if site_dir:
-            cfg["site_dir"] = site_dir
-        text = yamlhelpers.dump_yaml(dict(cfg))
-        buffer = io.StringIO(text)
-        buffer.name = config_path
-        config = load_config(buffer, **kwargs)
-        for k, v in config.items():
-            logger.debug("%s: %s", k, v)
-        return config
-
-    config = build_config()
+    cfg_builder = configbuilder.ConfigBuilder(
+        repo_path=repo_path, build_fn=build_fn, clone_depth=clone_depth
+    )
+    cfg_builder.add_config_file(config_path)
+    config = cfg_builder.build_mkdocs_config(site_dir=site_dir, **kwargs)
     with logfire.span("plugins callback: on_startup", config=config):
         config.plugins.run_event("startup", command="build", dirty=False)
     _build(config)
