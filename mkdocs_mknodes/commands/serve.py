@@ -94,7 +94,7 @@ def _serve(
     build_type: Literal["clean", "dirty"] | None = None,
     watch_theme: bool = False,
     watch: list[str] | None = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> None:
     """Start the MkDocs development server.
 
