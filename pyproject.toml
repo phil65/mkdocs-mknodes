@@ -88,6 +88,7 @@ dev-dependencies = [
     # dev
     "pyreadline3",
     "pyinstrument",
+    "devtools",
     # used for formatting signature
     "black",
     "pygments",
@@ -243,6 +244,7 @@ reportUnknownVariableType = false
 reportImplicitOverride = false
 reportAny = false
 pythonVersion = "3.12"
+reportUnannotatedClassAttribute = false
 
 [tool.mknodes]
 allowed-commit-types = [
