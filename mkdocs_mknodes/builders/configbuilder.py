@@ -32,14 +32,13 @@ class ConfigBuilder:
         cfg = mkdocsconfigfile.MkDocsConfigFile(path)
         self.configs.append(cfg)
 
-    def build_mkdocs_config(self, **kwargs: Any) -> MkDocsConfig:
+    def build_mkdocs_config(
+        self, site_dir: str | os.PathLike[str] | None = None, **kwargs: Any
+    ) -> MkDocsConfig:
         cfg = self.configs[0]
-        cfg = {**cfg, **kwargs}
-        text = yamltools.dump_yaml(cfg)
-        buffer = io.StringIO(text)
-        buffer.name = self.configs[0].path
-        config = load_config(buffer, **kwargs)
-        for plugin in config["plugins"]:
+        if site_dir:
+            cfg["site_dir"] = site_dir
+        for plugin in cfg["plugins"]:
             if "mknodes" in plugin:
                 if self.repo_path is not None:
                     plugin["mknodes"]["repo_path"] = self.repo_path
@@ -47,6 +46,12 @@ class ConfigBuilder:
                     plugin["mknodes"]["build_fn"] = self.build_fn
                 if self.clone_depth is not None:
                     plugin["mknodes"]["clone_depth"] = self.clone_depth
+        # cfg = {**cfg, **kwargs}
+        text = yamltools.dump_yaml(dict(cfg))
+        buffer = io.StringIO(text)
+        buffer.name = cfg.path
+        config = load_config(buffer, **kwargs)
+
         for k, v in config.items():
             logger.debug("%s: %s", k, v)
         return config
