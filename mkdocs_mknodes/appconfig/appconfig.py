@@ -126,7 +126,10 @@ class AppConfig(BaseModel):
     """Represents the full configuration for a MkDocs project."""
 
     site_name: str = Field(...)
-    """The title to use for the documentation.
+    """The title to use as the main title for the project documentation.
+
+    This is a required setting that defines the main title that will appear at the top of your
+    documentation site and be used in the HTML title tags.
 
     Example in mkdocs.yml:
     ```yaml
@@ -135,19 +138,26 @@ class AppConfig(BaseModel):
     """
 
     site_url: HttpUrl | None = Field(None)
-    """The full URL where the documentation will be hosted.
+    """The full canonical URL of the site.
+
+    Sets the canonical URL of the site. This will add a <link> tag with the canonical URL
+    to the <head> section of each HTML page. If the site will be hosted in a subdirectory,
+    include that directory in the URL (e.g., https://example.com/foo/).
+
+    This setting is also used for mkdocs serve: the server will be mounted onto a path taken
+    from the path component of the URL.
 
     Example in mkdocs.yml:
     ```yaml
-    site_url: https://myproject.github.io
+    site_url: https://example.com/foo/
     ```
     """
 
     site_description: str | None = Field(None)
     """A description for the documentation project.
 
-    Will be added to the HTML meta tags.
-    This helps with SEO and provides context when the site is shared.
+    Will be added to the HTML meta tags. This helps with SEO and provides context
+    when the site is shared on social media and other platforms.
 
     Example in mkdocs.yml:
     ```yaml
@@ -158,6 +168,8 @@ class AppConfig(BaseModel):
     site_author: str | None = Field(None)
     """The name of the author to add to the HTML meta tags.
 
+    This information appears in the meta tags of your generated HTML pages.
+
     Example in mkdocs.yml:
     ```yaml
     site_author: John Doe
@@ -165,7 +177,9 @@ class AppConfig(BaseModel):
     """
 
     copyright: str | None = Field(None)
-    """A copyright notice to add to the footer of documentation.
+    """A copyright notice to add to the footer of documentation pages.
+
+    This text will appear in the footer section of every documentation page.
 
     Example in mkdocs.yml:
     ```yaml
@@ -173,20 +187,12 @@ class AppConfig(BaseModel):
     ```
     """
 
-    repo_name: str | None = Field(None)
-    """A name to use for the link to the project source repo.
-    If repo_url is set but repo_name is not, it will default to "GitHub", "Bitbucket",
-    or "GitLab" for known URLs, or the hostname for unknown URLs.
-
-    Example in mkdocs.yml:
-    ```yaml
-    repo_name: MyProject
-    repo_url: https://github.com/username/myproject
-    ```
-    """
-
     repo_url: HttpUrl | None = Field(None)
-    """A link to the project source repository.
+    """A link to the project's source code repository.
+
+    When set, a link to your repository will be shown on each page. Some themes may show
+    this link in a different location or style. Compatible with GitHub, BitBucket, GitLab
+    and other hosting services.
 
     Example in mkdocs.yml:
     ```yaml
@@ -195,10 +201,11 @@ class AppConfig(BaseModel):
     """
 
     edit_uri: str | None = Field(None)
-    """A URI to the docs directory in the project source repo, relative to the repo_url.
+    """Path to the docs directory in the source repo, relative to repo_url.
 
-    When set, a link directly to the page in the source repo will be added
-    to the generated HTML.
+    When set, provides a direct edit link to the page source in your repository. The link is
+    constructed by concatenating repo_url and edit_uri, then appending the page path.
+    For GitHub wikis, use format: '{path_noext}/_edit'
 
     Example in mkdocs.yml:
     ```yaml
