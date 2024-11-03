@@ -19,7 +19,7 @@ class MarkdownBackend(buildbackend.BuildBackend):
     ):
         """Constructor.
 
-        Arguments:
+        Args:
             directory: build directory
             extension: Extention of files to generate
         """

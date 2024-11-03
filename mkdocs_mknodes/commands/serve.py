@@ -35,7 +35,7 @@ def serve(
 ):
     """Serve a MkNodes-based website.
 
-    Arguments:
+    Args:
         config_path: The path to the config file to use
         repo_path: Path to the repository a page should be built for
         build_fn: Callable to use for creating the webpage
@@ -103,7 +103,7 @@ def _serve(
     it will rebuild the documentation and refresh the page automatically
     whenever a file is edited.
 
-    Arguments:
+    Args:
         config_file: Config file to use
         livereload: Reload on file changes
         build_type: Type of the build

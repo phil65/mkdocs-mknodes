@@ -84,7 +84,7 @@ def _build(
     This method does NOT call the the startup / shutdown event hooks.
     If that is desired, build() should be called.
 
-    Arguments:
+    Args:
         config: Config to use
         live_server_url: An optional URL of the live server to use
         dirty: Do a dirty build

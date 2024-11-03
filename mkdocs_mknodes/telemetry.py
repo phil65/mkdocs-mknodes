@@ -52,7 +52,7 @@ class PrefixedLogger(logging.LoggerAdapter):
     def __init__(self, prefix: str, logger: logging.Logger) -> None:
         """Initialize the logger adapter.
 
-        Arguments:
+        Args:
             prefix: The string to insert in front of every message.
             logger: The logger instance.
         """
@@ -62,7 +62,7 @@ class PrefixedLogger(logging.LoggerAdapter):
     def process(self, msg: str, kwargs: MutableMapping[str, Any]) -> tuple[str, Any]:
         """Process the message.
 
-        Arguments:
+        Args:
             msg: The message:
             kwargs: Remaining arguments.
 
@@ -75,7 +75,7 @@ class PrefixedLogger(logging.LoggerAdapter):
 def get_plugin_logger(name: str) -> PrefixedLogger:
     """Return a logger for plugins.
 
-    Arguments:
+    Args:
         name: The name to use with `logging.getLogger`.
 
     Returns:

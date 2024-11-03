@@ -122,7 +122,7 @@ class Config:
     def __init__(self, config: Mapping | str | os.PathLike[str] | None = None):
         """Constructor.
 
-        Arguments:
+        Args:
             config: MkDocs config
         """
         match config:
@@ -180,7 +180,7 @@ class Config:
     ) -> mdconverter.MdConverter:
         """Return a markdown instance based on given config.
 
-        Arguments:
+        Args:
             additional_extensions: Additional extensions to use
             config_override: Dict with extension settings. Overrides config settings.
         """
@@ -196,7 +196,7 @@ class Config:
         If no explicit edit path is given, this will return the path
         to the builder function.
 
-        Arguments:
+        Args:
             edit_path: Edit path
         """
         repo_url = self.repo_url
@@ -238,7 +238,7 @@ class Config:
     ):
         """Add javascript to the config.
 
-        Arguments:
+        Args:
             path: Path / URL to the javascript file
             defer: Add defer attribute to <script> tag
             async_: Add async attribute to <script> tag

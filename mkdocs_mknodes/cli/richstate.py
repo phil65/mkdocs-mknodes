@@ -11,7 +11,7 @@ class RichState:
     def __init__(self, log_name: str | None = None, level: int = logging.INFO):
         """Constructor.
 
-        Arguments:
+        Args:
             log_name: Logger name
             level: Logging level
         """

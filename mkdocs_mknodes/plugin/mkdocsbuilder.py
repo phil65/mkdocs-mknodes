@@ -36,7 +36,7 @@ class MkDocsBuilder:
     ):
         """Constructor.
 
-        Arguments:
+        Args:
             config: MkDocs Config
         """
         match config:
@@ -57,7 +57,7 @@ class MkDocsBuilder:
     ) -> files_.File:
         """Return a MkDocs File for given path.
 
-        Arguments:
+        Args:
             path: path to get a File object for (relative to src_dir)
             src_dir: Source directory. If None, docs_dir is used.
             dest_dir: Target directory. If None, site_dir is used.

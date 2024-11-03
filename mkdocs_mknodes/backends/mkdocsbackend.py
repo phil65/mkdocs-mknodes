@@ -29,7 +29,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
     ):
         """Constructor.
 
-        Arguments:
+        Args:
             files: A Files collection to use for new files
             config: An MkDocs config
             directory: The build directory

@@ -25,7 +25,7 @@ logger = log.get_logger(__name__)
 def add_page_info(page: mk.MkPage, req: resources.Resources):
     """Add a collapsed admonition box showing some page-related data.
 
-    Arguments:
+    Args:
         page: Page which should get updated.
         req: Resources of the page (passed in to avoid having to collect them again)
     """
@@ -52,7 +52,7 @@ def add_page_info(page: mk.MkPage, req: resources.Resources):
 def update_page_template(page: mk.MkPage):
     """Set template filename, metadata reference and `extends` path for given page.
 
-    Arguments:
+    Args:
         page: Page of the template
     """
     if page.template:
@@ -74,7 +74,7 @@ def update_page_template(page: mk.MkPage):
 def update_nav_template(nav: mk.MkNav):
     """Set template filename, metadata reference and `extends` path for given nav.
 
-    Arguments:
+    Args:
         nav: Nav of the template
     """
     if nav.page_template:
@@ -138,7 +138,7 @@ def process_resources(page: mk.MkPage) -> resources.Resources:
 def _get_extends_from_parent(node: mk.MkPage | mk.MkNav) -> str | None:
     """Check parent navs for a page template and return its path if one was found.
 
-    Arguments:
+    Args:
         node: Node to get the `extends` path for
     """
     for nav in node.parent_navs:
@@ -160,7 +160,7 @@ class BuildCollector:
     ):
         """Constructor.
 
-        Arguments:
+        Args:
             backends: A list of backends which should be used for building
             show_page_info: Add a admonition box containing page build info to each page
             global_resources: If False, make page resources non-global by moving them
@@ -180,7 +180,7 @@ class BuildCollector:
     def collect(self, root: mk.MkNode, theme: mk.Theme):
         """Collect build stuff from given node + theme.
 
-        Arguments:
+        Args:
             root: A node to collect build stuff from
             theme: A theme to collect build stuff from.
         """
@@ -232,7 +232,7 @@ class BuildCollector:
     def collect_page(self, page: mk.MkPage):
         """Preprocess page and collect its data.
 
-        Arguments:
+        Args:
             page: Page to collect the data from.
         """
         if page.resolved_metadata.inclusion_level is False:
@@ -251,7 +251,7 @@ class BuildCollector:
     def render_page(self, page: mk.MkPage):
         """Convert a page to markdown/HTML.
 
-        Arguments:
+        Args:
             page: Page to render.
         """
         md = page.to_markdown()
@@ -267,7 +267,7 @@ class BuildCollector:
     def collect_nav(self, nav: mk.MkNav):
         """Preprocess nav and collect its data.
 
-        Arguments:
+        Args:
             nav: Nav to collect the data from.
         """
         logger.info("Processing section %r...", nav.title or "[ROOT]")
@@ -281,7 +281,7 @@ class BuildCollector:
     def render_nav(self, nav: mk.MkNav):
         """Convert a nav to markdown/HTML.
 
-        Arguments:
+        Args:
             nav: Nav to render.
         """
         md = nav.to_markdown()
