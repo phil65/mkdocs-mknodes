@@ -40,62 +40,91 @@ class NavItem(BaseModel):
 
 
 class ThemeConfig(BaseModel):
-    """Configuration for the MkDocs theme."""
+    """Configuration settings for the MkDocs themes.
 
-    class Config:
-        extra = "allow"
-        populate_by_name = True
+    !!! info "Theme Configuration Options"
+        The theme configuration allows for extensive customization including custom
+        directories, static templates, and locale settings.
+
+    ## Properties Overview
+
+    | Property | Description | Required |
+    |----------|-------------|----------|
+    | name | Theme identifier | Yes |
+    | custom_dir | Custom theme directory | No |
+    | static_templates | Additional static pages | No |
+    | locale | Language/locale setting | No |
+    """
 
     name: str = Field(...)
-    """The name of the theme to use.
+    """Specifies the theme to use for documentation rendering.
 
-    Common values include 'material', 'mkdocs', 'readthedocs'.
+    !!! info "Common Theme Options"
+        - `material`: Material for MkDocs theme
+        - `mkdocs`: Default MkDocs theme
+        - `readthedocs`: ReadTheDocs theme
 
-    Example in mkdocs.yml:
-    ```yaml
-    theme:
-      name: material
-    ```
+    !!! example "Basic Configuration"
+        ```yaml
+        theme:
+          name: material
+        ```
     """
 
     custom_dir: DirectoryPath | None = Field(None)
-    """Directory containing a custom theme. Used to override or extend the selected theme.
+    """Directory containing custom theme overrides or extensions.
 
-    Example in mkdocs.yml:
-    ```yaml
-    theme:
-      name: material
-      custom_dir: custom_theme/
-    ```
+    !!! tip "Theme Customization"
+        Use this to override or extend the selected theme's templates and assets.
+
+    !!! example "Custom Directory Setup"
+        ```yaml
+        theme:
+          name: material
+          custom_dir: custom_theme/
+        ```
     """
 
     static_templates: list[str] | None = Field(None)
-    """List of templates to render as static pages. These templates will be rendered
-    even if they are not referenced in the navigation.
+    """Defines templates to be rendered as static pages, regardless of nav structure.
 
-    Example in mkdocs.yml:
-    ```yaml
-    theme:
-      name: material
-      static_templates:
-        - sitemap.html
-        - 404.html
-        - custom_page.html
-    ```
+    !!! info "Common Use Cases"
+        - Error pages (404, 500)
+        - Sitemaps
+        - Custom static pages
+
+    !!! example "Static Templates Configuration"
+        ```yaml
+        theme:
+          name: material
+          static_templates:
+            - sitemap.html
+            - 404.html
+            - custom_page.html
+        ```
     """
 
     locale: str | None = Field(None)
-    """The locale to use for the theme
+    """Defines the language and regional settings for the theme.
 
-    Affects language-specific elements like date formats
-    and UI text. Uses standard locale codes (e.g., 'en', 'fr', 'de', 'ja').
+    !!! info "Locale Impact"
+        Affects:
+        - Date formats
+        - UI text translations
+        - RTL/LTR text direction
 
-    Example in mkdocs.yml:
-    ```yaml
-    theme:
-      name: material
-      locale: en_US
-    ```
+    !!! example "Locale Setting"
+        ```yaml
+        theme:
+          name: material
+          locale: en_US
+        ```
+
+    !!! tip "Common Locales"
+        - `en_US`: English (United States)
+        - `fr_FR`: French (France)
+        - `de_DE`: German (Germany)
+        - `ja_JP`: Japanese (Japan)
     """
     # Material-related
     # palette: dict[str, Any] | None = Field(
@@ -123,142 +152,238 @@ class PluginConfig(BaseModel):
 
 
 class AppConfig(BaseModel):
-    """Represents the full configuration for a MkDocs project."""
+    """The main configuration class for MkDocs projects.
+
+    This class defines all available settings for customizing your documentation site.
+
+    !!! tip "Configuration File"
+        All settings are typically defined in `mkdocs.yml` at your project root.
+
+    !!! warning "Required Fields"
+        At minimum, your configuration must include:
+        - `site_name`
+        - `theme` configuration
+    """
 
     site_name: str = Field(...)
-    """The title to use as the main title for the project documentation.
+    """The primary title for your documentation project.
 
-    This is a required setting that defines the main title that will appear at the top of your
-    documentation site and be used in the HTML title tags.
+    !!! info "Usage"
+        This title will appear:
+        - At the top of your documentation
+        - In browser tab titles
+        - In search engine results
 
-    Example in mkdocs.yml:
-    ```yaml
-    site_name: My Project Documentation
-    ```
+    !!! example "Configuration"
+        ```yaml
+        site_name: My Project Documentation
+        ```
     """
 
     site_url: HttpUrl | None = Field(None)
-    """The full canonical URL of the site.
+    """The canonical URL for your documentation site.
 
-    Sets the canonical URL of the site. This will add a <link> tag with the canonical URL
-    to the <head> section of each HTML page. If the site will be hosted in a subdirectory,
-    include that directory in the URL (e.g., https://example.com/foo/).
+    !!! info "Purpose"
+        - Adds canonical URL meta tags to HTML
+        - Configures the development server base path
+        - Helps with SEO optimization
 
-    This setting is also used for mkdocs serve: the server will be mounted onto a path taken
-    from the path component of the URL.
+    !!! warning "Subdirectory Hosting"
+        If hosting in a subdirectory, include it in the URL:
+        ```yaml
+        site_url: https://example.com/docs/
+        ```
 
-    Example in mkdocs.yml:
-    ```yaml
-    site_url: https://example.com/foo/
-    ```
+    !!! example "Basic Configuration"
+        ```yaml
+        site_url: https://example.com/
+        ```
     """
 
     site_description: str | None = Field(None)
-    """A description for the documentation project.
+    """A concise description of your documentation project.
 
-    Will be added to the HTML meta tags. This helps with SEO and provides context
-    when the site is shared on social media and other platforms.
+    !!! info "SEO Impact"
+        - Appears in search engine results
+        - Used in social media cards
+        - Improves site discoverability
 
-    Example in mkdocs.yml:
-    ```yaml
-    site_description: Official documentation for Xyz - A Python library for data analysis
-    ```
+    !!! example "Configuration"
+        ```yaml
+        site_description: Official documentation for XYZ - A data analysis library
+        ```
     """
 
     site_author: str | None = Field(None)
-    """The name of the author to add to the HTML meta tags.
+    """The name of the documentation author or organization.
 
-    This information appears in the meta tags of your generated HTML pages.
+    !!! info "Usage"
+        - Added to HTML meta tags
+        - Used for attribution
+        - Helpful for SEO
 
-    Example in mkdocs.yml:
-    ```yaml
-    site_author: John Doe
-    ```
+    !!! example "Configuration"
+        ```yaml
+        site_author: John Doe
+        ```
     """
 
     copyright: str | None = Field(None)
-    """A copyright notice to add to the footer of documentation pages.
+    """Copyright information displayed in the documentation footer.
 
-    This text will appear in the footer section of every documentation page.
+    !!! tip "Formatting"
+        You can use HTML entities and Unicode characters for © symbol:
+        - `&copy;`
+        - `©`
 
-    Example in mkdocs.yml:
-    ```yaml
-    copyright: '© 2024 MyProject Team'
-    ```
+    !!! example "Configuration"
+        ```yaml
+        copyright: '© 2024 MyProject Team. All rights reserved.'
+        ```
     """
 
     repo_url: HttpUrl | None = Field(None)
-    """A link to the project's source code repository.
+    """Link to your project's source code repository.
 
-    When set, a link to your repository will be shown on each page. Some themes may show
-    this link in a different location or style. Compatible with GitHub, BitBucket, GitLab
-    and other hosting services.
+    !!! info "Supported Platforms"
+        - GitHub
+        - GitLab
+        - Bitbucket
+        - Custom Git repositories
 
-    Example in mkdocs.yml:
-    ```yaml
-    repo_url: https://github.com/username/project
-    ```
+    !!! tip "Integration Features"
+        - Adds repository link to documentation
+        - Enables "Edit on GitHub" (or similar) buttons
+        - Integrates with version control features
+
+    !!! example "Configuration"
+        ```yaml
+        repo_url: https://github.com/username/project
+        ```
     """
 
     edit_uri: str | None = Field(None)
-    """Path to the docs directory in the source repo, relative to repo_url.
+    """Path to documentation source files in your repository.
 
-    When set, provides a direct edit link to the page source in your repository. The link is
-    constructed by concatenating repo_url and edit_uri, then appending the page path.
-    For GitHub wikis, use format: '{path_noext}/_edit'
+    !!! info "Construction"
+        The full edit URL is built by combining:
+        - `repo_url`
+        - `edit_uri`
+        - Current page path
 
-    Example in mkdocs.yml:
-    ```yaml
-    edit_uri: edit/main/docs/
-    ```
+    !!! tip "Common Patterns"
+        | Platform | Typical Format |
+        |----------|---------------|
+        | GitHub   | `edit/main/docs/` |
+        | GitLab   | `-/edit/main/docs/` |
+        | GitHub Wiki | `{path_noext}/_edit` |
+
+    !!! example "Configuration"
+        ```yaml
+        edit_uri: edit/main/docs/
+        ```
     """
 
     remote_branch: str | None = Field(None)
-    """The remote branch to commit to when using gh-deploy.
+    """Target branch for deployment when using gh-deploy command.
 
-    Example in mkdocs.yml:
-    ```yaml
-    remote_branch: gh-pages  # default
-    ```
+    !!! info "Default Value"
+        If not specified, defaults to `gh-pages`
+
+    !!! tip "Common Use Cases"
+        - GitHub Pages deployment
+        - Documentation versioning
+        - Staging environments
+
+    !!! example "Configuration"
+        ```yaml
+        remote_branch: gh-pages
+        # or
+        remote_branch: documentation
+        ```
     """
 
     remote_name: str | None = Field(None)
-    """The remote name to push to when using gh-deploy.
+    """Git remote for deployment with gh-deploy command.
 
-    Example in mkdocs.yml:
-    ```yaml
-    remote_name: origin  # default
-    ```
+    !!! info "Default Value"
+        If not specified, defaults to `origin`
+
+    !!! example "Configuration"
+        ```yaml
+        remote_name: origin
+        # or
+        remote_name: documentation
+        ```
+
+    !!! tip "Multiple Remotes"
+        Useful when maintaining separate remotes for:
+        - Code repository
+        - Documentation hosting
+        - Staging environments
     """
 
     docs_dir: DirectoryPath = Field("docs")
-    """The directory containing the documentation markdown files.
+    """Directory containing documentation markdown source files.
 
-    Example in mkdocs.yml:
-    ```yaml
-    docs_dir: documentation
-    ```
+    !!! info "Path Resolution"
+        - Relative paths: Resolved from mkdocs.yml location
+        - Absolute paths: Used as-is from filesystem root
+
+    !!! warning "Important Notes"
+        - Must be different from `site_dir`
+        - Should contain only documentation source files
+        - Binary files here will be copied to `site_dir`
+
+    !!! example "Configuration"
+        ```yaml
+        docs_dir: documentation
+        # or
+        docs_dir: /absolute/path/to/docs
+        ```
     """
 
     site_dir: DirectoryPath = Field("site")
-    """The directory where the site will be built to.
+    """Directory where the built HTML site will be created.
 
-    Example in mkdocs.yml:
-    ```yaml
-    site_dir: public
-    ```
+    !!! warning "Version Control"
+        - Add this directory to `.gitignore`
+        - Don't manually edit files in this directory
+        - Contents are overwritten on each build
+
+    !!! tip "Best Practices"
+        - Keep separate from source files
+        - Use for deployment only
+        - Clear directory before builds
+
+    !!! example "Configuration"
+        ```yaml
+        site_dir: public
+        # or
+        site_dir: build
+        ```
     """
 
     extra_templates: list[DirectoryPath] | None = Field(None)
-    """Similar to extra_css/js, but each template (HTML or XML) will be built with
-    Jinja2 and the global context.
+    """Additional template files to be processed by MkDocs.
 
-    Example in mkdocs.yml:
-    ```yaml
-    extra_templates:
-      - templates/custom.html
-      - templates/footer.html
-    ```
+    !!! info "Template Processing"
+        - Templates are processed with Jinja2
+        - Have access to global context
+        - Can generate HTML or XML output
+
+    !!! tip "Template Locations"
+        Templates must be in either:
+        - Theme's template directory
+        - Custom directory specified in theme config
+
+    !!! example "Configuration"
+        ```yaml
+        extra_templates:
+          - templates/sitemap.xml
+          - templates/robots.txt
+          - templates/custom_layout.html
+        ```
     """
 
     theme: ThemeConfig = Field(...)
@@ -281,86 +406,169 @@ class AppConfig(BaseModel):
     """
 
     use_directory_urls: bool = Field(True)
-    """If True, use <page_name>/index.html style files with hyperlinks to the directory.
-    If False, use <page_name>.html style file with hyperlinks to the file.
-    True generates nicer URLs, but False is useful if browsing the output on a filesystem.
+    """Controls URL structure of the generated documentation site.
 
-    Example in mkdocs.yml:
-    ```yaml
-    use_directory_urls: true  # default
-    ```
+    !!! info "URL Formats"
+        | Setting | URL Format | File Structure |
+        |---------|------------|----------------|
+        | `True`  | site.com/page/ | pretty URLs |
+        | `False` | site.com/page.html | file-based URLs |
+
+    !!! warning "When to Disable"
+        Consider setting to `False` when:
+        - Serving files directly from filesystem
+        - Using Amazon S3 static hosting
+        - Working with systems that don't support URL rewrites
+
+    !!! example "Configuration"
+        ```yaml
+        use_directory_urls: true  # default
+        # or
+        use_directory_urls: false  # for file-based URLs
+        ```
     """
 
     strict: bool = Field(False)
-    """Enabling strict mode causes MkDocs to stop the build when a problem is encountered
-    rather than display an error message.
+    """Controls how MkDocs handles warnings during build process.
 
-    Example in mkdocs.yml:
-    ```yaml
-    strict: true
-    ```
+    !!! info "Behavior"
+        - `True`: Treats warnings as errors, fails build
+        - `False`: Shows warnings but continues build
+
+    !!! tip "Use Cases"
+        Enable strict mode for:
+        - CI/CD pipelines
+        - Quality assurance
+        - Pre-release validation
+
+    !!! example "Configuration"
+        ```yaml
+        strict: true
+        ```
     """
 
     dev_addr: str = Field("127.0.0.1:8000")
-    """The address on which to serve the live reloading docs server.
+    """Specifies the IP address and port for the development server.
 
-    Example in mkdocs.yml:
-    ```yaml
-    dev_addr: 127.0.0.1:8000  # default
-    ```
+    !!! info "Format"
+        Must follow the pattern: `IP:PORT`
+
+    !!! warning "Validation Rules"
+        - IP must be valid IPv4/IPv6 address
+        - Port must be between 1-65535
+        - Common ports (80, 443) may require privileges
+
+    !!! example "Configuration Options"
+        ```yaml
+        dev_addr: 127.0.0.1:8000  # default, localhost only
+        dev_addr: 0.0.0.0:8000    # allow external access
+        dev_addr: localhost:8080   # alternate port
+        ```
     """
 
     extra_css: list[FilePath] | None = Field(None)
-    """List of CSS files from the docs dir that should be additionally includede.
+    """Custom CSS files to include in the documentation.
 
-    Example in mkdocs.yml:
-    ```yaml
-    extra_css:
-      - css/custom.css
-      - css/extra.css
-    ```
+    !!! info "Processing"
+        - Files are copied from `docs_dir` to `site_dir`
+        - Included in HTML as `<link>` tags
+        - Applied after theme CSS
+
+    !!! tip "Best Practices"
+        - Use for custom styling
+        - Override theme defaults
+        - Maintain responsive design
+
+    !!! example "Configuration"
+        ```yaml
+        extra_css:
+          - css/custom.css
+          - css/print.css
+          - css/responsive.css
+        ```
     """
 
     extra_javascript: list[FilePath] | None = Field(None)
-    """List of JavaScript files from the docs dir that should be additionally includede.
+    """Custom JavaScript files to include in the documentation.
 
-    Can include both simple paths and dictionaries with additional attributes.
+    !!! info "File Types"
+        - Regular `.js` files
+        - ES6 modules (`.mjs`)
+        - Async/deferred scripts
 
-    Example in mkdocs.yml:
-    ```yaml
-    extra_javascript:
-      - js/custom.js
-      - path: js/analytics.js
-        defer: true
-    ```
+    !!! tip "Advanced Usage"
+        You can specify script attributes:
+        ```yaml
+        extra_javascript:
+          - path: js/analytics.js
+            defer: true
+          - path: js/module.mjs
+            type: module
+            async: true
+        ```
+
+    !!! warning "Loading Order"
+        Scripts are loaded after theme JavaScript files
     """
 
     markdown_extensions: list[str | dict[str, Any]] | None = Field(None)
-    """PyMarkdown extension names and their configurations.
+    """PyMarkdown extensions and their configurations.
 
-    Example in mkdocs.yml:
-    ```yaml
-    markdown_extensions:
-      - toc:
-          permalink: true
-      - admonition
-      - pymdownx.highlight:
-          anchor_linenums: true
-      - pymdownx.superfences
-    ```
+    !!! info "Default Extensions"
+        Built-in enabled extensions:
+        - `meta`
+        - `toc`
+        - `tables`
+        - `fenced_code`
+
+    !!! tip "Popular Extensions"
+        ```yaml
+        markdown_extensions:
+          - admonition
+          - codehilite:
+              guess_lang: false
+          - toc:
+              permalink: true
+          - pymdownx.superfences
+        ```
+
+    !!! example "Advanced Configuration"
+        ```yaml
+        markdown_extensions:
+          - pymdownx.highlight:
+              anchor_linenums: true
+          - pymdownx.inlinehilite
+          - pymdownx.snippets
+          - pymdownx.superfences:
+              custom_fences:
+                - name: mermaid
+                  class: mermaid
+                  format: !!python/name:pymdownx.superfences.fence_code_format
+        ```
     """
 
     hooks: list[str] | None = Field(None)
-    """A list of Python scripts to load as hooks.
+    """Python scripts that extend the build process.
 
-    These scripts can modify the build process.
+    !!! info "Hook Types"
+        Hooks can implement various event handlers:
+        - `on_pre_build`
+        - `on_files`
+        - `on_nav`
+        - `on_page_read`
+        - `on_page_markdown`
+        - `on_page_content`
+        - `on_post_build`
 
-    Example in mkdocs.yml:
-    ```yaml
-    hooks:
-      - hooks/custom_hook.py
-      - hooks/pre_build.py
-    ```
+    !!! warning "Development Server"
+        Hook modules are not reloaded during `mkdocs serve`
+
+    !!! example "Configuration"
+        ```yaml
+        hooks:
+          - hooks/process_images.py
+          - hooks/custom_navigation.py
+        ```
     """
 
     nav: list[NavItem] | None = Field(None)
@@ -406,7 +614,7 @@ class AppConfig(BaseModel):
     """
 
     locale: str | None = Field(None)
-    """The locale of the documentation
+    """The locale of the documentation.
 
    Affects date formats and other regional settings.
 
@@ -434,58 +642,99 @@ class AppConfig(BaseModel):
     """
 
     validation: dict[str, Any] | None = Field(None)
-    """Validation options for internal & external links, and other content.
+    """Controls the validation behavior for links, content, and navigation.
 
-    Example in mkdocs.yml:
-    ```yaml
-    validation:
-      nav:
-        omitted_files: warn
-      links:
-        check_external: true
-    ```
+    !!! info "Validation Levels"
+        | Level   | Description |
+        |---------|-------------|
+        | `warn`  | Show warnings but continue |
+        | `info`  | Show informational messages |
+        | `ignore`| Skip validation |
+
+    !!! example "Configuration"
+        ```yaml
+        validation:
+          nav:
+            omitted_files: warn
+          links:
+            check_external: true
+            anchors: warn
+        ```
+
+    !!! tip "Recommended Settings"
+        Enable strict validation in CI/CD pipelines:
+        ```yaml
+        validation:
+          links:
+            check_external: true
+            anchors: strict
+          nav:
+            omitted_files: strict
+        ```
     """
 
     watch: list[DirectoryPath] | None = Field(None)
-    """A list of extra paths to watch while running `mkdocs serve`.
+    """Additional directories to monitor for changes during development.
 
-    These paths will trigger a rebuild if their contents change.
+    !!! info "Behavior"
+        - Automatically rebuilds site when files change
+        - Supplements default watching of `docs_dir`
+        - Useful for template and theme development
 
-    Example in mkdocs.yml:
-    ```yaml
-    watch:
-      - src/docs/
-      - additional/content/
-    ```
+    !!! example "Configuration"
+        ```yaml
+        watch:
+          - src/docs/
+          - custom_theme/
+          - templates/
+        ```
     """
 
     exclude_docs: GitIgnorePatterns = Field(default_factory=list)
-    """Gitignore-like file patterns (relative to docs dir) to exclude from the site.
+    """Gitignore-style patterns for files to exclude from documentation.
 
-    These files will be completely ignored during site generation.
+    !!! info "Pattern Syntax"
+        Uses `.gitignore` pattern format:
+        - `*` matches any sequence of characters
+        - `**` matches across directories
+        - `?` matches single character
+        - `!` negates a pattern
 
-    Example in mkdocs.yml:
-    ```yaml
-    exclude_docs:
-      - '*.tmp'
-      - 'draft/*.md'
-      - '.git/*'
-    ```
+    !!! example "Common Exclusions"
+        ```yaml
+        exclude_docs:
+          - '*.tmp'
+          - 'drafts/*.md'
+          - '.git/**'
+          - 'internal/**/*.md'
+        ```
+
+    !!! warning "Path Resolution"
+        Patterns are relative to `docs_dir`
     """
 
     not_in_nav: GitIgnorePatterns = Field(default_factory=list)
-    """Gitignore-like file patterns that are not intended to be in the nav.
+    """Patterns for files that should not generate warnings when not in navigation.
 
-    Patterns are relative to docs dir.
-    This marks doc files that are expected not to be in the nav, otherwise they will
-    cause a log message.
+    !!! info "Use Cases"
+        - Include files (partials)
+        - Template files
+        - Asset documentation
+        - Supporting content
 
-    Example in mkdocs.yml:
-    ```yaml
-    not_in_nav:
-      - 'includes/*.md'
-      - 'assets/templates/*'
-    ```
+    !!! example "Configuration"
+        ```yaml
+        not_in_nav:
+          - 'includes/*.md'
+          - 'assets/templates/*'
+          - '_snippets/**'
+        ```
+
+    !!! tip "Best Practices"
+        Use this to suppress warnings for files that are:
+        - Intentionally excluded from navigation
+        - Used as includes/partials
+        - Referenced programmatically
     """
 
     @field_validator("plugins", mode="before")
