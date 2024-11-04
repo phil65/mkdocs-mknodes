@@ -239,11 +239,13 @@ combine-as-imports = true
 "__init__.py" = ["E402", "I001"]
 
 [tool.pyright]
+pythonVersion = "3.12"
+pythonPlatform = "All"
+deprecateTypingAliases = true
 reportUnusedCallResult = false
 reportUnknownVariableType = false
 reportImplicitOverride = false
 reportAny = false
-pythonVersion = "3.12"
 reportUnannotatedClassAttribute = false
 
 [tool.mknodes]
