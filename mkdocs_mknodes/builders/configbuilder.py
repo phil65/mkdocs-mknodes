@@ -4,10 +4,10 @@ import io
 import os
 from typing import Any
 
-from jinjarope import yamltools
 from mkdocs.config import load_config
 from mkdocs.config.defaults import MkDocsConfig
 from mknodes.info import mkdocsconfigfile
+import yamling
 
 from mkdocs_mknodes import telemetry
 
@@ -47,7 +47,7 @@ class ConfigBuilder:
                 if self.clone_depth is not None:
                     plugin["mknodes"]["clone_depth"] = self.clone_depth
         # cfg = {**cfg, **kwargs}
-        text = yamltools.dump_yaml(dict(cfg))
+        text = yamling.dump_yaml(dict(cfg))
         buffer = io.StringIO(text)
         buffer.name = cfg.path
         config = load_config(buffer, **kwargs)

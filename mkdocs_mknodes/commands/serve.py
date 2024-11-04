@@ -10,10 +10,10 @@ from typing import TYPE_CHECKING, Any, Literal
 from urllib.parse import urlsplit
 
 # from mkdocs.commands import serve as serve_
-from jinjarope import yamltools
 from mkdocs.config import load_config
 from mknodes.info import mkdocsconfigfile
 from mknodes.utils import log
+import yamling
 
 from mkdocs_mknodes import liveserver, paths
 from mkdocs_mknodes.commands import build_page
@@ -53,7 +53,7 @@ def serve(
         config.remove_plugin("social")
         config.remove_plugin("tags")
         kwargs["theme"] = theme
-    text = yamltools.dump_yaml(dict(config))
+    text = yamling.dump_yaml(dict(config))
     stream = io.StringIO(text)
     stream.name = str(config_path)
     _serve(config_file=stream, livereload=False, **kwargs)  # type: ignore[arg-type]

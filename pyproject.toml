@@ -41,7 +41,8 @@ dependencies = [
     "typer",
     # Tools
     "jinja2",
-    "jinjarope[yaml]",
+    "jinjarope",
+    "yamling",
     "universal_pathlib",
     "pydantic",
     "logfire[requests,aiohttp,system-metrics]",
