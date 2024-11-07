@@ -190,7 +190,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
             self._watched_paths.pop(path)
             self.observer.unschedule(self._watch_refs.pop(path))
 
-    def serve(self, *, open_in_browser=False):
+    def serve(self, *, open_in_browser: bool = False):
         self.server_bind()
         self.server_activate()
 
