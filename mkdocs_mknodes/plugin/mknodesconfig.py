@@ -3,10 +3,18 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+import contextlib
+from datetime import datetime
 import functools
+import io
+from typing import Any
+from urllib import parse
 
 import jinjarope
+from mkdocs.__main__ import get_deps_command
 from mkdocs.config import config_options as c, defaults
+from mknodes.info import contexts
+from mknodes.mdlib import mdconverter
 from mknodes.utils import classhelpers
 
 
@@ -121,13 +129,13 @@ class MkNodesConfig(defaults.MkDocsConfig):
     jinja_on_undefined = c.Type(str, default="strict")
     """Jinja undefined macro behavior."""
 
-    def get_builder(self) -> Callable:
+    def get_builder(self) -> Callable[..., Any]:
         build_fn = classhelpers.to_callable(self.build_fn)
         build_kwargs = self.kwargs or {}
         return functools.partial(build_fn, **build_kwargs)
 
     def get_jinja_config(self) -> jinjarope.EnvConfig:
-        return jinjarope.EnvConfig(
+        cfg = jinjarope.EnvConfig(
             block_start_string=self.jinja_block_start_string or "{%",
             block_end_string=self.jinja_block_end_string or "%}",
             variable_start_string=self.jinja_variable_start_string or r"{{",
@@ -135,3 +143,104 @@ class MkNodesConfig(defaults.MkDocsConfig):
             # undefined=self.jinja_on_undefined,
             loader=jinjarope.loaders.from_json(self.jinja_loaders),
         )
+        cfg.loader |= jinjarope.FileSystemLoader(self.docs_dir)
+        return cfg
+
+    # @property
+    # def site_url(self) -> str:
+    #     url = super().site_url
+    #     if url is None:
+    #         return ""
+    #     return url if url.endswith("/") else f"{url}/"
+
+    # @property
+    # def docs_dir(self) -> pathlib.Path:
+    #     return pathlib.Path(super().docs_dir)
+
+    # @property
+    # def site_dir(self) -> pathlib.Path:
+    #     return pathlib.Path(super().site_dir)
+
+    def update_from_context(self, context: contexts.ProjectContext):
+        if not super().extra.get("social"):
+            super().extra["social"] = context.metadata.social_info
+        super().repo_url = context.metadata.repository_url
+        super().site_description = context.metadata.summary
+        super().site_name = context.metadata.distribution_name
+        super().site_author = context.metadata.author_name
+        text = f"Copyright © {datetime.now().year} {context.metadata.author_name}"
+        super().copyright = text
+
+    def get_markdown_instance(
+        self,
+        additional_extensions: list[str] | None = None,
+        config_override: dict[str, Any] | None = None,
+    ) -> mdconverter.MdConverter:
+        """Return a markdown instance based on given config.
+
+        Args:
+            additional_extensions: Additional extensions to use
+            config_override: Dict with extension settings. Overrides config settings.
+        """
+        extensions = super().markdown_extensions
+        if additional_extensions:
+            extensions = list(set(additional_extensions + extensions))
+        configs = super().mdx_configs | (config_override or {})
+        return mdconverter.MdConverter(extensions=extensions, extension_configs=configs)
+
+    def get_edit_url(self, edit_path: str | None) -> str | None:
+        """Return edit url.
+
+        If no explicit edit path is given, this will return the path
+        to the builder function.
+
+        Args:
+            edit_path: Edit path
+        """
+        repo_url = self.repo_url
+        if not repo_url:
+            return None
+        edit_uri = self.edit_uri or "edit/main/"
+        if not edit_uri.startswith(("?", "#")) and not repo_url.endswith("/"):
+            repo_url += "/"
+        rel_path = self.build_fn.split(":")[0]
+        if not rel_path.endswith(".py"):
+            rel_path = rel_path.replace(".", "/")
+            rel_path += ".py"
+        base_url = parse.urljoin(repo_url, edit_uri)
+        if repo_url and edit_path:
+            # root_path = pathlib.Path(config["docs_dir"]).parent
+            # edit_path = str(edit_path.relative_to(root_path))
+            rel_path = edit_path
+        return parse.urljoin(base_url, rel_path)
+
+    def get_install_candidates(self) -> list[str]:
+        """Return a list of installation candidates for this config."""
+        path = "https://raw.githubusercontent.com/mkdocs/catalog/main/projects.yaml"
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            get_deps_command(path, super().config_file_path)
+        return [i for i in buffer.getvalue().split("\n") if i]
+
+    def add_js(
+        self,
+        path: str,
+        defer: bool = False,
+        async_: bool = False,
+        typ: str = "",
+    ):
+        """Add javascript to the config.
+
+        Args:
+            path: Path / URL to the javascript file
+            defer: Add defer attribute to <script> tag
+            async_: Add async attribute to <script> tag
+            typ: Add given type attribute to <script> tag
+        """
+        from mkdocs.config import config_options
+
+        val = config_options.ExtraScriptValue(str(path))
+        val.async_ = async_
+        val.defer = defer
+        val.type = typ
+        self.extra_javascript.append(val)
