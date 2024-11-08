@@ -612,26 +612,6 @@ class AppConfig(BaseModel):
     ```
     """
 
-    language: str | None = Field(None)
-    """The language of the documentation as a BCP 47 language tag.
-
-    Example in mkdocs.yml:
-    ```yaml
-    language: en
-    ```
-    """
-
-    locale: str | None = Field(None)
-    """The locale of the documentation.
-
-   Affects date formats and other regional settings.
-
-    Example in mkdocs.yml:
-    ```yaml
-    locale: en_US
-    ```
-    """
-
     extra: dict[str, Any] | None = Field(None)
     """A mapping/dictionary of custom data that is passed to the template.
 

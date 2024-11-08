@@ -150,6 +150,15 @@ class ThemeConfig(BaseModel):
         msg = "ThemeConfig must be a str, ThemeConfig instance, or dict"
         raise TypeError(msg)
 
+    # @field_validator("locale")
+    # @classmethod
+    # def validate_language(cls, v: str | None) -> str | None:
+    #     import babel
+
+    #     if v and v not in babel.core.LOCALE_ALIASES:
+    #         raise ValueError(f"Invalid language code: {v}")
+    #     return v
+
 
 if __name__ == "__main__":
     # Example usage:
