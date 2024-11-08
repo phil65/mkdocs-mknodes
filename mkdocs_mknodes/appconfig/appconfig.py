@@ -3,19 +3,30 @@ from __future__ import annotations
 from collections.abc import Callable
 import functools
 import ipaddress
-from typing import Annotated, Any
+import os
+from typing import Annotated, Any, Self
 
 from mknodes.utils import classhelpers
 from pathspec import gitignore
-from pydantic import BaseModel, DirectoryPath, Field, FilePath, HttpUrl, field_validator
+from pydantic import (
+    BaseModel,
+    DirectoryPath,
+    Field,
+    HttpUrl,
+    ValidationInfo,
+    field_validator,
+)
 from pydantic.functional_validators import BeforeValidator
 from pydantic_core import PydanticCustomError
+import yamling
 
-from mkdocs_mknodes.appconfig import jinjaconfig, themeconfig
+from mkdocs_mknodes.appconfig import jinjaconfig, themeconfig, validationconfig
 
 
-def validate_gitignore_patterns(patterns: list[str]) -> list[str]:
+def validate_gitignore_patterns(pattern: list[str] | str) -> str:
     """Validate a list of gitignore patterns using pathspec."""
+    patterns = pattern.splitlines() if isinstance(pattern, str) else pattern
+    pattern_str = pattern if isinstance(pattern, str) else "\n".join(pattern)
     try:
         gitignore.GitIgnoreSpec.from_lines(patterns)
     except Exception as e:
@@ -26,11 +37,11 @@ def validate_gitignore_patterns(patterns: list[str]) -> list[str]:
             {"error": str(e)},
         ) from e
     else:
-        return patterns
+        return pattern_str
 
 
 GitIgnorePatterns = Annotated[
-    list[str],
+    str,
     BeforeValidator(validate_gitignore_patterns),
 ]
 
@@ -53,6 +64,13 @@ class PluginConfig(BaseModel):
     )
 
 
+class ExtraJavascript(BaseModel):
+    path: str
+    type: str | None = None
+    async_: bool | None = Field(None, alias="async")
+    defer: bool | None = None
+
+
 class AppConfig(BaseModel):
     """The main configuration class for MkDocs projects.
 
@@ -67,6 +85,17 @@ class AppConfig(BaseModel):
         - `theme` configuration
     """
 
+    @classmethod
+    def from_yaml_file(cls, yaml_path: str | os.PathLike[str], **overrides: Any) -> Self:
+        cfg = yamling.load_yaml_file(yaml_path)
+        vals = {**cfg, **overrides}
+        return cls(**vals)
+
+    inherit: str | None = Field(None, description="", alias="INHERIT")
+    """Define the parent for a configuration file.
+
+    The path must be relative to the location of the primary file.
+    """
     site_name: str = Field(...)
     """The primary title for your documentation project.
 
@@ -238,7 +267,7 @@ class AppConfig(BaseModel):
     The targeted callable gets the project instance as an argument and optionally
     keyword arguments from setting below.
     """
-    kwargs: dict[str, Any] | None = None
+    build_fn_arguments: dict[str, Any] | None = None
     """Keyword arguments passed to the build script / callable.
 
     Build scripts may have keyword arguments. You can set them by using this setting.
@@ -444,8 +473,8 @@ class AppConfig(BaseModel):
         dev_addr: localhost:8080   # alternate port
         ```
     """
-
-    extra_css: list[FilePath] | None = Field(None)
+    # pydantic.FilePath would be nice.. Looses bw compat to old mkdocs filess
+    extra_css: list[str] | None = Field(None)
     """Custom CSS files to include in the documentation.
 
     !!! info "Processing"
@@ -467,7 +496,7 @@ class AppConfig(BaseModel):
         ```
     """
 
-    extra_javascript: list[FilePath] | None = Field(None)
+    extra_javascript: list[str | ExtraJavascript] | None = Field(None)
     """Custom JavaScript files to include in the documentation.
 
     !!! info "File Types"
@@ -490,7 +519,7 @@ class AppConfig(BaseModel):
         Scripts are loaded after theme JavaScript files
     """
 
-    markdown_extensions: list[str | dict[str, Any]] | None = Field(None)
+    markdown_extensions: list[dict[str, Any]] | None = Field(None)
     """PyMarkdown extensions and their configurations.
 
     !!! info "Default Extensions"
@@ -550,7 +579,7 @@ class AppConfig(BaseModel):
         ```
     """
 
-    nav: list[NavItem] | None = Field(None)
+    nav: list[dict[str, Any] | str] | None = Field(None)
     """Defines the hierarchical structure of the documentation navigation.
     Each item can be a simple path to a file or a section with nested items.
 
@@ -620,7 +649,7 @@ class AppConfig(BaseModel):
     ```
     """
 
-    validation: dict[str, Any] | None = Field(None)
+    validation: validationconfig.ValidationConfig | None = Field(None)
     """Controls the validation behavior for links, content, and navigation.
 
     !!! info "Validation Levels"
@@ -651,8 +680,8 @@ class AppConfig(BaseModel):
             omitted_files: strict
         ```
     """
-
-    watch: list[DirectoryPath] | None = Field(None)
+    # DirectoryPath would be nice
+    watch: list[str] | None = Field(None)
     """Additional directories to monitor for changes during development.
 
     !!! info "Behavior"
@@ -692,7 +721,7 @@ class AppConfig(BaseModel):
         Patterns are relative to `docs_dir`
     """
 
-    not_in_nav: GitIgnorePatterns = Field(default_factory=list)
+    not_in_nav: GitIgnorePatterns = Field(str)
     """Patterns for files that should not generate warnings when not in navigation.
 
     !!! info "Use Cases"
@@ -716,11 +745,12 @@ class AppConfig(BaseModel):
         - Referenced programmatically
     """
 
-    @field_validator("plugins", mode="before")
+    @field_validator("plugins", "markdown_extensions", mode="before")
     @classmethod
     def convert_to_plugin_dict_list(
         cls,
         value: list[str | dict[str, dict[str, Any]]] | dict[str, Any],
+        info: ValidationInfo,
     ) -> list[dict[str, dict[str, Any]]]:
         result: list[dict[str, Any]] = []
         for item in value:
@@ -729,11 +759,12 @@ class AppConfig(BaseModel):
                     result.append({item: {}})
                 case dict():
                     if len(item) > 1:
-                        msg = "Plugin dictionaries must have a single key"
+                        msg = f"{info.field_name} dictionaries must have a single key"
                         raise ValueError(msg)
                     result.append(item)
                 case _:
-                    msg = f"Invalid type for plugin section: {item!r} ({type(item)})"
+                    type_str = f"{item!r} ({type(item)})"
+                    msg = f"Invalid type for {info.field_name} section: {type_str}"
                     raise ValueError(msg)
         return result
 
@@ -753,18 +784,19 @@ class AppConfig(BaseModel):
 
     def get_builder(self) -> Callable[..., Any]:
         build_fn = classhelpers.to_callable(self.build_fn)
-        build_kwargs = self.kwargs or {}
+        build_kwargs = self.build_fn_arguments or {}
         return functools.partial(build_fn, **build_kwargs)
 
 
 if __name__ == "__main__":
-    import pathlib
-
     import devtools
-    import yaml
 
-    text = pathlib.Path("mkdocs.yml").read_text("utf-8")
-    cfg = yaml.unsafe_load(text)
-    config = AppConfig(**cfg)
-
-    devtools.debug(config)
+    tests = [
+        "https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/mkdocs.yml",
+        "https://raw.githubusercontent.com/fastapi-users/fastapi-users/master/mkdocs.yml",
+        "https://raw.githubusercontent.com/pydantic/pydantic/main/mkdocs.yml",
+        "https://raw.githubusercontent.com/facelessuser/pymdown-extensions/refs/heads/main/mkdocs.yml",
+    ]
+    for url in tests:
+        config = AppConfig.from_yaml_file(url)
+        devtools.debug(config)

@@ -26,7 +26,6 @@ from typing import Any, Self
 
 from pydantic import (
     BaseModel,
-    DirectoryPath,
     Field,
     model_validator,
 )
@@ -49,7 +48,7 @@ class ThemeConfig(BaseModel):
     | locale | Language/locale setting | No |
     """
 
-    name: str = Field(...)
+    name: str = Field("material")
     """Specifies the theme to use for documentation rendering.
 
     !!! info "Common Theme Options"
@@ -63,8 +62,8 @@ class ThemeConfig(BaseModel):
           name: material
         ```
     """
-
-    custom_dir: DirectoryPath | None = Field(None)
+    # pydantic.DirectoryPath would be better
+    custom_dir: str | None = Field(None)
     """Directory containing custom theme overrides or extensions.
 
     !!! tip "Theme Customization"
@@ -97,7 +96,7 @@ class ThemeConfig(BaseModel):
         ```
     """
 
-    locale: str | None = Field(None)
+    locale: str | None = Field("en")
     """Defines the language and regional settings for the theme.
 
     !!! info "Locale Impact"
