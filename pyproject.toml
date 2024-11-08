@@ -50,6 +50,7 @@ dependencies = [
     # "opentelemetry-instrumentation-sqlite3",
     "opentelemetry-instrumentation-urllib",
     "opentelemetry-instrumentation-jinja2",
+    "yarl>=1.17.1",
 ]
 license = "MIT"
 

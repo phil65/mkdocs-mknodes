@@ -19,7 +19,6 @@ import threading
 import time
 import traceback
 from typing import Any
-import urllib.parse
 import webbrowser
 import wsgiref.simple_server
 import wsgiref.util
@@ -29,6 +28,7 @@ from mknodes.utils import log
 import upath
 import watchdog.events
 import watchdog.observers.polling
+from yarl import URL
 
 
 _SCRIPT_TEMPLATE_STR = """
@@ -81,21 +81,8 @@ _SCRIPT_TEMPLATE = string.Template(_SCRIPT_TEMPLATE_STR)
 logger = log.get_logger(__name__)
 
 
-# class _LoggerAdapter(logging.LoggerAdapter):
-#     def process(self, msg: str, kwargs: dict) -> tuple[str, dict]:
-#         return time.strftime("[%H:%M:%S] ") + msg, kwargs
-
-
-# log = _LoggerAdapter(logging.getLogger(__name__), {})
-
-
-def _normalize_mount_path(mount_path: str) -> str:
-    """Ensure the mount path starts and ends with a slash."""
-    return ("/" + mount_path.lstrip("/")).rstrip("/") + "/"
-
-
-def _serve_url(host: str, port: int, path: str) -> str:
-    return f"http://{host}:{port}{_normalize_mount_path(path)}"
+def _serve_url(host: str, port: int, path: str) -> URL:
+    return URL.build(scheme="http", host=host, port=port, path=path)
 
 
 class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
@@ -117,7 +104,6 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
             if isinstance(ipaddress.ip_address(host), ipaddress.IPv6Address):
                 self.address_family = socket.AF_INET6
         self.root = upath.UPath(root).resolve()
-        self.mount_path = _normalize_mount_path(mount_path)
         self.url = _serve_url(host, port, mount_path)
         self.build_delay = 0.1
         self.shutdown_delay = shutdown_delay
@@ -206,7 +192,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
             logger.info("Serving on %s", self.url)
         self.serve_thread.start()
         if open_in_browser:
-            webbrowser.open(self.url)
+            webbrowser.open(str(self.url))
 
         self._build_loop()
 
@@ -309,8 +295,8 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
                     )
                 return [b"%d" % self._visible_epoch]
 
-        if (path + "/").startswith(self.mount_path):
-            rel_file_path = path[len(self.mount_path) :]
+        if (path + "/").startswith(str(self.url.path)):
+            rel_file_path = path[len(str(self.url.path)) :]
 
             if path.endswith("/"):
                 rel_file_path += "index.html"
@@ -318,9 +304,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
             rel_file_path = posixpath.normpath("/" + rel_file_path).lstrip("/")
             file_path = self.root / rel_file_path
         elif path == "/":
-            start_response(
-                "302 Found", [("Location", urllib.parse.quote(self.mount_path))]
-            )
+            start_response("302 Found", [("Location", str(self.url.path))])
             return []
         else:
             return None  # Not found
@@ -334,9 +318,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
             file = file_path.open("rb")
         except OSError:
             if not path.endswith("/") and (file_path / "index.html").is_file():
-                start_response(
-                    "302 Found", [("Location", urllib.parse.quote(path) + "/")]
-                )
+                start_response("302 Found", [("Location", str(URL(path).path) + "/")])
                 return []
             return None  # Not found
 
