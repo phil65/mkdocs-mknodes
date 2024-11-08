@@ -5,12 +5,13 @@ import functools
 import ipaddress
 from typing import Annotated, Any
 
-import jinjarope
 from mknodes.utils import classhelpers
 from pathspec import gitignore
 from pydantic import BaseModel, DirectoryPath, Field, FilePath, HttpUrl, field_validator
 from pydantic.functional_validators import BeforeValidator
 from pydantic_core import PydanticCustomError
+
+from mkdocs_mknodes.appconfig import jinjaconfig, themeconfig
 
 
 def validate_gitignore_patterns(patterns: list[str]) -> list[str]:
@@ -41,165 +42,6 @@ class NavItem(BaseModel):
     """
 
     item: str | dict[str, NavItem]
-
-
-class JinjaConfig(BaseModel):
-    jinja_block_start_string: str | None = None
-    """Jinja block start string."""
-    jinja_block_end_string: str | None = None
-    """Jinja block end string."""
-    jinja_variable_start_string: str | None = None
-    """Jinja variable start string."""
-    jinja_variable_end_string: str | None = None
-    """Jinja variable end string."""
-    jinja_on_undefined: str = Field("strict")
-    """Jinja undefined macro behavior."""
-    jinja_loaders: list[JinjaLoader] | None = None
-    """List containing additional jinja loaders to use.
-
-    Dictionaries must have the `type` key set to either "filesystem" or "fsspec".
-
-    Examples:
-        ``` yaml
-        plugins:
-        - mknodes:
-            jinja_loaders:
-            - type: fsspec
-              path: github://
-              repo: mknodes
-              org: phil65
-        ```
-    """
-    jinja_extensions: list[str] | None = None
-    """List containing additional jinja extensions to use.
-
-    Examples:
-        ``` yaml
-        plugins:
-        - mknodes:
-            jinja_extensions:
-            - jinja2_ansible_filters.AnsibleCoreFiltersExtension
-        ```
-    """
-
-    def get_jinja_config(self) -> jinjarope.EnvConfig:
-        return jinjarope.EnvConfig(
-            block_start_string=self.jinja_block_start_string or "{%",
-            block_end_string=self.jinja_block_end_string or "%}",
-            variable_start_string=self.jinja_variable_start_string or r"{{",
-            variable_end_string=self.jinja_variable_end_string or r"}}",
-            # undefined=self.jinja_on_undefined,
-            loader=jinjarope.loaders.from_json(self.jinja_loaders),
-            extensions=self.jinja_extensions or [],
-        )
-
-
-class JinjaLoader(BaseModel):
-    typ: str
-    path: str
-
-
-class ThemeConfig(BaseModel):
-    """Configuration settings for the MkDocs themes.
-
-    !!! info "Theme Configuration Options"
-        The theme configuration allows for extensive customization including custom
-        directories, static templates, and locale settings.
-
-    ## Properties Overview
-
-    | Property | Description | Required |
-    |----------|-------------|----------|
-    | name | Theme identifier | Yes |
-    | custom_dir | Custom theme directory | No |
-    | static_templates | Additional static pages | No |
-    | locale | Language/locale setting | No |
-    """
-
-    name: str = Field(...)
-    """Specifies the theme to use for documentation rendering.
-
-    !!! info "Common Theme Options"
-        - `material`: Material for MkDocs theme
-        - `mkdocs`: Default MkDocs theme
-        - `readthedocs`: ReadTheDocs theme
-
-    !!! example "Basic Configuration"
-        ```yaml
-        theme:
-          name: material
-        ```
-    """
-
-    custom_dir: DirectoryPath | None = Field(None)
-    """Directory containing custom theme overrides or extensions.
-
-    !!! tip "Theme Customization"
-        Use this to override or extend the selected theme's templates and assets.
-
-    !!! example "Custom Directory Setup"
-        ```yaml
-        theme:
-          name: material
-          custom_dir: custom_theme/
-        ```
-    """
-
-    static_templates: list[str] | None = Field(None)
-    """Defines templates to be rendered as static pages, regardless of nav structure.
-
-    !!! info "Common Use Cases"
-        - Error pages (404, 500)
-        - Sitemaps
-        - Custom static pages
-
-    !!! example "Static Templates Configuration"
-        ```yaml
-        theme:
-          name: material
-          static_templates:
-            - sitemap.html
-            - 404.html
-            - custom_page.html
-        ```
-    """
-
-    locale: str | None = Field(None)
-    """Defines the language and regional settings for the theme.
-
-    !!! info "Locale Impact"
-        Affects:
-        - Date formats
-        - UI text translations
-        - RTL/LTR text direction
-
-    !!! example "Locale Setting"
-        ```yaml
-        theme:
-          name: material
-          locale: en_US
-        ```
-
-    !!! tip "Common Locales"
-        - `en_US`: English (United States)
-        - `fr_FR`: French (France)
-        - `de_DE`: German (Germany)
-        - `ja_JP`: Japanese (Japan)
-    """
-    # Material-related
-    # palette: dict[str, Any] | None = Field(
-    #     None, description="Color palette configuration for the theme."
-    # )
-    # font: dict[str, Any] | None = Field(
-    #     None, description="Font configuration for the theme."
-    # )
-    # features: list[str] | None = Field(
-    #     None, description="List of theme-specific features to enable."
-    # )
-    # logo: str | None = Field(None, description="Path to a logo file for the theme.")
-    # icon: str | None = Field(None, description="Path to a favicon file.")
-    # favicon: str | None = Field(None, description="Path to a favicon file.")
-    # language: str | None = Field(None, description="Language for theme localization.")
 
 
 class PluginConfig(BaseModel):
@@ -455,8 +297,11 @@ class AppConfig(BaseModel):
     If False, then MkNodes will put the CSS / JS only into the pages which need it.
     (the resources will be moved into the appropriate page template blocks)
     """
-    jinja_config: JinjaConfig = Field(default_factory=JinjaConfig)
+    jinja_config: jinjaconfig.JinjaConfig = Field(default_factory=jinjaconfig.JinjaConfig)
+    """Contains the configuration for the Jinja2 Environment.
 
+    Allows setting up loaders, extensions and the render behavior.
+    """
     docs_dir: DirectoryPath = Field("docs")
     """Directory containing documentation markdown source files.
 
@@ -520,7 +365,7 @@ class AppConfig(BaseModel):
         ```
     """
 
-    theme: ThemeConfig = Field(...)
+    theme: themeconfig.ThemeConfig = Field(...)
     """The MkDocs theme for the documentation.
 
     Can be a string for built-in themes or a theme config dict.
