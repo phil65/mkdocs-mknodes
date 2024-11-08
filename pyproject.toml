@@ -121,6 +121,7 @@ exclude_lines = [
 python_version = "3.12"
 disable_error_code = ["assignment", "misc", "import", "has-type"]
 pretty = true
+plugins = ["pydantic.mypy"]
 
 [tool.ruff]
 line-length = 90
