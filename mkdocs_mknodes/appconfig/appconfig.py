@@ -748,6 +748,24 @@ class AppConfig(BaseModel):
                     raise ValueError(msg)
         return result
 
+    @field_validator("extra_javascript", mode="before")
+    @classmethod
+    def validate_extra_javascript(
+        cls, values: list[dict[str, Any] | str]
+    ) -> list[ExtraJavascript | str]:
+        items: list[ExtraJavascript | str] = []
+        for value in values:
+            if isinstance(value, str):
+                if value.endswith(".mjs"):
+                    item = ExtraJavascript(path=value, type="module")
+                    items.append(item)
+                    continue
+                items.append(value)
+                continue
+            item = ExtraJavascript(**value)
+            items.append(item)
+        return items
+
     @field_validator("dev_addr", mode="before")
     @classmethod
     def validate_ip_port(cls, v: str) -> str:
