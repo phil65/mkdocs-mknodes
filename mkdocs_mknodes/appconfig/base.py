@@ -50,7 +50,7 @@ class ConfigFile(BaseModel):
             A new instance of the ConfigFile class initialized with the YAML data
         """
         cfg = yamling.load_yaml(text, resolve_inherit=True)
-        path = {"config_file_path": str(text.name)} if getattr(text, "name", None) else {}
+        path = {"config_file_path": str(text.name)} if getattr(text, "name", None) else {}  # type: ignore
         vals = {**path, **cfg, **overrides}
         return cls(**vals)
 

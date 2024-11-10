@@ -119,7 +119,7 @@ def _serve(
 
     def get_config() -> mknodesconfig.MkNodesConfig:
         config = mknodesconfig.MkNodesConfig.from_yaml(
-            config_file=config_file,
+            config_file=config_file,  # type: ignore[arg-type]
             site_dir=str(site_dir),
             **kwargs,
         )
