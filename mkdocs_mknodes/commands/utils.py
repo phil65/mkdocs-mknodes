@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import collections
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Collection, Iterable
 import contextlib
 import datetime
 import functools
@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 
 from mkdocs import exceptions
 from mkdocs.structure.files import File, Files, InclusionLevel, _file_sort_key
+from mkdocs.structure.pages import Page
 import pathspec
 import upath
 
@@ -211,3 +212,24 @@ def is_error_template(path: str) -> bool:
         True if path matches error template pattern
     """
     return bool(_ERROR_TEMPLATE_RE.match(path))
+
+
+def get_build_timestamp(*, pages: Collection[Page] | None = None) -> int:
+    """Returns the number of seconds since the epoch for the latest updated page.
+
+    In reality this is just today's date because that's how pages' update time
+    is populated.
+
+    Args:
+        pages: Optional collection of pages to determine timestamp from
+
+    Returns:
+        Unix timestamp as integer
+    """
+    if pages:
+        # Lexicographic comparison is OK for ISO date.
+        date_string = max(p.update_date for p in pages)
+        dt = datetime.datetime.fromisoformat(date_string).replace(tzinfo=datetime.UTC)
+    else:
+        dt = get_build_datetime()
+    return int(dt.timestamp())

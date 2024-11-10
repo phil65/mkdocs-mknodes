@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Collection, Sequence
-from datetime import UTC, datetime
+from collections.abc import Sequence
 import os
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urljoin, urlsplit
@@ -310,7 +309,8 @@ def _build_theme_template(
         pathhelpers.write_file(output.encode(), output_path)
         if template_name == "sitemap.xml":
             docs = files.documentation_pages()
-            ts = get_build_timestamp(pages=[f.page for f in docs if f.page is not None])
+            pages = [f.page for f in docs if f.page is not None]
+            ts = utils.get_build_timestamp(pages=pages)
             utils.write_gzip(f"{output_path}.gz", output, timestamp=ts)
     else:
         logger.info("Template skipped: %r generated empty output.", template_name)
@@ -336,27 +336,6 @@ def _build_extra_template(
         pathhelpers.write_file(output.encode(), file.abs_dest_path)
     else:
         logger.info("Template skipped: %r generated empty output.", template_name)
-
-
-def get_build_timestamp(*, pages: Collection[Page] | None = None) -> int:
-    """Returns the number of seconds since the epoch for the latest updated page.
-
-    In reality this is just today's date because that's how pages' update time
-    is populated.
-
-    Args:
-        pages: Optional collection of pages to determine timestamp from
-
-    Returns:
-        Unix timestamp as integer
-    """
-    if pages:
-        # Lexicographic comparison is OK for ISO date.
-        date_string = max(p.update_date for p in pages)
-        dt = datetime.fromisoformat(date_string).replace(tzinfo=UTC)
-    else:
-        dt = utils.get_build_datetime()
-    return int(dt.timestamp())
 
 
 if __name__ == "__main__":
