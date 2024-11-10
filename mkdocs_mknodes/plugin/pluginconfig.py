@@ -25,7 +25,7 @@ class PluginConfig(base.Config):
     The targeted callable gets the project instance as an argument and optionally
     keyword arguments from setting below.
     """
-    kwargs = c.Optional(c.Type(dict))
+    build_kwargs = c.Optional(c.Type(dict))
     """Keyword arguments passed to the build script / callable.
 
     Build scripts may have keyword arguments. You can set them by using this setting.
@@ -130,7 +130,7 @@ class PluginConfig(base.Config):
 
     def get_builder(self) -> Callable[..., Any]:
         build_fn = classhelpers.to_callable(self.build_fn)
-        build_kwargs = self.kwargs or {}
+        build_kwargs = self.build_kwargs or {}
         return functools.partial(build_fn, **build_kwargs)
 
     def get_jinja_config(self) -> jinjarope.EnvConfig:

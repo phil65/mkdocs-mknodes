@@ -9,7 +9,7 @@ plugins:
       repo_path: https://github.com/mkdocs/mkdocs.git
       clone_depth: 100
       build_fn: mkdocs_mknodes:parse
-      kwargs:
+      build_kwargs:
         pages:
           - title: Home
             type: MkText
