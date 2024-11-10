@@ -20,6 +20,7 @@ from mkdocs.config import config_options as c, defaults
 from mknodes.info import contexts
 from mknodes.mdlib import mdconverter
 from mknodes.utils import classhelpers
+import upath
 import yamling
 
 
@@ -111,6 +112,17 @@ class MkNodesConfig(defaults.MkDocsConfig):
             msg = f"Aborted with {len(warnings)} configuration warnings in 'strict' mode!"
             raise SystemExit(msg)
         return cfg
+
+    @classmethod
+    def from_yaml_file(
+        cls,
+        file: str | os.PathLike[str],
+        config_file_path: str | None = None,
+    ) -> Self:
+        # cfg = yamling.load_yaml_file(file, resolve_inherit=True)
+        config_str = upath.UPath(file).read_text()
+        str_io = io.StringIO(config_str)
+        return cls.from_yaml(str_io, config_file_path=config_file_path)
 
     build_fn = c.Type(str, default="mkdocs_mknodes:parse")
     """Path to the build script / callable.
