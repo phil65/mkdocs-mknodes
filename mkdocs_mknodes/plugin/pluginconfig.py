@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 import functools
+from typing import Any
 
 import jinjarope
 from mkdocs.config import base, config_options as c
@@ -127,7 +128,7 @@ class PluginConfig(base.Config):
     llm_model_name = c.Optional(c.Type(str))
     """LLM model name to use."""
 
-    def get_builder(self) -> Callable:
+    def get_builder(self) -> Callable[..., Any]:
         build_fn = classhelpers.to_callable(self.build_fn)
         build_kwargs = self.kwargs or {}
         return functools.partial(build_fn, **build_kwargs)
