@@ -4,12 +4,12 @@ import io
 import os
 from typing import Any
 
-from mkdocs.config import load_config
 from mkdocs.config.defaults import MkDocsConfig
 from mknodes.info import mkdocsconfigfile
 import yamling
 
 from mkdocs_mknodes import telemetry
+from mkdocs_mknodes.plugin import mknodesconfig
 
 
 logger = telemetry.get_plugin_logger(__name__)
@@ -50,7 +50,7 @@ class ConfigBuilder:
         text = yamling.dump_yaml(dict(cfg))
         buffer = io.StringIO(text)
         buffer.name = cfg.path
-        config = load_config(buffer, **kwargs)
+        config = mknodesconfig.MkNodesConfig.from_yaml_file(buffer, **kwargs)
 
         for k, v in config.items():
             logger.debug("%s: %s", k, v)

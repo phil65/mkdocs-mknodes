@@ -10,13 +10,13 @@ from typing import TYPE_CHECKING, Any, Literal
 from urllib.parse import urlsplit
 
 # from mkdocs.commands import serve as serve_
-from mkdocs.config import load_config
 from mknodes.info import mkdocsconfigfile
 from mknodes.utils import log
 import yamling
 
 from mkdocs_mknodes import liveserver, paths
 from mkdocs_mknodes.commands import build_page
+from mkdocs_mknodes.plugin import mknodesconfig
 
 
 if TYPE_CHECKING:
@@ -90,7 +90,7 @@ def catch_exceptions(config: MkDocsConfig):
 
 
 def _serve(
-    config_file: str | None = None,
+    config_file: str | None | yamling.YAMLInput = None,
     livereload: bool = True,
     build_type: Literal["clean", "dirty"] | None = None,
     watch_theme: bool = False,
@@ -118,7 +118,11 @@ def _serve(
         return urlsplit(config.site_url or "/").path
 
     def get_config() -> MkDocsConfig:
-        config = load_config(config_file=config_file, site_dir=str(site_dir), **kwargs)
+        config = mknodesconfig.MkNodesConfig.from_yaml_file(
+            config_file=config_file,
+            site_dir=str(site_dir),
+            **kwargs,
+        )
         config.watch.extend(watch)
         config.site_url = f"http://{config.dev_addr}{mount_path(config)}"
         return config
