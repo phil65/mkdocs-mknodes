@@ -679,7 +679,7 @@ class AppConfig(BaseModel):
         ```
     """
 
-    exclude_docs: GitIgnorePatterns = Field(default_factory=list)
+    exclude_docs: GitIgnorePatterns = Field(default="")
     """Gitignore-style patterns for files to exclude from documentation.
 
     !!! info "Pattern Syntax"
@@ -702,7 +702,7 @@ class AppConfig(BaseModel):
         Patterns are relative to `docs_dir`
     """
 
-    not_in_nav: GitIgnorePatterns = Field(str)
+    not_in_nav: GitIgnorePatterns = Field(default="")
     """Patterns for files that should not generate warnings when not in navigation.
 
     !!! info "Use Cases"
