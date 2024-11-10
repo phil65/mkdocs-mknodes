@@ -71,7 +71,7 @@ def _open_config_file(
 class MkNodesConfig(defaults.MkDocsConfig):
     @classmethod
     @functools.cache
-    def from_yaml_file(
+    def from_yaml(
         cls,
         config_file: str | TextIO | None = None,
         *,

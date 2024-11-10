@@ -49,7 +49,7 @@ class ConfigBuilder:
         text = yamling.dump_yaml(dict(cfg))
         buffer = io.StringIO(text)
         buffer.name = cfg.path
-        config = mknodesconfig.MkNodesConfig.from_yaml_file(buffer, **kwargs)
+        config = mknodesconfig.MkNodesConfig.from_yaml(buffer, **kwargs)
 
         for k, v in config.items():
             logger.debug("%s: %s", k, v)

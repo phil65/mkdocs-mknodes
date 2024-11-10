@@ -118,7 +118,7 @@ def _serve(
         return urlsplit(config.site_url or "/").path
 
     def get_config() -> mknodesconfig.MkNodesConfig:
-        config = mknodesconfig.MkNodesConfig.from_yaml_file(
+        config = mknodesconfig.MkNodesConfig.from_yaml(
             config_file=config_file,
             site_dir=str(site_dir),
             **kwargs,
