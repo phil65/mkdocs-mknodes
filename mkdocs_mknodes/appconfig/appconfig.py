@@ -395,7 +395,7 @@ class AppConfig(BaseModel):
         ```
     """
 
-    theme: themeconfig.ThemeConfig = Field(...)
+    theme: themeconfig.ThemeConfig = Field(default_factory=themeconfig.ThemeConfig)
     """The MkDocs theme for the documentation.
 
     Can be a string for built-in themes or a theme config dict.
