@@ -94,9 +94,9 @@ class MkNodesConfig(defaults.MkDocsConfig):
                 config_file_path = getattr(fd, "name", None)
             cfg = cls(config_file_path=config_file_path)
             dct = yamling.load_yaml(fd, resolve_inherit=True)
-            cfg.load_dict(dct)
+            cfg.update(dct)
         # Then load the options to overwrite anything in the config.
-        cfg.load_dict(options)
+        cfg.update(options)
 
         errors, warnings = cfg.validate()
 

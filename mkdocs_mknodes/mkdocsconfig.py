@@ -97,7 +97,7 @@ def load_config(
         cfg.load_file(fd)
 
     # Then load the options to overwrite anything in the config.
-    cfg.load_dict(options)
+    cfg.update(options)
 
     errors, warnings = cfg.validate()
 
