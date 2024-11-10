@@ -4,7 +4,9 @@ repo_url: "https://github.com/phil65/mkdocs_mknodes/"
 site_url: https://phil65.github.io/mkdocs-mknodes/
 site_author: Philipp Temminghoff
 copyright: Copyright &copy; 2023 Philipp Temminghoff
-
+build_fn: mkdocs_mknodes.manual.root:Build.build
+show_page_info: true
+global_resources: false
 theme:
   name: material
   custom_dir: overrides
