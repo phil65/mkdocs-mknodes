@@ -3,8 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 import functools
 import ipaddress
-import os
-from typing import Annotated, Any, Self
+from typing import Annotated, Any
 
 from mknodes.utils import classhelpers
 from pathspec import gitignore
@@ -18,9 +17,9 @@ from pydantic import (
 )
 from pydantic.functional_validators import BeforeValidator
 from pydantic_core import PydanticCustomError
-import yamling
 
 from mkdocs_mknodes.appconfig import jinjaconfig, themeconfig, validationconfig
+from mkdocs_mknodes.appconfig.base import ConfigFile
 
 
 def validate_gitignore_patterns(pattern: list[str] | str) -> str:
@@ -71,7 +70,7 @@ class ExtraJavascript(BaseModel):
     defer: bool | None = None
 
 
-class AppConfig(BaseModel):
+class AppConfig(ConfigFile):
     """The main configuration class for MkDocs projects.
 
     This class defines all available settings for customizing your documentation site.
@@ -85,18 +84,6 @@ class AppConfig(BaseModel):
         - `theme` configuration
     """
 
-    @classmethod
-    def from_yaml_file(cls, yaml_path: str | os.PathLike[str], **overrides: Any) -> Self:
-        cfg = yamling.load_yaml_file(yaml_path)
-        vals = {"config_file_path": str(yaml_path), **cfg, **overrides}
-        return cls(**vals)
-
-    config_file_path: str | None = Field(None, exclude=True)
-    inherit: str | None = Field(None, description="", alias="INHERIT")
-    """Define the parent for a configuration file.
-
-    The path must be relative to the location of the primary file.
-    """
     site_name: str = Field(...)
     """The primary title for your documentation project.
 
@@ -112,7 +99,7 @@ class AppConfig(BaseModel):
         ```
     """
 
-    site_url: HttpUrl | None = Field(None)
+    site_url: str | None = Field(None)
     """The canonical URL for your documentation site.
 
     !!! info "Purpose"
