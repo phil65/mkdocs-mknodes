@@ -17,7 +17,6 @@ from mkdocs.commands import build as mkdocs_build
 from mkdocs.structure.files import InclusionLevel
 from mkdocs.structure.nav import Navigation, get_navigation
 from mkdocs.structure.pages import Page
-from mknodes.info import mkdocsconfigfile
 from mknodes.utils import pathhelpers
 import upath
 
@@ -361,6 +360,8 @@ def get_build_timestamp(*, pages: Collection[Page] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    config = mkdocsconfigfile.MkDocsConfigFile("mkdocs.yml")
-    print(config.dump_config())
+    from mkdocs_mknodes.appconfig import appconfig
+
+    config = appconfig.AppConfig.from_yaml_file("mkdocs.yml")
+    print(config.model_dump())
     build("mkdocs.yml", ".", "mkdocs_mknodes.manual.root:Build.build")

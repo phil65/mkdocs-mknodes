@@ -1,5 +1,6 @@
 import mknodes as mk
-from mknodes.info import mkdocsconfigfile
+
+from mkdocs_mknodes.appconfig import appconfig
 
 
 nav = mk.MkNav("Use cases")
@@ -13,8 +14,7 @@ def _(page: mk.MkPage):
 @nav.route.page("Creating a website via config", hide="toc")
 def _(page: mk.MkPage):
     """Create the "Creating a sample website" MkPage."""
-    file = mkdocsconfigfile.MkDocsConfigFile("configs/mkdocs_mkdocs.yml")
-    section = file.get_section("plugins", "mknodes", keep_path=True)
-    config = section.serialize("yaml")
+    file = appconfig.AppConfig.from_yaml_file("configs/mkdocs_mkdocs.yml")
+    config = file.model_dump()
     variables = dict(config=config)
     page += mk.MkTemplate("use_case_default_website.jinja", variables=variables)
