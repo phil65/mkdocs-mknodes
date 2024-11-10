@@ -807,6 +807,11 @@ class AppConfig(BaseModel):
             case str():
                 self.theme = themeconfig.ThemeConfig(name=theme, **kwargs)
 
+    def remove_plugin(self, name: str):
+        for plg in self.plugins:
+            if plg == name or (isinstance(plg, dict) and next(iter(plg.keys())) == name):
+                self.plugins.remove(plg)
+
     # @field_validator("theme", mode="before")
     # @classmethod
     # def validate_theme(cls, value: Any) -> ThemeConfig:
