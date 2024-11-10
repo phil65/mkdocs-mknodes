@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Collection, Sequence
 from datetime import UTC, datetime
 import os
-from typing import TYPE_CHECKING, Any, TypedDict
+from typing import TYPE_CHECKING, Any
 from urllib.parse import urljoin, urlsplit
 
 import jinja2
@@ -21,7 +21,7 @@ import upath
 
 from mkdocs_mknodes import telemetry
 from mkdocs_mknodes.builders import configbuilder
-from mkdocs_mknodes.commands import utils
+from mkdocs_mknodes.commands import templatecontext, utils
 
 
 if TYPE_CHECKING:
@@ -31,19 +31,6 @@ if TYPE_CHECKING:
 
 
 logger = telemetry.get_plugin_logger(__name__)
-
-
-class TemplateContext(TypedDict):
-    nav: Navigation
-    pages: Sequence[File]
-    base_url: str
-    extra_css: Sequence[str]  # Do not use, prefer `config.extra_css`.
-    extra_javascript: Sequence[str]  # Do not use, prefer `config.extra_javascript`.
-    mkdocs_version: str
-    mknodes_version: str
-    build_date_utc: datetime
-    config: MkNodesConfig
-    page: Page | None
 
 
 DRAFT_CONTENT = (
@@ -242,7 +229,7 @@ def _build_page(
         logger.debug("Building page %s", page.file.src_uri)
         # Activate page. Signals to theme that this is the current page.
         page.active = True
-        ctx = get_context(nav, doc_files, config, page)
+        ctx = templatecontext.get_context(nav, doc_files, config, page)
         # Allow 'template:' override in md source files.
         template = env.get_template(page.meta.get("template", "main.html"))
         # Run `page_context` plugin events.
@@ -294,7 +281,7 @@ def _build_template(
         base_url = urlsplit(config.site_url or "/").path
     else:
         base_url = htmlfilters.relative_url_mkdocs(".", name)
-    context = get_context(nav, files, config, base_url=base_url)
+    context = templatecontext.get_context(nav, files, config, base_url=base_url)
     ctx = config.plugins.on_template_context(context, template_name=name, config=config)  # type: ignore
     output = template.render(ctx)
     return config.plugins.on_post_template(output, template_name=name, config=config)
@@ -370,47 +357,6 @@ def get_build_timestamp(*, pages: Collection[Page] | None = None) -> int:
     else:
         dt = utils.get_build_datetime()
     return int(dt.timestamp())
-
-
-def get_context(
-    nav: Navigation,
-    files: Sequence[File] | Files,
-    config: MkNodesConfig,
-    page: Page | None = None,
-    base_url: str = "",
-) -> TemplateContext:
-    """Return the template context for a given page or template."""
-    if page is not None:
-        base_url = htmlfilters.relative_url_mkdocs(".", page.url)
-
-    extra_javascript = [
-        htmlfilters.normalize_url(str(script), page.url if page else None, base_url)
-        for script in config.extra_javascript
-    ]
-    extra_css = [
-        htmlfilters.normalize_url(path, page.url if page else None, base_url)
-        for path in config.extra_css
-    ]
-
-    if isinstance(files, Files):
-        files = files.documentation_pages()
-
-    import mkdocs
-
-    import mkdocs_mknodes
-
-    return TemplateContext(
-        nav=nav,
-        pages=files,
-        base_url=base_url,
-        extra_css=extra_css,
-        extra_javascript=extra_javascript,
-        mknodes_version=mkdocs_mknodes.__version__,
-        mkdocs_version=mkdocs.__version__,
-        build_date_utc=utils.get_build_datetime(),
-        config=config,
-        page=page,
-    )
 
 
 if __name__ == "__main__":
