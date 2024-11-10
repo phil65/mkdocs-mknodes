@@ -13,7 +13,7 @@ from jinja2.exceptions import TemplateNotFound
 from jinjarope import envtests, htmlfilters
 import logfire
 from mkdocs import exceptions, utils as mkdocs_utils
-from mkdocs.structure.files import InclusionLevel
+from mkdocs.structure.files import Files, InclusionLevel
 from mkdocs.structure.nav import Navigation, get_navigation
 from mkdocs.structure.pages import Page
 from mknodes.utils import pathhelpers
@@ -25,7 +25,7 @@ from mkdocs_mknodes.commands import utils
 
 
 if TYPE_CHECKING:
-    from mkdocs.structure.files import File, Files
+    from mkdocs.structure.files import File
 
     from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
 
