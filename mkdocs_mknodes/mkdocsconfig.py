@@ -10,7 +10,6 @@ import sys
 from typing import Any, TextIO
 from urllib import parse
 
-import jinjarope
 from mknodes.info import contexts
 from mknodes.mdlib import mdconverter
 from mknodes.utils import pathhelpers, reprhelpers
@@ -203,7 +202,7 @@ class Config:
         edit_uri = self.edit_uri or "edit/main/"
         if not edit_uri.startswith(("?", "#")) and not repo_url.endswith("/"):
             repo_url += "/"
-        rel_path = self.plugin.config.build_fn.split(":")[0]
+        rel_path = self.build_fn.split(":")[0]
         if not rel_path.endswith(".py"):
             rel_path = rel_path.replace(".", "/")
             rel_path += ".py"
@@ -213,11 +212,6 @@ class Config:
             # edit_path = str(edit_path.relative_to(root_path))
             rel_path = edit_path
         return parse.urljoin(base_url, rel_path)
-
-    def get_jinja_config(self) -> jinjarope.EnvConfig:
-        cfg = self.plugin.config.get_jinja_config()
-        cfg.loader |= jinjarope.FileSystemLoader(self.docs_dir)
-        return cfg
 
     def add_js(
         self,

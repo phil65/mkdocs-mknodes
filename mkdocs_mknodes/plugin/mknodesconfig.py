@@ -247,7 +247,11 @@ class MkNodesConfig(defaults.MkDocsConfig):
             # undefined=self.jinja_on_undefined,
             loader=jinjarope.loaders.from_json(self.jinja_loaders),
         )
-        cfg.loader |= jinjarope.FileSystemLoader(self.docs_dir)  # type: ignore
+        docs_loader = jinjarope.FileSystemLoader(self.docs_dir)
+        if cfg.loader:
+            cfg.loader |= docs_loader  # type: ignore
+        else:
+            cfg.loader = docs_loader
         return cfg
 
     # @property

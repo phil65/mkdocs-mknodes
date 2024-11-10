@@ -44,11 +44,12 @@ def serve(
         kwargs: Optional config values (overrides value from config)
     """
     config = mkdocsconfigfile.MkDocsConfigFile(config_path)
-    config.update_mknodes_section(
-        repo_url=repo_path,
-        build_fn=build_fn,
-        clone_depth=clone_depth,
-    )
+    if repo_path is not None:
+        config._data["repo_path"] = repo_path
+    if build_fn is not None:
+        config._data["build_fn"] = build_fn
+    if clone_depth is not None:
+        config._data["clone_depth"] = clone_depth
     if theme and theme != "material":
         config.remove_plugin("social")
         config.remove_plugin("tags")
