@@ -16,7 +16,7 @@ import jinjarope
 
 from mkdocs_mknodes import buildcollector, mkdocsconfig, telemetry
 from mkdocs_mknodes.backends import markdownbackend, mkdocsbackend
-from mkdocs_mknodes.plugin import pluginconfig, rewriteloader
+from mkdocs_mknodes.plugin import mknodesconfig, pluginconfig, rewriteloader
 
 if TYPE_CHECKING:
     import jinja2
@@ -49,7 +49,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
     def on_startup(self, *, command: CommandStr, dirty: bool):
         """Activates new-style MkDocs plugin lifecycle."""
 
-    def on_config(self, config: MkDocsConfig):
+    def on_config(self, config: mknodesconfig.MkNodesConfig):  # type: ignore
         """Create the project based on MkDocs config."""
         if self.config.build_folder:
             self.build_folder = pathlib.Path(self.config.build_folder)
@@ -86,7 +86,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             env_config=self.config.get_jinja_config(),
         )
 
-    def on_files(self, files: Files, *, config: MkDocsConfig) -> Files:
+    def on_files(self, files: Files, *, config: mknodesconfig.MkNodesConfig) -> Files:  # type: ignore
         """Create the node tree and write files to build folder.
 
         In this step we aggregate all files and info we need to build the website.
@@ -210,7 +210,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         """During this phase links get replaced and `jinja2` stuff get rendered."""
         return self.link_replacer.replace(markdown, page.file.src_uri)
 
-    def on_post_build(self, *, config: MkDocsConfig) -> None:
+    def on_post_build(self, *, config: mknodesconfig.MkNodesConfig) -> None:  # type: ignore
         """Delete the temporary template files."""
         if not config.theme.custom_dir or not self.config.build_fn:
             return
