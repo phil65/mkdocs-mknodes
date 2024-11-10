@@ -785,16 +785,41 @@ class AppConfig(BaseModel):
         build_kwargs = self.build_fn_arguments or {}
         return functools.partial(build_fn, **build_kwargs)
 
+    def set_theme(
+        self,
+        theme: str | dict[str, Any] | themeconfig.ThemeConfig,
+        **kwargs: Any,
+    ):
+        match theme:
+            case themeconfig.ThemeConfig():
+                self.theme = theme
+            case dict():
+                self.theme = themeconfig.ThemeConfig(**{**theme, **kwargs})
+            case str():
+                self.theme = themeconfig.ThemeConfig(name=theme, **kwargs)
+
+    # @field_validator("theme", mode="before")
+    # @classmethod
+    # def validate_theme(cls, value: Any) -> ThemeConfig:
+    #     if isinstance(value, dict):
+    #         return themeconfig.ThemeConfig(**value)
+    #     if isinstance(value, themeconfig.ThemeConfig):
+    #         return value
+    #     raise ValueError("Address must be either a dict or Address instance")
+
 
 if __name__ == "__main__":
     import devtools
 
     tests = [
         "https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/mkdocs.yml",
-        "https://raw.githubusercontent.com/fastapi-users/fastapi-users/master/mkdocs.yml",
-        "https://raw.githubusercontent.com/pydantic/pydantic/main/mkdocs.yml",
-        "https://raw.githubusercontent.com/facelessuser/pymdown-extensions/refs/heads/main/mkdocs.yml",
+        # "https://raw.githubusercontent.com/fastapi-users/fastapi-users/master/mkdocs.yml",
+        # "https://raw.githubusercontent.com/pydantic/pydantic/main/mkdocs.yml",
+        # "https://raw.githubusercontent.com/facelessuser/pymdown-extensions/refs/heads/main/mkdocs.yml",
     ]
     for url in tests:
         config = AppConfig.from_yaml_file(url)
-        devtools.debug(config)
+        config.theme = dict(name="xyz", override_dir="overrides")
+
+        devtools.debug(config.theme)
+        print(config.theme, type(config.theme))
