@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from datetime import datetime
 import logging
-from mknodes.info.mkdocsconfigfile import MkDocsConfigFile
 
 import typer as t
 
@@ -12,6 +11,7 @@ from mknodes.utils import classhelpers, log
 import mknodes as mk
 import yamling
 
+from mkdocs_mknodes.appconfig import appconfig
 from mkdocs_mknodes import buildcollector, paths
 from mkdocs_mknodes.cli import richstate
 from mkdocs_mknodes.commands import build_page, serve as serve_
@@ -148,13 +148,12 @@ def create_config(
     """
     build_fn = build_fn or paths.DEFAULT_BUILD_FN
 
-    cfg_file = MkDocsConfigFile(paths.RESOURCES / "mkdocs_basic.yml")
-    cfg_file.update_mknodes_section(repo_url=repo_path, build_fn=build_fn)
+    config = appconfig.AppConfig.from_yaml_file(paths.RESOURCES / "mkdocs_basic.yml")
     theme_name = theme or "material"
     if theme_name != "material":
-        cfg_file["theme"] = dict(name=theme_name, override_dir="overrides")
-    cfg_file["use_directory_urls"] = use_directory_urls
-    config = cfg_file._data
+        theme_dict = dict(name=theme_name, override_dir="overrides")
+        config.set_theme(theme_dict)
+    config.use_directory_urls = use_directory_urls
     skin = mk.Theme(theme_name)
     nav = mk.MkNav.with_context(repo_url=repo_path)
     builder = classhelpers.to_callable(build_fn)
@@ -164,14 +163,16 @@ def create_config(
     resources = info.resources
     info = nav.ctx.metadata
     if social := info.social_info:
-        config.setdefault("extra", {})["social"] = social  # type: ignore[index]
-    config["markdown_extensions"] = resources.markdown_extensions
-    config["repo_path"] = info.repository_url
-    config["site_description"] = info.summary
-    config["site_name"] = info.distribution_name
-    config["site_author"] = info.author_name
-    config["copyright"] = f"Copyright © {datetime.now().year} {info.author_name}"
-    result = yamling.dump_yaml(config)
+        config.extra["social"] = social  # type: ignore[index]
+    config.markdown_extensions = resources.markdown_extensions
+    config.repo_path = info.repository_url
+    config.site_description = info.summary
+    config.site_name = info.distribution_name
+    config.site_author = info.author_name
+    config.copyright = f"Copyright © {datetime.now().year} {info.author_name}"
+    result = yamling.dump_yaml(
+        config.model_dump(exclude_unset=True, exclude_defaults=True)
+    )
     print(result)
 
 

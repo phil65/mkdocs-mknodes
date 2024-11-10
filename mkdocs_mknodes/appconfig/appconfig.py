@@ -612,7 +612,7 @@ class AppConfig(BaseModel):
     ```
     """
 
-    extra: dict[str, Any] | None = Field(None)
+    extra: dict[str, Any] = Field(default_factory=dict)
     """A mapping/dictionary of custom data that is passed to the template.
 
     This allows template authors to require extra configuration that is not
@@ -733,19 +733,27 @@ class AppConfig(BaseModel):
         info: ValidationInfo,
     ) -> list[dict[str, dict[str, Any]]]:
         result: list[dict[str, Any]] = []
-        for item in value:
-            match item:
-                case str():
-                    result.append({item: {}})
-                case dict():
-                    if len(item) > 1:
-                        msg = f"{info.field_name} dictionaries must have a single key"
-                        raise ValueError(msg)
-                    result.append(item)
-                case _:
-                    type_str = f"{item!r} ({type(item)})"
-                    msg = f"Invalid type for {info.field_name} section: {type_str}"
-                    raise ValueError(msg)
+        match value:
+            case dict():
+                # Convert dict to list of single-key dicts
+                for k, v in value.items():
+                    result.append({k: v})
+            case list():
+                for item in value:
+                    match item:
+                        case str():
+                            result.append({item: {}})
+                        case dict():
+                            if len(item) > 1:
+                                f = info.field_name
+                                msg = f"{f} dictionaries must have a single key"
+                                raise ValueError(msg)
+                            result.append(item)
+                        case _:
+                            type_str = f"{item!r} ({type(item)})"
+                            f = info.field_name
+                            msg = f"Invalid type for {f} section: {type_str}"
+                            raise ValueError(msg)
         return result
 
     @field_validator("extra_javascript", mode="before")
