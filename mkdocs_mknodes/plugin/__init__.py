@@ -38,9 +38,19 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         super().__init__(**kwargs)
         self.link_replacer = linkreplacer.LinkReplacer()
         logger.debug("Finished initializing plugin")
+        self.build_folder = None
+        self._dir = None
+        self.linkprovider = None
+        self.theme = None
+        self.folderinfo = None
+        self.context = None
+        self.root = None
 
     def on_startup(self, *, command: CommandStr, dirty: bool):
         """Activates new-style MkDocs plugin lifecycle."""
+
+    def on_config(self, config: MkDocsConfig):
+        """Create the project based on MkDocs config."""
         if self.config.build_folder:
             self.build_folder = pathlib.Path(self.config.build_folder)
         else:
@@ -51,8 +61,6 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             self.build_folder = pathlib.Path(self._dir.name)
             logger.debug("Creating temporary dir %s", self._dir.name)
 
-    def on_config(self, config: MkDocsConfig):
-        """Create the project based on MkDocs config."""
         if not self.config.build_fn:
             return
         self.linkprovider = linkprovider.LinkProvider(
