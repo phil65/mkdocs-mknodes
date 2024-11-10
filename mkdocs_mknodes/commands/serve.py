@@ -20,7 +20,7 @@ from mkdocs_mknodes.plugin import mknodesconfig
 
 
 if TYPE_CHECKING:
-    from mkdocs.config.defaults import MkDocsConfig
+    pass
 
 logger = log.get_logger(__name__)
 
@@ -75,7 +75,7 @@ def serve_node(node, repo_path: str = "."):
 
 
 @contextlib.contextmanager
-def catch_exceptions(config: MkDocsConfig):
+def catch_exceptions(config: mknodesconfig.MkNodesConfig):
     """Context manager used to clean up in case of build error.
 
     Args:
@@ -114,10 +114,10 @@ def _serve(
     watch = watch or []
     site_dir = pathlib.Path(tempfile.mkdtemp(prefix="mkdocs_"))
 
-    def mount_path(config: MkDocsConfig) -> str:
+    def mount_path(config: mknodesconfig.MkNodesConfig) -> str:
         return urlsplit(config.site_url or "/").path
 
-    def get_config() -> MkDocsConfig:
+    def get_config() -> mknodesconfig.MkNodesConfig:
         config = mknodesconfig.MkNodesConfig.from_yaml_file(
             config_file=config_file,
             site_dir=str(site_dir),
@@ -137,7 +137,7 @@ def _serve(
     suffix = mount_path(config).lstrip("/").rstrip("/")
     url = None if is_clean else f"http://{host}:{port}/{suffix}/"
 
-    def builder(config: MkDocsConfig | None = None):
+    def builder(config: mknodesconfig.MkNodesConfig | None = None):
         logger.info("Building documentation...")
         if config is None:
             config = get_config()

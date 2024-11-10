@@ -13,12 +13,12 @@ from urllib import parse
 
 import jinjarope
 from mkdocs.__main__ import get_deps_command
-from mkdocs.config.defaults import MkDocsConfig
 from mknodes.info import contexts
 from mknodes.mdlib import mdconverter
 from mknodes.utils import pathhelpers, reprhelpers
 
 from mkdocs_mknodes import telemetry
+from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
 
 
 logger = telemetry.get_plugin_logger(__name__)
@@ -80,7 +80,7 @@ def load_config(
     *,
     config_file_path: str | None = None,
     **kwargs,
-) -> MkDocsConfig:
+) -> MkNodesConfig:
     """Load the configuration for a given file object or name.
 
     The config_file can either be a file object, string or None. If it is None
@@ -95,7 +95,7 @@ def load_config(
 
         if config_file_path is None and fd is not sys.stdin.buffer:
             config_file_path = getattr(fd, "name", None)
-        cfg = MkDocsConfig(config_file_path=config_file_path)
+        cfg = MkNodesConfig(config_file_path=config_file_path)
         cfg.load_file(fd)
 
     # Then load the options to overwrite anything in the config.
@@ -126,8 +126,8 @@ class Config:
             config: MkDocs config
         """
         match config:
-            case MkDocsConfig():
-                self._config: MkDocsConfig = config
+            case MkNodesConfig():
+                self._config: MkNodesConfig = config
             case Mapping():
                 self._config = load_config(config)
             case str() | os.PathLike() as path:

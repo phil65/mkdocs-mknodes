@@ -4,7 +4,6 @@ import io
 import os
 from typing import Any
 
-from mkdocs.config.defaults import MkDocsConfig
 from mknodes.info import mkdocsconfigfile
 import yamling
 
@@ -34,7 +33,7 @@ class ConfigBuilder:
 
     def build_mkdocs_config(
         self, site_dir: str | os.PathLike[str] | None = None, **kwargs: Any
-    ) -> MkDocsConfig:
+    ) -> mknodesconfig.MkNodesConfig:
         cfg = self.configs[0]
         if site_dir:
             cfg["site_dir"] = site_dir

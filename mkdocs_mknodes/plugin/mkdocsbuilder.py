@@ -7,6 +7,7 @@ from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.structure import files as files_, nav, pages
 
 from mkdocs_mknodes import mkdocsconfig, telemetry
+from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
 
 
 if TYPE_CHECKING:
@@ -18,7 +19,7 @@ logger = telemetry.get_plugin_logger(__name__)
 class MkDocsPage(pages.Page):
     """MkPage-based Mkocs-Page subclass."""
 
-    def __init__(self, mkpage: mk.MkPage, file: files_.File, config: MkDocsConfig):
+    def __init__(self, mkpage: mk.MkPage, file: files_.File, config: MkNodesConfig):
         self.mkpage = mkpage
         super().__init__(title=self.mkpage.title, file=file, config=config)
 
@@ -32,7 +33,11 @@ class MkDocsPage(pages.Page):
 class MkDocsBuilder:
     def __init__(
         self,
-        config: mkdocsconfig.Config | MkDocsConfig | str | os.PathLike[str] | None = None,
+        config: mkdocsconfig.Config
+        | MkNodesConfig
+        | str
+        | os.PathLike[str]
+        | None = None,
     ):
         """Constructor.
 
@@ -42,7 +47,7 @@ class MkDocsBuilder:
         match config:
             case mkdocsconfig.Config():
                 self._config = config._config
-            case MkDocsConfig():
+            case MkNodesConfig():
                 self._config = config
             case _:
                 self._config = mkdocsconfig.Config(config)._config

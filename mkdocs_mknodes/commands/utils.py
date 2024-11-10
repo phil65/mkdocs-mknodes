@@ -24,7 +24,7 @@ from mkdocs_mknodes import telemetry
 
 
 if TYPE_CHECKING:
-    from mkdocs.config.defaults import MkDocsConfig
+    from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
 
 
 logger = telemetry.get_plugin_logger(__name__)
@@ -58,7 +58,7 @@ class CountHandler(logging.NullHandler):
 
 def count_warnings(fn: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(fn)
-    def wrapped(config: MkDocsConfig, *args, **kwargs) -> T:
+    def wrapped(config: MkNodesConfig, *args, **kwargs) -> T:
         start = time.monotonic()
         warning_counter = CountHandler()
         warning_counter.setLevel(logging.WARNING)
@@ -81,7 +81,7 @@ def count_warnings(fn: Callable[..., T]) -> Callable[..., T]:
 
 def handle_exceptions(fn: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(fn)
-    def wrapped(config: MkDocsConfig, *args, **kwargs) -> T:
+    def wrapped(config: MkNodesConfig, *args, **kwargs) -> T:
         try:
             return fn(config, *args, **kwargs)
         except Exception as e:
@@ -98,7 +98,7 @@ def handle_exceptions(fn: Callable[..., T]) -> Callable[..., T]:
     return wrapped
 
 
-def set_exclusions(files: Iterable[File], config: MkDocsConfig) -> None:
+def set_exclusions(files: Iterable[File], config: MkNodesConfig) -> None:
     """Re-calculate which files are excluded, based on the patterns in the config."""
     exclude: pathspec.gitignore.GitIgnoreSpec | None = config.get("exclude_docs")
     exclude = _default_exclude + exclude if exclude else _default_exclude
@@ -119,7 +119,7 @@ def set_exclusions(files: Iterable[File], config: MkDocsConfig) -> None:
                 file.inclusion = InclusionLevel.INCLUDED
 
 
-def get_files(config: MkDocsConfig) -> Files:
+def get_files(config: MkNodesConfig) -> Files:
     """Walk the `docs_dir` and return a Files collection."""
     files: list[File] = []
     conflicting_files: list[tuple[File, File]] = []

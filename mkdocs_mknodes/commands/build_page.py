@@ -26,8 +26,9 @@ from mkdocs_mknodes.commands import utils
 
 
 if TYPE_CHECKING:
-    from mkdocs.config.defaults import MkDocsConfig
     from mkdocs.structure.files import File, Files
+
+    from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
 
 
 logger = telemetry.get_plugin_logger(__name__)
@@ -74,7 +75,7 @@ def build(
 @utils.handle_exceptions
 @utils.count_warnings
 def _build(
-    config: MkDocsConfig,
+    config: MkNodesConfig,
     live_server_url: str | None = None,
     dirty: bool = False,
 ) -> None:
@@ -169,7 +170,7 @@ def _build(
 
 
 def _populate_page(
-    page: Page, config: MkDocsConfig, files: Files, dirty: bool = False
+    page: Page, config: MkNodesConfig, files: Files, dirty: bool = False
 ) -> None:
     """Read page content from docs_dir and render Markdown."""
     config._current_page = page
@@ -213,7 +214,7 @@ def _populate_page(
 
 def _build_page(
     page: Page,
-    config: MkDocsConfig,
+    config: MkNodesConfig,
     doc_files: Sequence[File],
     nav: Navigation,
     env: jinja2.Environment,
@@ -267,7 +268,7 @@ def _build_template(
     name: str,
     template: jinja2.Template,
     files: Files,
-    config: MkDocsConfig,
+    config: MkNodesConfig,
     nav: Navigation,
 ) -> str:
     """Return rendered output for given template as a string."""
@@ -291,7 +292,7 @@ def _build_theme_template(
     template_name: str,
     env: jinja2.Environment,
     files: Files,
-    config: MkDocsConfig,
+    config: MkNodesConfig,
     nav: Navigation,
 ) -> None:
     """Build a template using the theme environment."""
@@ -317,7 +318,7 @@ def _build_theme_template(
 
 
 def _build_extra_template(
-    template_name: str, files: Files, config: MkDocsConfig, nav: Navigation
+    template_name: str, files: Files, config: MkNodesConfig, nav: Navigation
 ):
     """Build user templates which are not part of the theme."""
     logger.debug("Building extra template: %s", template_name)
