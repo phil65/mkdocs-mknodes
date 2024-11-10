@@ -93,7 +93,7 @@ class MkNodesConfig(defaults.MkDocsConfig):
             if config_file_path is None and fd is not sys.stdin.buffer:
                 config_file_path = getattr(fd, "name", None)
             cfg = cls(config_file_path=config_file_path)
-            dct = yamling.load_yaml(fd)
+            dct = yamling.load_yaml(fd, resolve_inherit=True)
             cfg.load_dict(dct)
         # Then load the options to overwrite anything in the config.
         cfg.load_dict(options)
