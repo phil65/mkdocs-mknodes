@@ -12,7 +12,7 @@ import jinja2
 from jinja2.exceptions import TemplateNotFound
 from jinjarope import envtests, htmlfilters
 import logfire
-from mkdocs import exceptions, utils as mkdocs_utils
+from mkdocs import exceptions
 from mkdocs.structure.files import Files, InclusionLevel
 from mkdocs.structure.nav import Navigation, get_navigation
 from mkdocs.structure.pages import Page
@@ -381,14 +381,15 @@ def get_context(
 ) -> TemplateContext:
     """Return the template context for a given page or template."""
     if page is not None:
-        base_url = mkdocs_utils.get_relative_url(".", page.url)
+        base_url = htmlfilters.relative_url_mkdocs(".", page.url)
 
     extra_javascript = [
-        mkdocs_utils.normalize_url(str(script), page, base_url)
+        htmlfilters.normalize_url(str(script), page.url if page else None, base_url)
         for script in config.extra_javascript
     ]
     extra_css = [
-        mkdocs_utils.normalize_url(path, page, base_url) for path in config.extra_css
+        htmlfilters.normalize_url(path, page.url if page else None, base_url)
+        for path in config.extra_css
     ]
 
     if isinstance(files, Files):
