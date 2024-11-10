@@ -15,7 +15,6 @@ from typing import Any, Self, TextIO
 from urllib import parse
 
 import jinjarope
-from mkdocs.__main__ import get_deps_command
 from mkdocs.config import config_options as c, defaults
 from mknodes.info import contexts
 from mknodes.mdlib import mdconverter
@@ -318,14 +317,6 @@ class MkNodesConfig(defaults.MkDocsConfig):
             # edit_path = str(edit_path.relative_to(root_path))
             rel_path = edit_path
         return parse.urljoin(base_url, rel_path)
-
-    def get_install_candidates(self) -> list[str]:
-        """Return a list of installation candidates for this config."""
-        path = "https://raw.githubusercontent.com/mkdocs/catalog/main/projects.yaml"
-        buffer = io.StringIO()
-        with contextlib.redirect_stdout(buffer):
-            get_deps_command(path, super().config_file_path)
-        return [i for i in buffer.getvalue().split("\n") if i]
 
     def add_js(
         self,

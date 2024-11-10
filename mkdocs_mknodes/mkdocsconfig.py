@@ -4,7 +4,6 @@ from collections.abc import Iterator, Mapping
 import contextlib
 from datetime import datetime
 import functools
-import io
 import os
 import pathlib
 import sys
@@ -12,7 +11,6 @@ from typing import Any, TextIO
 from urllib import parse
 
 import jinjarope
-from mkdocs.__main__ import get_deps_command
 from mknodes.info import contexts
 from mknodes.mdlib import mdconverter
 from mknodes.utils import pathhelpers, reprhelpers
@@ -220,14 +218,6 @@ class Config:
         cfg = self.plugin.config.get_jinja_config()
         cfg.loader |= jinjarope.FileSystemLoader(self.docs_dir)
         return cfg
-
-    def get_install_candidates(self) -> list[str]:
-        """Return a list of installation candidates for this config."""
-        path = "https://raw.githubusercontent.com/mkdocs/catalog/main/projects.yaml"
-        buffer = io.StringIO()
-        with contextlib.redirect_stdout(buffer):
-            get_deps_command(path, self._config.config_file_path)
-        return [i for i in buffer.getvalue().split("\n") if i]
 
     def add_js(
         self,
