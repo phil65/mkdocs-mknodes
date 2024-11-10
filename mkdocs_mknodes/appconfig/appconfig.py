@@ -88,9 +88,10 @@ class AppConfig(BaseModel):
     @classmethod
     def from_yaml_file(cls, yaml_path: str | os.PathLike[str], **overrides: Any) -> Self:
         cfg = yamling.load_yaml_file(yaml_path)
-        vals = {**cfg, **overrides}
+        vals = {"config_file_path": str(yaml_path), **cfg, **overrides}
         return cls(**vals)
 
+    config_file_path: str | None = Field(None, exclude=True)
     inherit: str | None = Field(None, description="", alias="INHERIT")
     """Define the parent for a configuration file.
 
