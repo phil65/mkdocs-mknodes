@@ -763,6 +763,15 @@ class AppConfig(ConfigFile):
             items.append(item)
         return items
 
+    @field_validator("nav", mode="before")
+    @classmethod
+    def validate_nav(
+        cls, values: list[dict[str, Any] | str] | None
+    ) -> list[dict[str, Any] | str]:
+        if values is None:
+            return []
+        return values
+
     @field_validator("dev_addr", mode="before")
     @classmethod
     def validate_ip_port(cls, v: str) -> str:
