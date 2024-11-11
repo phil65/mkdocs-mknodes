@@ -107,8 +107,6 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         self.url = _serve_url(host, port, mount_path)
         self.build_delay = 0.1
         self.shutdown_delay = shutdown_delay
-        # To allow custom error pages.
-        self.error_handler: Callable[[int], bytes | None] = lambda code: None
 
         super().__init__((host, port), _Handler, bind_and_activate=False)
         self.set_app(self.serve_request)
@@ -132,6 +130,12 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
 
         self._watched_paths: dict[str, int] = {}
         self._watch_refs: dict[str, Any] = {}
+
+    def error_handler(self, code: int) -> bytes | None:
+        if code not in (404, 500):
+            return None
+        error_page = self.root / f"{code}.html"
+        return error_page.read_bytes() if error_page.is_file() else None
 
     def watch(self, path: str | os.PathLike[str], *, recursive: bool = True) -> None:
         """Add the 'path' to watched paths.

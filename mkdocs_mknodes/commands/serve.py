@@ -133,14 +133,6 @@ def _serve(
         mount_path=mount_path(config),
     )
 
-    def error_handler(code: int) -> bytes | None:
-        if code not in (404, 500):
-            return None
-        error_page = site_dir / f"{code}.html"
-        return error_page.read_bytes() if error_page.is_file() else None
-
-    server.error_handler = error_handler
-
     with catch_exceptions(config):
         # Perform the initial build
         builder(config)
