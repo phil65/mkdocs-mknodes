@@ -27,8 +27,8 @@ class ConfigBuilder:
         self.build_fn = build_fn
         self.clone_depth = clone_depth
 
-    def add_config_file(self, path: str | os.PathLike[str]):
-        cfg = appconfig.AppConfig.from_yaml_file(path)
+    def add_config_file(self, path: str | os.PathLike[str], **overrides: Any):
+        cfg = appconfig.AppConfig.from_yaml_file(path, **overrides)
         self.configs.append(cfg)
 
     def build_mkdocs_config(

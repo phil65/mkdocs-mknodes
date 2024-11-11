@@ -11,6 +11,7 @@ from urllib.parse import urlsplit
 
 # from mkdocs.commands import serve as serve_
 from mknodes.utils import log
+import upath
 import yamling
 
 from mkdocs_mknodes import liveserver, paths
@@ -26,9 +27,6 @@ logger = log.get_logger(__name__)
 
 def serve(
     config_path: str | os.PathLike[str] = paths.CFG_DEFAULT,
-    repo_path: str = ".",
-    build_fn: str = paths.DEFAULT_BUILD_FN,
-    clone_depth: int = 100,
     theme: str | None = None,
     **kwargs: Any,
 ):
@@ -42,16 +40,9 @@ def serve(
         theme: Theme to use
         kwargs: Optional config values (overrides value from config)
     """
-    config = mknodesconfig.MkNodesConfig.from_yaml_file(config_path, validate=False)
-    if repo_path is not None:
-        config.repo_path = repo_path
-    if build_fn is not None:
-        config.build_fn = build_fn
-    if clone_depth is not None:
-        config.clone_depth = clone_depth
     if theme and theme != "material":
         kwargs["theme"] = theme
-    text = yamling.dump_yaml(dict(config))
+    text = upath.UPath(config_path).read_text()
     stream = io.StringIO(text)
     stream.name = str(config_path)
     _serve(config_file=stream, livereload=False, **kwargs)  # type: ignore[arg-type]

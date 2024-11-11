@@ -55,31 +55,20 @@ class MarkdownBuilder:
     def build_from_config(
         self,
         config_path: str | os.PathLike[str],
-        repo_path: str,
-        build_fn: str | None,
-        *,
-        site_dir: str | None = None,
-        clone_depth: int = 100,
         **kwargs: Any,
     ) -> tuple[Navigation, Files]:
         """Build markdown content from config file.
 
         Args:
             config_path: Path to the MkDocs config file
-            repo_path: Repository path/URL to build docs for
-            build_fn: Fully qualified name of build function to use
-            site_dir: Output directory for built site
-            clone_depth: Number of commits to fetch for Git repos
-            kwargs: Additional config overrides passed to MkDocs
+            kwargs: Additional config overrides
 
         Returns:
             Navigation structure
         """
-        cfg_builder = configbuilder.ConfigBuilder(
-            repo_path=repo_path, build_fn=build_fn, clone_depth=clone_depth
-        )
+        cfg_builder = configbuilder.ConfigBuilder()
         cfg_builder.add_config_file(config_path)
-        self.config = cfg_builder.build_mkdocs_config(site_dir=site_dir, **kwargs)
+        self.config = cfg_builder.build_mkdocs_config(**kwargs)
 
         with logfire.span("plugins callback: on_startup", config=self.config):
             self.config.plugins.on_startup(command="build", dirty=False)
@@ -472,15 +461,7 @@ def build(
         kwargs: Additional config overrides passed to MkDocs
     """
     md_builder = MarkdownBuilder()
-    nav, files = md_builder.build_from_config(
-        config_path=config_path,
-        repo_path=repo_path,
-        build_fn=build_fn,
-        site_dir=site_dir,
-        clone_depth=clone_depth,
-        **kwargs,
-    )
-
+    nav, files = md_builder.build_from_config(config_path, site_dir=site_dir, **kwargs)
     html_builder = HTMLBuilder(md_builder.config)
     html_builder.build_html(nav, files)
 
