@@ -44,7 +44,7 @@ class ConfigBuilder:
         if self.clone_depth is not None:
             cfg.clone_depth = self.clone_depth
         # cfg = {**cfg, **kwargs}
-        text = yamling.dump_yaml(cfg.model_dump(mode="json"))
+        text = yamling.dump_yaml(cfg.model_dump(mode="json", exclude_none=True))
         buffer = io.StringIO(text)
         buffer.name = cfg.config_file_path
         config = mknodesconfig.MkNodesConfig.from_yaml(buffer, **kwargs)

@@ -16,6 +16,7 @@ from pydantic import (
 )
 from pydantic.functional_validators import BeforeValidator
 from pydantic_core import PydanticCustomError
+import upath
 
 from mkdocs_mknodes.appconfig import jinjaconfig, themeconfig, validationconfig
 from mkdocs_mknodes.appconfig.base import ConfigFile
@@ -261,7 +262,7 @@ class AppConfig(ConfigFile):
     """
     repo_path: str = "."
     """Path to the repository to create a website for. (`http://....my_project.git`)"""
-    clone_depth: int = 100
+    clone_depth: int | None = 100
     """Clone depth in case the repository is remote. (Required for `git-changelog`)."""
     build_folder: str | None = None
     """Folder to create the Markdown files in.
@@ -318,7 +319,7 @@ class AppConfig(ConfigFile):
 
     Allows setting up loaders, extensions and the render behavior.
     """
-    docs_dir: DirectoryPath = Field("docs")
+    docs_dir: str = Field("docs/")
     """Directory containing documentation markdown source files.
 
     !!! info "Path Resolution"
@@ -771,6 +772,16 @@ class AppConfig(ConfigFile):
         if values is None:
             return []
         return values
+
+    @field_validator("docs_dir", mode="before")
+    @classmethod
+    def validate_docs_dir(cls, value: str, info: ValidationInfo) -> str:
+        config_file_path = info.data["config_file_path"]
+        config_dir = upath.UPath(config_file_path).parent if config_file_path else None
+        path = upath.UPath(value)
+        if config_dir and not path.is_absolute():
+            path = config_dir / path
+        return str(path.resolve())
 
     @field_validator("dev_addr", mode="before")
     @classmethod
