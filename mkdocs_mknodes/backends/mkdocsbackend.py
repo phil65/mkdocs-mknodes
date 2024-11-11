@@ -14,7 +14,7 @@ import upath
 
 from mkdocs_mknodes import mkdocsconfig, telemetry
 from mkdocs_mknodes.backends import buildbackend
-from mkdocs_mknodes.plugin import mkdocsbuilder, mkdocshelpers
+from mkdocs_mknodes.plugin import mkdocsbuilder
 
 
 logger = telemetry.get_plugin_logger(__name__)
@@ -62,7 +62,15 @@ class MkDocsBackend(buildbackend.BuildBackend):
 
         [Files]: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/files.py
         """
-        files = sorted(self._mk_files.values(), key=mkdocshelpers.file_sorter)
+
+        def file_sorter(f: files_.File) -> tuple[str, ...]:
+            parts = pathlib.PurePath(f.src_path).parts
+            return tuple(
+                chr(f.name != "index" if i == len(parts) - 1 else 2) + p
+                for i, p in enumerate(parts)
+            )
+
+        files = sorted(self._mk_files.values(), key=file_sorter)
         return files_.Files(files)
 
     def write_files(self, files):
