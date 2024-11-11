@@ -59,13 +59,13 @@ class CountHandler(logging.NullHandler):
 
 def count_warnings(fn: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(fn)
-    def wrapped(config: MkNodesConfig, *args, **kwargs) -> T:
+    def wrapped(self, *args, **kwargs) -> T:
         start = time.monotonic()
         warning_counter = CountHandler()
         warning_counter.setLevel(logging.WARNING)
-        if config.strict:
+        if self.config.strict:  # Access config through self
             logging.getLogger("mkdocs").addHandler(warning_counter)
-        result = fn(config, *args, **kwargs)
+        result = fn(self, *args, **kwargs)
         counts = warning_counter.get_counts()
         if counts:
             msg = ", ".join(f"{v} {k.lower()}s" for k, v in counts)
@@ -82,19 +82,17 @@ def count_warnings(fn: Callable[..., T]) -> Callable[..., T]:
 
 def handle_exceptions(fn: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(fn)
-    def wrapped(config: MkNodesConfig, *args, **kwargs) -> T:
+    def wrapped(self, *args, **kwargs) -> T:
         try:
-            return fn(config, *args, **kwargs)
+            return fn(self, *args, **kwargs)
         except Exception as e:
             # Run `build_error` plugin events.
-            config.plugins.on_build_error(error=e)
+            self.config.plugins.on_build_error(error=e)  # Access config through self
             if isinstance(e, exceptions.BuildError):
                 msg = "Aborted with a BuildError!"
                 logger.exception(msg)
                 raise exceptions.Abort(msg) from e
             raise
-        # finally:
-        # logging.getLogger("mkdocs").removeHandler(warning_counter)
 
     return wrapped
 
