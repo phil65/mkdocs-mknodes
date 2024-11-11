@@ -5,11 +5,11 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 import os
 from typing import TYPE_CHECKING, Any
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urlsplit
 
 import jinja2
 from jinja2.exceptions import TemplateNotFound
-from jinjarope import envtests, htmlfilters
+from jinjarope import htmlfilters
 import logfire
 from mkdocs import exceptions
 from mkdocs.structure.files import Files, InclusionLevel
@@ -39,11 +39,14 @@ DRAFT_CONTENT = (
 )
 
 
-class MkDocsSiteBuilder:
-    """Main class for building MkDocs sites."""
+class MarkdownBuilder:
+    """Handles the initial phase of building Websites.
+
+    File collection and markdown processing.
+    """
 
     def __init__(self, config: MkNodesConfig | None = None):
-        """Initialize the site builder.
+        """Initialize the markdown builder.
 
         Args:
             config: Optional MkDocs configuration
@@ -59,8 +62,8 @@ class MkDocsSiteBuilder:
         site_dir: str | None = None,
         clone_depth: int = 100,
         **kwargs: Any,
-    ) -> None:
-        """Build a MkNodes-based website from config file.
+    ) -> tuple[Navigation, Files]:
+        """Build markdown content from config file.
 
         Args:
             config_path: Path to the MkDocs config file
@@ -69,6 +72,9 @@ class MkDocsSiteBuilder:
             site_dir: Output directory for built site
             clone_depth: Number of commits to fetch for Git repos
             kwargs: Additional config overrides passed to MkDocs
+
+        Returns:
+            Navigation structure
         """
         cfg_builder = configbuilder.ConfigBuilder(
             repo_path=repo_path, build_fn=build_fn, clone_depth=clone_depth
@@ -78,21 +84,23 @@ class MkDocsSiteBuilder:
 
         with logfire.span("plugins callback: on_startup", config=self.config):
             self.config.plugins.on_startup(command="build", dirty=False)
-        self.build_site()
-        with logfire.span("plugins callback: shutdown", config=self.config):
-            self.config.plugins.on_shutdown()
+
+        nav, files = self.process_markdown()
+        return nav, files
 
     @utils.handle_exceptions
     @utils.count_warnings
-    def build_site(self, live_server_url: str | None = None, dirty: bool = False) -> None:
-        """Build a MkNodes-based website.
+    def process_markdown(self, dirty: bool = False) -> tuple[Navigation, Files]:
+        """Process markdown files and build navigation structure.
 
         Args:
-            live_server_url: An optional URL of the live server to use
             dirty: Do a dirty build
+
+        Returns:
+            Navigation structure
         """
         if self.config is None:
-            msg = "Configuration must be set before building site"
+            msg = "Configuration must be set before processing markdown"
             raise ValueError(msg)
 
         with logfire.span("plugins callback: on_config", config=self.config):
@@ -103,17 +111,6 @@ class MkDocsSiteBuilder:
         if not dirty:
             logger.info("Cleaning site directory")
             pathhelpers.clean_directory(self.config.site_dir)
-        else:  # pragma: no cover
-            logger.warning(
-                "A 'dirty' build is being performed (for site dev purposes only)"
-            )
-
-        if not live_server_url:  # pragma: no cover
-            logger.info("Building documentation to directory: %s", self.config.site_dir)
-            if dirty and envtests.contains_files(self.config.site_dir):
-                logger.info(
-                    "The directory contains stale files. Use --clean to remove them."
-                )
 
         files = utils.get_files(self.config)
         env = self.config.theme.get_env()
@@ -128,73 +125,33 @@ class MkDocsSiteBuilder:
         with logfire.span("plugins callback: on_nav", config=self.config, nav=nav):
             nav = self.config.plugins.on_nav(nav, config=self.config, files=files)
 
-        self._process_pages(files, live_server_url, dirty)
+        self._process_pages(files)
+        return nav, files
 
-        with logfire.span("plugins callback: on_env", env=env, config=self.config):
-            env = self.config.plugins.on_env(env, config=self.config, files=files)
-
-        with logfire.span("copy_static_files"):
-            inclusion = (
-                InclusionLevel.is_in_serve
-                if live_server_url
-                else InclusionLevel.is_included
-            )
-            files.copy_static_files(dirty=dirty, inclusion=inclusion)
-
-        self._build_templates(env, files, nav)
-        self._build_pages(files, nav, env, dirty, inclusion)
-
-        with logfire.span("plugins callback: on_post_build", config=self.config):
-            self.config.plugins.on_post_build(config=self.config)
-
-    def _process_pages(
-        self, files: Files, live_server_url: str | None, dirty: bool
-    ) -> None:
+    def _process_pages(self, files: Files) -> None:
         """Process all pages, reading their content and applying plugins.
 
         Args:
             files: Collection of files to process
-            live_server_url: Optional live server URL
-            dirty: Whether this is a dirty build
         """
-        excluded: list[str] = []
-        inclusion = (
-            InclusionLevel.is_in_serve if live_server_url else InclusionLevel.is_included
-        )
-
         with logfire.span("populate pages"):
-            for file in files.documentation_pages(inclusion=inclusion):
+            for file in files.documentation_pages():
                 with logfire.span(f"populate page for {file.src_uri}", file=file):
                     logger.debug("Reading: %s", file.src_uri)
                     if file.page is None and file.inclusion.is_not_in_nav():
                         Page(None, file, self.config)
-                        if live_server_url and file.inclusion.is_excluded():
-                            excluded.append(urljoin(live_server_url, file.url))
                     assert file.page is not None
-                    self._populate_page(file.page, files, dirty)
+                    self._populate_page(file.page, files)
 
-        if excluded:
-            excluded_str = "\n  - ".join(excluded)
-            logger.info(
-                "The following pages are being built only for the preview "
-                "but will be excluded from `mkdocs build` per `draft_docs` config:"
-                "\n  - %s",
-                excluded_str,
-            )
-
-    def _populate_page(self, page: Page, files: Files, dirty: bool = False) -> None:
+    def _populate_page(self, page: Page, files: Files) -> None:
         """Read page content from docs_dir and render Markdown.
 
         Args:
             page: Page to populate
             files: Collection of files
-            dirty: Whether this is a dirty build
         """
         self.config._current_page = page
         try:
-            if dirty and not page.file.is_modified():
-                return
-
             with logfire.span(
                 "plugins callback: on_pre_page", page=page, config=self.config
             ):
@@ -231,6 +188,51 @@ class MkDocsSiteBuilder:
             raise
         finally:
             self.config._current_page = None
+
+
+class HTMLBuilder:
+    """Handles the HTML generation phase of building MkDocs sites."""
+
+    def __init__(self, config: MkNodesConfig):
+        """Initialize the HTML builder.
+
+        Args:
+            config: MkDocs configuration
+        """
+        self.config = config
+
+    def build_html(
+        self,
+        nav: Navigation,
+        files: Files,
+        live_server_url: str | None = None,
+        dirty: bool = False,
+    ) -> None:
+        """Build HTML files from processed markdown.
+
+        Args:
+            nav: Navigation structure
+            files: Collection of files
+            live_server_url: An optional URL of the live server to use
+            dirty: Whether this is a dirty build
+        """
+        env = self.config.theme.get_env()
+        with logfire.span("plugins callback: on_env", env=env, config=self.config):
+            env = self.config.plugins.on_env(env, config=self.config, files=files)
+
+        with logfire.span("copy_static_files"):
+            inclusion = (
+                InclusionLevel.is_in_serve
+                if live_server_url
+                else InclusionLevel.is_included
+            )
+            files.copy_static_files(dirty=dirty, inclusion=inclusion)
+
+        self._build_templates(env, files, nav)
+        self._build_pages(files, nav, env, dirty, inclusion)
+
+        with logfire.span("plugins callback: on_post_build", config=self.config):
+            self.config.plugins.on_post_build(config=self.config)
 
     def _build_templates(
         self, env: jinja2.Environment, files: Files, nav: Navigation
@@ -470,8 +472,8 @@ def build(
         clone_depth: Number of commits to fetch for Git repos
         kwargs: Additional config overrides passed to MkDocs
     """
-    builder = MkDocsSiteBuilder()
-    builder.build_from_config(
+    md_builder = MarkdownBuilder()
+    nav, files = md_builder.build_from_config(
         config_path=config_path,
         repo_path=repo_path,
         build_fn=build_fn,
@@ -479,6 +481,9 @@ def build(
         clone_depth=clone_depth,
         **kwargs,
     )
+
+    html_builder = HTMLBuilder(md_builder.config)
+    html_builder.build_html(nav, files)
 
 
 def _build(
@@ -493,8 +498,16 @@ def _build(
         live_server_url: An optional URL of the live server to use
         dirty: Do a dirty build
     """
-    builder = MkDocsSiteBuilder(config)
-    builder.build_site(live_server_url=live_server_url, dirty=dirty)
+    md_builder = MarkdownBuilder(config)
+    nav, files = md_builder.process_markdown(dirty=dirty)
+
+    html_builder = HTMLBuilder(config)
+    html_builder.build_html(
+        nav=nav,
+        files=files,
+        live_server_url=live_server_url,
+        dirty=dirty,
+    )
 
 
 if __name__ == "__main__":
