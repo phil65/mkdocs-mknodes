@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Any, Literal
 from urllib.parse import urlsplit
 
 # from mkdocs.commands import serve as serve_
-from mknodes.info import mkdocsconfigfile
 from mknodes.utils import log
 import yamling
 
@@ -43,16 +42,16 @@ def serve(
         theme: Theme to use
         kwargs: Optional config values (overrides value from config)
     """
-    config = mkdocsconfigfile.MkDocsConfigFile(config_path)
+    config = mknodesconfig.MkNodesConfig.from_yaml_file(config_path, validate=False)
     if repo_path is not None:
-        config._data["repo_path"] = repo_path
+        config.repo_path = repo_path
     if build_fn is not None:
-        config._data["build_fn"] = build_fn
+        config.build_fn = build_fn
     if clone_depth is not None:
-        config._data["clone_depth"] = clone_depth
+        config.clone_depth = clone_depth
     if theme and theme != "material":
-        config.remove_plugin("social")
-        config.remove_plugin("tags")
+        # config.remove_plugin("social")
+        # config.remove_plugin("tags")
         kwargs["theme"] = theme
     text = yamling.dump_yaml(dict(config))
     stream = io.StringIO(text)
@@ -130,7 +129,6 @@ def _serve(
 
     is_clean = build_type == "clean"
     is_dirty = build_type == "dirty"
-
     config = get_config()
     config.plugins.on_startup(command=("build" if is_clean else "serve"), dirty=is_dirty)
 

@@ -76,6 +76,7 @@ class MkNodesConfig(defaults.MkDocsConfig):
         config_file: str | TextIO | None = None,
         *,
         config_file_path: str | None = None,
+        validate: bool = True,
         **kwargs: Any,
     ) -> Self:
         """Load the configuration for a given file object or name.
@@ -97,19 +98,19 @@ class MkNodesConfig(defaults.MkDocsConfig):
             cfg.update(dct)
         # Then load the options to overwrite anything in the config.
         cfg.update(options)
+        if validate:
+            errors, warnings = cfg.validate()
 
-        errors, warnings = cfg.validate()
-
-        for config_name, warning in warnings + errors:
-            logger.warning("Config value %r: %s", config_name, warning)
-        for k, v in cfg.items():
-            logger.debug("Config value %r = %r", k, v)
-        if len(errors) > 0:
-            msg = f"Aborted with {len(errors)} configuration errors!"
-            raise SystemExit(msg)
-        if cfg.strict and len(warnings) > 0:
-            msg = f"Aborted with {len(warnings)} configuration warnings in 'strict' mode!"
-            raise SystemExit(msg)
+            for config_name, warning in warnings + errors:
+                logger.warning("Config value %r: %s", config_name, warning)
+            for k, v in cfg.items():
+                logger.debug("Config value %r = %r", k, v)
+            if len(errors) > 0:
+                msg = f"Aborted with {len(errors)} configuration errors!"
+                raise SystemExit(msg)
+            if cfg.strict and len(warnings) > 0:
+                msg = f"Strict mode: Aborted with {len(warnings)} config warnings"
+                raise SystemExit(msg)
         return cfg
 
     @classmethod
@@ -117,11 +118,12 @@ class MkNodesConfig(defaults.MkDocsConfig):
         cls,
         file: str | os.PathLike[str],
         config_file_path: str | None = None,
+        validate: bool = True,
     ) -> Self:
         # cfg = yamling.load_yaml_file(file, resolve_inherit=True)
         config_str = upath.UPath(file).read_text()
         str_io = io.StringIO(config_str)
-        return cls.from_yaml(str_io, config_file_path=config_file_path)
+        return cls.from_yaml(str_io, config_file_path=config_file_path, validate=validate)
 
     build_fn = c.Type(str, default="mkdocs_mknodes:parse")
     """Path to the build script / callable.
@@ -195,43 +197,44 @@ class MkNodesConfig(defaults.MkDocsConfig):
     If False, then MkNodes will put the CSS / JS only into the pages which need it.
     (the resources will be moved into the appropriate page template blocks)
     """
-    jinja_loaders = c.Optional(c.ListOfItems(c.Type(dict)))
-    """List containing additional jinja loaders to use.
+    jinja_config = c.Type(dict, default={})
+    # jinja_loaders = c.Optional(c.ListOfItems(c.Type(dict)))
+    # """List containing additional jinja loaders to use.
 
-    Dictionaries must have the `type` key set to either "filesystem" or "fsspec".
+    # Dictionaries must have the `type` key set to either "filesystem" or "fsspec".
 
-    Examples:
-        ``` yaml
-        plugins:
-        - mknodes:
-            jinja_loaders:
-            - type: fsspec
-              path: github://
-              repo: mknodes
-              org: phil65
-        ```
-    """
-    jinja_extensions = c.Optional(c.ListOfItems(c.Type(str)))
-    """List containing additional jinja extensions to use.
+    # Examples:
+    #     ``` yaml
+    #     plugins:
+    #     - mknodes:
+    #         jinja_loaders:
+    #         - type: fsspec
+    #           path: github://
+    #           repo: mknodes
+    #           org: phil65
+    #     ```
+    # """
+    # jinja_extensions = c.Optional(c.ListOfItems(c.Type(str)))
+    # """List containing additional jinja extensions to use.
 
-    Examples:
-        ``` yaml
-        plugins:
-        - mknodes:
-            jinja_extensions:
-            - jinja2_ansible_filters.AnsibleCoreFiltersExtension
-        ```
-    """
-    jinja_block_start_string = c.Optional(c.Type(str))
-    """Jinja block start string."""
-    jinja_block_end_string = c.Optional(c.Type(str))
-    """Jinja block end string."""
-    jinja_variable_start_string = c.Optional(c.Type(str))
-    """Jinja variable start string."""
-    jinja_variable_end_string = c.Optional(c.Type(str))
-    """Jinja variable end string."""
-    jinja_on_undefined = c.Type(str, default="strict")
-    """Jinja undefined macro behavior."""
+    # Examples:
+    #     ``` yaml
+    #     plugins:
+    #     - mknodes:
+    #         jinja_extensions:
+    #         - jinja2_ansible_filters.AnsibleCoreFiltersExtension
+    #     ```
+    # """
+    # jinja_block_start_string = c.Optional(c.Type(str))
+    # """Jinja block start string."""
+    # jinja_block_end_string = c.Optional(c.Type(str))
+    # """Jinja block end string."""
+    # jinja_variable_start_string = c.Optional(c.Type(str))
+    # """Jinja variable start string."""
+    # jinja_variable_end_string = c.Optional(c.Type(str))
+    # """Jinja variable end string."""
+    # jinja_on_undefined = c.Type(str, default="strict")
+    # """Jinja undefined macro behavior."""
 
     def get_builder(self) -> Callable[..., Any]:
         build_fn = classhelpers.to_callable(self.build_fn)
@@ -240,12 +243,14 @@ class MkNodesConfig(defaults.MkDocsConfig):
 
     def get_jinja_config(self) -> jinjarope.EnvConfig:
         cfg = jinjarope.EnvConfig(
-            block_start_string=self.jinja_block_start_string or "{%",
-            block_end_string=self.jinja_block_end_string or "%}",
-            variable_start_string=self.jinja_variable_start_string or r"{{",
-            variable_end_string=self.jinja_variable_end_string or r"}}",
-            # undefined=self.jinja_on_undefined,
-            loader=jinjarope.loaders.from_json(self.jinja_loaders),
+            block_start_string=self.jinja_config.get("jinja_block_start_string") or "{%",
+            block_end_string=self.jinja_config.get("jinja_block_end_string") or "%}",
+            variable_start_string=self.jinja_config.get("jinja_variable_start_string")
+            or r"{{",
+            variable_end_string=self.jinja_config.get("jinja_variable_end_string")
+            or r"}}",
+            # undefined=self.jinja_config.get("jinja_on_undefined"),
+            loader=jinjarope.loaders.from_json(self.jinja_config.get("jinja_loaders")),
         )
         docs_loader = jinjarope.FileSystemLoader(self.docs_dir)
         if cfg.loader:
