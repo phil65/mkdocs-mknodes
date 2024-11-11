@@ -127,21 +127,21 @@ class MarkdownBuilder:
         self._process_pages(files)
         return nav, files
 
+    @logfire.instrument("Populate pages")
     def _process_pages(self, files: Files) -> None:
         """Process all pages, reading their content and applying plugins.
 
         Args:
             files: Collection of files to process
         """
-        with logfire.span("populate pages"):
-            for file in files.documentation_pages():
-                with logfire.span(f"populate page for {file.src_uri}", file=file):
-                    logger.debug("Reading: %s", file.src_uri)
-                    if file.page is None and file.inclusion.is_not_in_nav():
-                        Page(None, file, self.config)
-                    assert file.page is not None
-                    self._populate_page(file.page, files)
+        for file in files.documentation_pages():
+            logger.debug("Reading: %s", file.src_uri)
+            if file.page is None and file.inclusion.is_not_in_nav():
+                Page(None, file, self.config)
+            assert file.page is not None
+            self._populate_page(file.page, files)
 
+    @logfire.instrument("populate page for {file.src_uri}")
     def _populate_page(self, page: Page, files: Files) -> None:
         """Read page content from docs_dir and render Markdown.
 
@@ -233,6 +233,7 @@ class HTMLBuilder:
         with logfire.span("plugins callback: on_post_build", config=self.config):
             self.config.plugins.on_post_build(config=self.config)
 
+    @logfire.instrument("Build templates")
     def _build_templates(
         self, env: jinja2.Environment, files: Files, nav: Navigation
     ) -> None:
@@ -243,11 +244,10 @@ class HTMLBuilder:
             files: Collection of files
             nav: Navigation structure
         """
-        with logfire.span("build_templates"):
-            for template in self.config.theme.static_templates:
-                self._build_theme_template(template, env, files, nav)
-            for template in self.config.extra_templates:
-                self._build_extra_template(template, files, nav)
+        for template in self.config.theme.static_templates:
+            self._build_theme_template(template, env, files, nav)
+        for template in self.config.extra_templates:
+            self._build_extra_template(template, files, nav)
 
     def _build_pages(
         self,
