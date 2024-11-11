@@ -50,28 +50,11 @@ def serve(
     if clone_depth is not None:
         config.clone_depth = clone_depth
     if theme and theme != "material":
-        # config.remove_plugin("social")
-        # config.remove_plugin("tags")
         kwargs["theme"] = theme
     text = yamling.dump_yaml(dict(config))
     stream = io.StringIO(text)
     stream.name = str(config_path)
     _serve(config_file=stream, livereload=False, **kwargs)  # type: ignore[arg-type]
-
-
-def serve_node(node, repo_path: str = "."):
-    text = f"""
-    import mknodes
-
-    def build(project):
-        page = project.root.add_page(is_index=True, hide="toc")
-        page += '''{node!s}'''
-
-
-    """
-    p = pathlib.Path("docs/test.py")
-    p.write_text(text)
-    serve(repo_url=repo_path, site_script=p)
 
 
 @contextlib.contextmanager

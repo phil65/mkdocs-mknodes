@@ -43,6 +43,9 @@ class ConfigBuilder:
             cfg.build_fn = self.build_fn
         if self.clone_depth is not None:
             cfg.clone_depth = self.clone_depth
+        if cfg.theme.name != "material":
+            cfg.remove_plugin("social")
+            cfg.remove_plugin("tags")
         # cfg = {**cfg, **kwargs}
         text = yamling.dump_yaml(cfg.model_dump(mode="json", exclude_none=True))
         buffer = io.StringIO(text)
