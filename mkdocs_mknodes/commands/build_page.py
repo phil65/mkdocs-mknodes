@@ -21,12 +21,11 @@ import upath
 from mkdocs_mknodes import telemetry
 from mkdocs_mknodes.builders import configbuilder
 from mkdocs_mknodes.commands import templatecontext, utils
+from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
 
 
 if TYPE_CHECKING:
     from mkdocs.structure.files import File
-
-    from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
 
 
 logger = telemetry.get_plugin_logger(__name__)
