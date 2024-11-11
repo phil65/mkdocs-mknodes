@@ -141,7 +141,7 @@ class MarkdownBuilder:
             assert file.page is not None
             self._populate_page(file.page, files)
 
-    @logfire.instrument("populate page for {file.src_uri}")
+    @logfire.instrument("populate page for {page.file.src_uri}")
     def _populate_page(self, page: Page, files: Files) -> None:
         """Read page content from docs_dir and render Markdown.
 
