@@ -238,6 +238,7 @@ class HTMLBuilder:
         for template in self.config.extra_templates:
             self._build_extra_template(template, files, nav)
 
+    @logfire.instrument("Build pages")
     def _build_pages(
         self,
         files: Files,
@@ -257,20 +258,15 @@ class HTMLBuilder:
         """
         logger.debug("Building markdown pages.")
         doc_files = files.documentation_pages(inclusion=inclusion)
-
-        with logfire.span("build_pages"):
-            for file in doc_files:
-                assert file.page
-                excl = file.inclusion.is_excluded()
-                with logfire.span(f"build_page {file.page.url}", page=file.page):
-                    self._build_page(file.page, doc_files, nav, env, dirty, excl)
-
         log_level = self.config.validation.links.anchors
-        with logfire.span("validate_anchor_links"):
-            for file in doc_files:
-                assert file.page is not None
+        for file in doc_files:
+            assert file.page
+            excl = file.inclusion.is_excluded()
+            self._build_page(file.page, doc_files, nav, env, dirty, excl)
+            with logfire.span("validate_anchor_links"):
                 file.page.validate_anchor_links(files=files, log_level=log_level)
 
+    @logfire.instrument("Build page {page.file.url}")
     def _build_page(
         self,
         page: Page,
