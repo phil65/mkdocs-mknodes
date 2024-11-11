@@ -32,7 +32,10 @@ class ConfigBuilder:
         self.configs.append(cfg)
 
     def build_mkdocs_config(
-        self, site_dir: str | os.PathLike[str] | None = None, **kwargs: Any
+        self,
+        site_dir: str | os.PathLike[str] | None = None,
+        infer_watch_paths: bool = False,
+        **kwargs: Any,
     ) -> mknodesconfig.MkNodesConfig:
         cfg = self.configs[0]
         if site_dir:
@@ -51,7 +54,18 @@ class ConfigBuilder:
         buffer = io.StringIO(text)
         buffer.name = cfg.config_file_path
         config = mknodesconfig.MkNodesConfig.from_yaml(buffer, **kwargs)
-
+        if infer_watch_paths:
+            watch_paths = [*config.watch, *_infer_watch_paths(config)]
+            config.watch = list(set(watch_paths))
         for k, v in config.items():
             logger.debug("%s: %s", k, v)
         return config
+
+
+def _infer_watch_paths(config: mknodesconfig.MkNodesConfig) -> list[str]:
+    paths_to_watch: list[str] = []
+    paths_to_watch.append(config.docs_dir)
+    if config.config_file_path:
+        paths_to_watch.append(config.config_file_path)
+    paths_to_watch.extend(config.theme.dirs)
+    return paths_to_watch
