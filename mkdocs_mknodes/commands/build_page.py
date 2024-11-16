@@ -207,15 +207,11 @@ class HTMLBuilder:
         env = self.config.theme.get_env()
         with logfire.span("plugins callback: on_env", env=env, config=self.config):
             env = self.config.plugins.on_env(env, config=self.config, files=files)
-
+        inclusion = (
+            InclusionLevel.is_in_serve if live_server_url else InclusionLevel.is_included
+        )
         with logfire.span("copy_static_files"):
-            inclusion = (
-                InclusionLevel.is_in_serve
-                if live_server_url
-                else InclusionLevel.is_included
-            )
             files.copy_static_files(dirty=dirty, inclusion=inclusion)
-
         self._build_templates(env, files, nav)
         self._build_pages(files, nav, env, dirty, inclusion)
 
