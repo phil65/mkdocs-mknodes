@@ -77,7 +77,7 @@ class ThemeConfig(BaseModel):
         ```
     """
 
-    static_templates: list[str] | None = Field(default_factory=list)
+    static_templates: list[str] = Field(default_factory=list)
     """Defines templates to be rendered as static pages, regardless of nav structure.
 
     !!! info "Common Use Cases"

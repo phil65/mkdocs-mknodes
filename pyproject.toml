@@ -45,7 +45,7 @@ dependencies = [
     "yamling",
     "universal_pathlib",
     "pydantic",
-    "logfire[requests,aiohttp,system-metrics]",
+    "logfire[requests,aiohttp,system-metrics]==2.6.0",
     "opentelemetry-instrumentation-urllib3",
     # "opentelemetry-instrumentation-sqlite3",
     "opentelemetry-instrumentation-urllib",
@@ -73,6 +73,9 @@ build-backend = "hatchling.build"
 source = "regex_commit"
 commit_extra_args = ["-e"]
 path = "mkdocs_mknodes/__init__.py"
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.uv]
 dev-dependencies = [
@@ -250,6 +253,8 @@ reportUnknownVariableType = false
 reportImplicitOverride = false
 reportAny = false
 reportUnannotatedClassAttribute = false
+reportExplicitAny = false
+reportImplicitStringConcatenation = false
 
 [tool.mknodes]
 allowed-commit-types = [
