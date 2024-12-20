@@ -237,7 +237,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
                 self._visible_epoch = self._wanted_epoch
                 self._epoch_cond.notify_all()
 
-    def shutdown(self, wait=False) -> None:
+    def shutdown(self, wait: bool = False) -> None:
         self.observer.stop()
         with self._rebuild_cond:
             self._shutdown = True
@@ -367,7 +367,7 @@ class _Handler(wsgiref.simple_server.WSGIRequestHandler):
         level = logging.DEBUG if str(code) == "200" else logging.WARNING
         logger.log(level, "%r code %r", self.requestline, code)
 
-    def log_message(self, format, *args):  # noqa: A002
+    def log_message(self, format: str, *args: Any):  # noqa: A002
         logger.debug(format, *args)
 
 
