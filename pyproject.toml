@@ -78,7 +78,8 @@ path = "mkdocs_mknodes/__init__.py"
 dev-dependencies = [
     # lint
     "ruff",
-    "mypy[faster-cache]",
+    "mypy[faster-cache]; python_version < '3.14'",
+    "mypy; python_version >= '3.14'",
     # test
     "pytest",
     "pytest-cov",
@@ -95,8 +96,8 @@ dev-dependencies = [
     "black",
     "pygments",
     # Material Social addon
-    "cairosvg",
-    "pillow",
+    "cairosvg; python_version < '3.14'",
+    "pillow; python_version < '3.14'",
 ]
 
 [tool.pytest.ini_options]
