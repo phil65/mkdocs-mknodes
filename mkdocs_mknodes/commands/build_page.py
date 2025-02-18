@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Sequence
+import asyncio
+from collections.abc import Callable, Coroutine, Sequence
 import os
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
@@ -189,31 +190,26 @@ class HTMLBuilder:
         """
         self.config = config
 
-    def build_html(
+    async def build_html(
         self,
         nav: Navigation,
         files: Files,
         live_server_url: str | None = None,
         dirty: bool = False,
     ) -> None:
-        """Build HTML files from processed markdown.
-
-        Args:
-            nav: Navigation structure
-            files: Collection of files
-            live_server_url: An optional URL of the live server to use
-            dirty: Whether this is a dirty build
-        """
+        """Build HTML files from processed markdown."""
         env = self.config.theme.get_env()
         with logfire.span("plugins callback: on_env", env=env, config=self.config):
             env = self.config.plugins.on_env(env, config=self.config, files=files)
+
         inclusion = (
             InclusionLevel.is_in_serve if live_server_url else InclusionLevel.is_included
         )
         with logfire.span("copy_static_files"):
             files.copy_static_files(dirty=dirty, inclusion=inclusion)
-        self._build_templates(env, files, nav)
-        self._build_pages(files, nav, env, dirty, inclusion)
+
+        await self._build_templates(env, files, nav)
+        await self._build_pages(files, nav, env, dirty, inclusion)
 
         with logfire.span("plugins callback: on_post_build", config=self.config):
             self.config.plugins.on_post_build(config=self.config)
@@ -235,7 +231,7 @@ class HTMLBuilder:
             self._build_extra_template(template, files, nav)
 
     @logfire.instrument("Build pages")
-    def _build_pages(
+    async def _build_pages(
         self,
         files: Files,
         nav: Navigation,
@@ -243,76 +239,107 @@ class HTMLBuilder:
         dirty: bool,
         inclusion: Callable[[InclusionLevel], bool],
     ) -> None:
-        """Build all pages.
-
-        Args:
-            files: Collection of files
-            nav: Navigation structure
-            env: Jinja environment
-            dirty: Whether this is a dirty build
-            inclusion: Inclusion level for pages
-        """
+        """Build all pages in parallel."""
         logger.debug("Building markdown pages.")
         doc_files = files.documentation_pages(inclusion=inclusion)
-        log_level = self.config.validation.links.anchors
+
+        # Create tasks for all pages that need building
+        tasks: list[Coroutine] = []
         for file in doc_files:
-            assert file.page
-            excl = file.inclusion.is_excluded()
-            self._build_page(file.page, doc_files, nav, env, dirty, excl)
-            with logfire.span("validate_anchor_links"):
-                file.page.validate_anchor_links(files=files, log_level=log_level)
+            if file.page is None:
+                continue
+            if dirty and not file.is_modified():
+                continue
+            tasks.append(
+                self._build_page(
+                    file.page,
+                    doc_files,
+                    nav,
+                    env,
+                    file.inclusion.is_excluded(),
+                )
+            )
+
+        await asyncio.gather(*tasks)
+
+        # Validate anchor links after all pages are built
+        log_level = self.config.validation.links.anchors
+        validation_tasks = [
+            asyncio.to_thread(
+                file.page.validate_anchor_links,
+                files=files,
+                log_level=log_level,
+            )
+            for file in doc_files
+            if file.page
+        ]
+        await asyncio.gather(*validation_tasks)
 
     @logfire.instrument("Build page {page.file.url}")
-    def _build_page(
+    async def _build_page(
         self,
         page: Page,
         doc_files: Sequence[File],
         nav: Navigation,
         env: jinja2.Environment,
-        dirty: bool = False,
         excluded: bool = False,
     ) -> None:
-        """Build a single page.
-
-        Args:
-            page: Page to build
-            doc_files: Collection of documentation files
-            nav: Navigation structure
-            env: Jinja environment
-            dirty: Whether this is a dirty build
-            excluded: Whether the page is excluded
-        """
+        """Build a single page."""
         self.config._current_page = page
         try:
-            if dirty and not page.file.is_modified():
-                return
-
             logger.debug("Building page %s", page.file.src_uri)
             page.active = True
 
-            ctx = templatecontext.get_context(nav, doc_files, self.config, page)
+            # Plugin hooks need to run sequentially
+            with logfire.span("plugins callback: on_pre_page"):
+                page = self.config.plugins.on_pre_page(
+                    page,
+                    config=self.config,
+                    files=doc_files,
+                )
+
+            # CPU-intensive operations can run in threads
+            ctx = await asyncio.to_thread(
+                self._get_page_context,
+                nav,
+                doc_files,
+                page,
+            )
             template = env.get_template(page.meta.get("template", "main.html"))
+
+            # Plugin hook needs to run in sequence
             ctx = self.config.plugins.on_page_context(
-                ctx,  # type: ignore
+                ctx,
                 page=page,
-                config=self.config,  # type: ignore
+                config=self.config,
                 nav=nav,
             )
 
             if excluded:
                 page.content = DRAFT_CONTENT + (page.content or "")
 
-            output = template.render(ctx)
+            # CPU-intensive template rendering
+            output = await asyncio.to_thread(template.render, ctx)
+
+            # Final plugin hook
             output = self.config.plugins.on_post_page(
-                output, page=page, config=self.config
+                output,
+                page=page,
+                config=self.config,
             )
 
             if output.strip():
+                # File writing can be async but probably not worth it for small files
                 text = output.encode("utf-8", errors="xmlcharrefreplace")
-                pathhelpers.write_file(text, page.file.abs_dest_path)
+                await asyncio.to_thread(
+                    pathhelpers.write_file,
+                    text,
+                    page.file.abs_dest_path,
+                )
             else:
                 logger.info(
-                    "Page skipped: '%s'. Generated empty output.", page.file.src_uri
+                    "Page skipped: '%s'. Generated empty output.",
+                    page.file.src_uri,
                 )
 
         except Exception as e:
@@ -362,6 +389,15 @@ class HTMLBuilder:
         return self.config.plugins.on_post_template(
             output, template_name=name, config=self.config
         )
+
+    def _get_page_context(
+        self,
+        nav: Navigation,
+        files: Sequence[File],
+        page: Page,
+    ) -> dict[str, Any]:
+        """Get the template context for a page. CPU-intensive operation."""
+        return templatecontext.get_context(nav, files, self.config, page)  # type: ignore
 
     def _build_theme_template(
         self,
@@ -455,7 +491,7 @@ def build(
     md_builder = MarkdownBuilder()
     nav, files = md_builder.build_from_config(config_path, site_dir=site_dir, **kwargs)
     html_builder = HTMLBuilder(md_builder.config)
-    html_builder.build_html(nav, files)
+    asyncio.run(html_builder.build_html(nav, files))
 
 
 def _build(
@@ -474,11 +510,13 @@ def _build(
     nav, files = md_builder.process_markdown(dirty=dirty)
 
     html_builder = HTMLBuilder(config)
-    html_builder.build_html(
-        nav=nav,
-        files=files,
-        live_server_url=live_server_url,
-        dirty=dirty,
+    asyncio.run(
+        html_builder.build_html(
+            nav=nav,
+            files=files,
+            live_server_url=live_server_url,
+            dirty=dirty,
+        )
     )
 
 
