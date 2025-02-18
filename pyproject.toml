@@ -245,16 +245,25 @@ combine-as-imports = true
 "__init__.py" = ["E402", "I001"]
 
 [tool.pyright]
+venvPath = "."
+venv = ".venv"
 pythonVersion = "3.12"
 pythonPlatform = "All"
+typeCheckingMode = "basic"
 deprecateTypingAliases = true
+reportMissingTypeStubs = false
 reportUnusedCallResult = false
 reportUnknownVariableType = false
-reportImplicitOverride = false
 reportAny = false
-reportUnannotatedClassAttribute = false
-reportExplicitAny = false
+reportImplicitOverride = false
+reportUnusedFunction = false
 reportImplicitStringConcatenation = false
+reportIgnoreCommentWithoutRule = false
+reportUnannotatedClassAttribute = false
+reportSelfClsParameterName = false
+reportPrivateImportUsage = false
+reportUnusedExpression = false
+reportGeneralTypeIssues = false
 
 [tool.mknodes]
 allowed-commit-types = [
