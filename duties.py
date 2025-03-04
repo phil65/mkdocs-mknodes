@@ -1,53 +1,55 @@
 from __future__ import annotations
 
 import os
-import sysconfig
+import sys
 
 from duty import duty
+from duty.context import Context
+
+
+FREE_THREADED = sys.version_info >= (3, 13) and not sys._is_gil_enabled()
+# FREE_THREADED = sysconfig.get_config_var("Py_GIL_DISABLED")
+# FREE_THREADED = True
+if FREE_THREADED:
+    os.environ["PYTHON_GIL"] = "0"
 
 
 @duty(capture=False)
-def build(ctx, *args: str):
+def build(ctx: Context, *args: str):
     """Build a MkNodes page."""
-    if sysconfig.get_config_var("Py_GIL_DISABLED"):
-        os.environ["PYTHON_GIL"] = "0"
     args_str = " " + " ".join(args) if args else ""
     ctx.run(f"uv run mknodes build{args_str}")
 
 
 @duty(capture=False)
-def serve(ctx, *args: str):
+def serve(ctx: Context, *args: str):
     """Serve a MkNodes page."""
-    if sysconfig.get_config_var("Py_GIL_DISABLED"):
-        os.environ["PYTHON_GIL"] = "0"
     args_str = " " + " ".join(args) if args else ""
     ctx.run(f"uv run mknodes serve{args_str}")
 
 
 @duty(capture=False)
-def test(ctx, *args: str):
+def test(ctx: Context, *args: str):
     """Serve a MkNodes page."""
-    if sysconfig.get_config_var("Py_GIL_DISABLED"):
-        os.environ["PYTHON_GIL"] = "0"
     args_str = " " + " ".join(args) if args else ""
     ctx.run(f"uv run pytest{args_str}")
 
 
 @duty(capture=False)
-def clean(ctx):
+def clean(ctx: Context):
     """Clean all files from the Git directory except checked-in files."""
     ctx.run("git clean -dfX")
 
 
 @duty(capture=False)
-def update(ctx):
+def update(ctx: Context):
     """Update all environment packages using pip directly."""
     ctx.run("uv lock --upgrade")
     ctx.run("uv sync --all-extras")
 
 
 @duty(capture=False)
-def lint(ctx):
+def lint(ctx: Context):
     """Lint the code and fix issues if possible."""
     ctx.run("uv run ruff check --fix .")
     ctx.run("uv run ruff format .")
@@ -55,7 +57,7 @@ def lint(ctx):
 
 
 @duty(capture=False)
-def lint_check(ctx):
+def lint_check(ctx: Context):
     """Lint the code."""
     ctx.run("uv run ruff check .")
     ctx.run("uv run ruff format --check .")
@@ -63,7 +65,7 @@ def lint_check(ctx):
 
 
 @duty(capture=False)
-def docs_test_build(ctx):
+def docs_test_build(ctx: Context):
     """Build some test pages."""
     ctx.run("uv run mknodes build -v")
     opts = "-d ../site/mkdocs -p configs/mkdocs_mkdocs.yml -v --clone-depth 100"
@@ -71,7 +73,7 @@ def docs_test_build(ctx):
 
 
 @duty(capture=False)
-def version(ctx, *args: str):
+def version(ctx: Context, *args: str):
     """Bump package version."""
     args_str = " " + " ".join(args) if args else ""
     ctx.run(f"hatch version{args_str}")
