@@ -33,6 +33,7 @@ keywords = [
 requires-python = ">=3.12"
 dependencies = [
     # MkDocs
+    "pydantic>=2.11.0a2",
     "mkdocs >=1.5",
     "pathspec",
     "mknodes",
@@ -78,31 +79,39 @@ path = "mkdocs_mknodes/__init__.py"
 [tool.hatch.metadata]
 allow-direct-references = true
 
+
 [tool.uv]
-dev-dependencies = [
-    # lint
-    "ruff",
-    # "mypy[faster-cache]; python_version < '3.14'",
-    "mypy",
-    # test
+default-groups = ["dev", "lint", "docs"]
+
+[dependency-groups]
+dev = [
     "pytest",
     "pytest-cov",
-    # docs
-    "mkdocs-material >= 9.5",
+    "pyreadline3",
+    "devtools",
+    # Only add below (Copier)
+    "black",
+    "pygments",
+]
+benchmark = ["pyinstrument"]
+lint = [
+    "ruff",
+    "mypy",
+    # "mypy[faster-cache]; python_version < '3.14'",
+    # "mypy; python_version >= '3.14'",
+    # Only add below (Copier)
+]
+docs = [
+    "mkdocs-mknodes",
+    "mkdocs-material",
     "pymdown-extensions",
     "mkdocstrings[python]",
     "griffe-fieldz",
-    # dev
-    "pyreadline3",
-    "pyinstrument",
-    "devtools",
-    # used for formatting signature
-    "black",
-    "pygments",
     # Material Social addon
     "cairosvg; python_version < '3.14'",
     "pillow; python_version < '3.14'",
 ]
+
 
 [tool.pytest.ini_options]
 minversion = "7.0"
