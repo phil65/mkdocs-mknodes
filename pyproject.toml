@@ -51,6 +51,7 @@ dependencies = [
     "opentelemetry-instrumentation-urllib",
     "opentelemetry-instrumentation-jinja2",
     "yarl>=1.17.1",
+    "anyenv>=0.1.0",
 ]
 license = "MIT"
 
@@ -81,8 +82,8 @@ allow-direct-references = true
 dev-dependencies = [
     # lint
     "ruff",
-    "mypy[faster-cache]; python_version < '3.14'",
-    "mypy; python_version >= '3.14'",
+    # "mypy[faster-cache]; python_version < '3.14'",
+    "mypy",
     # test
     "pytest",
     "pytest-cov",
