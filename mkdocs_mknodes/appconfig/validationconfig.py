@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ValidationLevel(Enum):
@@ -32,10 +32,10 @@ class Links(BaseModel):
 
 
 class ValidationConfig(BaseModel):
-    nav: Nav | None = None
-    links: Links | None = None
-    omitted_files: ValidationLevel | None = None
-    not_found: ValidationLevel | None = None
-    absolute_links: ValidationLevelForAbsolute | None = None
-    anchors: ValidationLevel | None = None
-    unrecognized_links: ValidationLevel | None = None
+    nav: Nav = Field(default_factory=Nav)
+    links: Links = Field(default_factory=Links)
+    omitted_files: ValidationLevel = ValidationLevel.info
+    not_found: ValidationLevel = ValidationLevel.warn
+    absolute_links: ValidationLevelForAbsolute = ValidationLevelForAbsolute.info
+    anchors: ValidationLevel = ValidationLevel.info
+    unrecognized_links: ValidationLevel = ValidationLevel.info

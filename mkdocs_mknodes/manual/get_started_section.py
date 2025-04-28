@@ -27,7 +27,7 @@ def _(page: mk.MkPage):
 @router.route_page("Plugin configuration", hide="toc")
 def _(page: mk.MkPage):
     page += mk.MkTemplate("plugin_configuration.jinja")
-    eps = page.ctx.metadata.entry_points.get("mkdocs.plugins", [])
+    eps = page.ctx.metadata.entry_points.get_group("mkdocs.plugins")
     page += mk.MkDocStrings(
         eps[0].load().config_class,
         show_root_toc_entry=False,

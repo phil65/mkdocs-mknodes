@@ -11,12 +11,12 @@ from pydantic import (
     BaseModel,
     DirectoryPath,
     Field,
-    HttpUrl,
     ValidationInfo,
     field_validator,
 )
 from pydantic.functional_validators import BeforeValidator
 from pydantic_core import PydanticCustomError
+import upath
 
 from mkdocs_mknodes.appconfig import jinjaconfig, themeconfig, validationconfig
 from mkdocs_mknodes.appconfig.base import ConfigFile
@@ -160,8 +160,8 @@ class AppConfig(ConfigFile):
         copyright: '© 2024 MyProject Team. All rights reserved.'
         ```
     """
-
-    repo_url: HttpUrl | None = Field(None)
+    # pydantic.HttpUrl
+    repo_url: str | None = Field(None)
     """Link to your project's source code repository.
 
     !!! info "Supported Platforms"
@@ -255,14 +255,14 @@ class AppConfig(ConfigFile):
     The targeted callable gets the project instance as an argument and optionally
     keyword arguments from setting below.
     """
-    build_fn_arguments: dict[str, Any] | None = None
+    build_kwargs: dict[str, Any] | None = None
     """Keyword arguments passed to the build script / callable.
 
     Build scripts may have keyword arguments. You can set them by using this setting.
     """
     repo_path: str = "."
     """Path to the repository to create a website for. (`http://....my_project.git`)"""
-    clone_depth: int = 100
+    clone_depth: int | None = 100
     """Clone depth in case the repository is remote. (Required for `git-changelog`)."""
     build_folder: str | None = None
     """Folder to create the Markdown files in.
@@ -319,7 +319,7 @@ class AppConfig(ConfigFile):
 
     Allows setting up loaders, extensions and the render behavior.
     """
-    docs_dir: DirectoryPath = Field("docs")
+    docs_dir: str = Field("docs/")
     """Directory containing documentation markdown source files.
 
     !!! info "Path Resolution"
@@ -484,7 +484,7 @@ class AppConfig(ConfigFile):
         ```
     """
 
-    extra_javascript: list[str | ExtraJavascript] | None = Field(None)
+    extra_javascript: list[str | ExtraJavascript] = Field(default_factory=list)
     """Custom JavaScript files to include in the documentation.
 
     !!! info "File Types"
@@ -543,7 +543,7 @@ class AppConfig(ConfigFile):
         ```
     """
 
-    hooks: list[str] | None = Field(None)
+    hooks: list[str] = Field(default_factory=list)
     """Python scripts that extend the build process.
 
     !!! info "Hook Types"
@@ -567,7 +567,7 @@ class AppConfig(ConfigFile):
         ```
     """
 
-    nav: list[dict[str, Any] | str] | None = Field(None)
+    nav: list[dict[str, Any] | str] = Field(default_factory=list)
     """Defines the hierarchical structure of the documentation navigation.
     Each item can be a simple path to a file or a section with nested items.
 
@@ -617,7 +617,9 @@ class AppConfig(ConfigFile):
     ```
     """
 
-    validation: validationconfig.ValidationConfig | None = Field(None)
+    validation: validationconfig.ValidationConfig = Field(
+        default_factory=validationconfig.ValidationConfig
+    )
     """Controls the validation behavior for links, content, and navigation.
 
     !!! info "Validation Levels"
@@ -649,7 +651,7 @@ class AppConfig(ConfigFile):
         ```
     """
     # DirectoryPath would be nice
-    watch: list[str] | None = Field(None)
+    watch: list[str] = Field(default_factory=list)
     """Additional directories to monitor for changes during development.
 
     !!! info "Behavior"
@@ -762,6 +764,25 @@ class AppConfig(ConfigFile):
             items.append(item)
         return items
 
+    @field_validator("nav", mode="before")
+    @classmethod
+    def validate_nav(
+        cls, values: list[dict[str, Any] | str] | None
+    ) -> list[dict[str, Any] | str]:
+        if values is None:
+            return []
+        return values
+
+    @field_validator("docs_dir", mode="before")
+    @classmethod
+    def validate_docs_dir(cls, value: str, info: ValidationInfo) -> str:
+        config_file_path = info.data["config_file_path"]
+        config_dir = upath.UPath(config_file_path).parent if config_file_path else None
+        path = upath.UPath(value)
+        if config_dir and not path.is_absolute():
+            path = config_dir / path
+        return str(path.resolve())
+
     @field_validator("dev_addr", mode="before")
     @classmethod
     def validate_ip_port(cls, v: str) -> str:
@@ -778,7 +799,7 @@ class AppConfig(ConfigFile):
 
     def get_builder(self) -> Callable[..., Any]:
         build_fn = classhelpers.to_callable(self.build_fn)
-        build_kwargs = self.build_fn_arguments or {}
+        build_kwargs = self.build_kwargs or {}
         return functools.partial(build_fn, **build_kwargs)
 
     def set_theme(

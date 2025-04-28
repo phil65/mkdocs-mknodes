@@ -51,8 +51,8 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
 
     def on_config(self, config: mknodesconfig.MkNodesConfig):  # type: ignore
         """Create the project based on MkDocs config."""
-        if self.config.build_folder:
-            self.build_folder = pathlib.Path(self.config.build_folder)
+        if config.build_folder:
+            self.build_folder = pathlib.Path(config.build_folder)
         else:
             self._dir = tempfile.TemporaryDirectory(
                 prefix="mknodes_",
@@ -61,7 +61,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             self.build_folder = pathlib.Path(self._dir.name)
             logger.debug("Creating temporary dir %s", self._dir.name)
 
-        if not self.config.build_fn:
+        if not config.build_fn:
             return
         self.linkprovider = linkprovider.LinkProvider(
             base_url=config.site_url or "",
@@ -73,8 +73,8 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             data=dict(config.theme),
         )
         git_repo = reporegistry.get_repo(
-            str(self.config.repo_path or "."),
-            clone_depth=self.config.clone_depth,
+            str(config.repo_path or "."),
+            clone_depth=config.clone_depth,
         )
         self.folderinfo = folderinfo.FolderInfo(git_repo.working_dir)
         self.context = contexts.ProjectContext(
@@ -83,7 +83,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             # github=self.folderinfo.github.context,
             theme=self.theme.context,
             links=self.linkprovider,
-            env_config=self.config.get_jinja_config(),
+            env_config=config.get_jinja_config(),
         )
 
     def on_files(self, files: Files, *, config: mknodesconfig.MkNodesConfig) -> Files:  # type: ignore
@@ -96,11 +96,11 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
           - Templates
           - CSS files
         """
-        if not self.config.build_fn:
+        if not config.build_fn:
             return files
 
         logger.info("Generating pages...")
-        build_fn = self.config.get_builder()
+        build_fn = config.get_builder()
         self.root = mk.MkNav(context=self.context)
         build_fn(theme=self.theme, root=self.root)
         logger.debug("Finished building page.")
@@ -131,9 +131,9 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         )
         collector = buildcollector.BuildCollector(
             backends=[mkdocs_backend, markdown_backend],
-            show_page_info=self.config.show_page_info,
-            global_resources=self.config.global_resources,
-            render_by_default=self.config.render_by_default,
+            show_page_info=config.show_page_info,
+            global_resources=config.global_resources,
+            render_by_default=config.render_by_default,
         )
         self.build_info = collector.collect(self.root, self.theme)
         if nav_dict := self.root.nav.to_nav_dict():
@@ -168,7 +168,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         env: jinja2.Environment,
         /,
         *,
-        config: MkDocsConfig,
+        config: mknodesconfig.MkNodesConfig,  # type: ignore
         files: Files,
     ) -> jinja2.Environment | None:
         """Add our own info to the MkDocs environment."""
@@ -176,7 +176,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         env.globals["mknodes"] = rope_env.globals
         env.filters |= rope_env.filters
         logger.debug("Added macros / filters to MkDocs jinja2 environment.")
-        if self.config.rewrite_theme_templates:
+        if config.rewrite_theme_templates:
             assert env.loader
             env.loader = jinjarope.RewriteLoader(env.loader, rewriteloader.rewrite)
             logger.debug("Injected Jinja2 Rewrite loader.")
@@ -212,9 +212,9 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
 
     def on_post_build(self, *, config: mknodesconfig.MkNodesConfig) -> None:  # type: ignore
         """Delete the temporary template files."""
-        if not config.theme.custom_dir or not self.config.build_fn:
+        if not config.theme.custom_dir or not config.build_fn:
             return
-        if self.config.auto_delete_generated_templates:
+        if config.auto_delete_generated_templates:
             logger.debug("Deleting page templates...")
             for template in self.build_info.templates:
                 assert template.filename

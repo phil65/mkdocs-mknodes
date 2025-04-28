@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, Any, Literal
 from urllib.parse import urlsplit
 
 # from mkdocs.commands import serve as serve_
-from mknodes.info import mkdocsconfigfile
 from mknodes.utils import log
+import upath
 import yamling
 
 from mkdocs_mknodes import liveserver, paths
@@ -27,9 +27,6 @@ logger = log.get_logger(__name__)
 
 def serve(
     config_path: str | os.PathLike[str] = paths.CFG_DEFAULT,
-    repo_path: str = ".",
-    build_fn: str = paths.DEFAULT_BUILD_FN,
-    clone_depth: int = 100,
     theme: str | None = None,
     **kwargs: Any,
 ):
@@ -43,35 +40,12 @@ def serve(
         theme: Theme to use
         kwargs: Optional config values (overrides value from config)
     """
-    config = mkdocsconfigfile.MkDocsConfigFile(config_path)
-    config.update_mknodes_section(
-        repo_url=repo_path,
-        build_fn=build_fn,
-        clone_depth=clone_depth,
-    )
     if theme and theme != "material":
-        config.remove_plugin("social")
-        config.remove_plugin("tags")
         kwargs["theme"] = theme
-    text = yamling.dump_yaml(dict(config))
+    text = upath.UPath(config_path).read_text()
     stream = io.StringIO(text)
     stream.name = str(config_path)
     _serve(config_file=stream, livereload=False, **kwargs)  # type: ignore[arg-type]
-
-
-def serve_node(node, repo_path: str = "."):
-    text = f"""
-    import mknodes
-
-    def build(project):
-        page = project.root.add_page(is_index=True, hide="toc")
-        page += '''{node!s}'''
-
-
-    """
-    p = pathlib.Path("docs/test.py")
-    p.write_text(text)
-    serve(repo_url=repo_path, site_script=p)
 
 
 @contextlib.contextmanager
@@ -129,7 +103,6 @@ def _serve(
 
     is_clean = build_type == "clean"
     is_dirty = build_type == "dirty"
-
     config = get_config()
     config.plugins.on_startup(command=("build" if is_clean else "serve"), dirty=is_dirty)
 
@@ -150,14 +123,6 @@ def _serve(
         root=str(site_dir),
         mount_path=mount_path(config),
     )
-
-    def error_handler(code: int) -> bytes | None:
-        if code not in (404, 500):
-            return None
-        error_page = site_dir / f"{code}.html"
-        return error_page.read_bytes() if error_page.is_file() else None
-
-    server.error_handler = error_handler
 
     with catch_exceptions(config):
         # Perform the initial build
