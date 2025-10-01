@@ -34,9 +34,6 @@ def serve(
 
     Args:
         config_path: The path to the config file to use
-        repo_path: Path to the repository a page should be built for
-        build_fn: Callable to use for creating the webpage
-        clone_depth: If repository is remote, the amount of commits to fetch
         theme: Theme to use
         kwargs: Optional config values (overrides value from config)
     """
