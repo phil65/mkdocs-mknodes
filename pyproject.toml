@@ -53,6 +53,7 @@ dependencies = [
     "opentelemetry-instrumentation-jinja2",
     "yarl>=1.17.1",
     "anyenv>=0.1.0",
+    "upathtools>=0.6.5",
 ]
 license = "MIT"
 
