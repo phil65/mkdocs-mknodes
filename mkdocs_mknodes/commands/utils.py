@@ -13,7 +13,7 @@ import os
 import pathlib
 import re
 import time
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any
 
 from mkdocs import exceptions
 from mkdocs.structure.files import File, Files, InclusionLevel, _file_sort_key
@@ -31,9 +31,6 @@ if TYPE_CHECKING:
 logger = telemetry.get_plugin_logger(__name__)
 
 _default_exclude = pathspec.gitignore.GitIgnoreSpec.from_lines([".*", "/templates/"])
-
-
-T = TypeVar("T")
 
 
 class CountHandler(logging.NullHandler):
@@ -57,7 +54,7 @@ class CountHandler(logging.NullHandler):
         ]
 
 
-def count_warnings(fn: Callable[..., T]) -> Callable[..., T]:
+def count_warnings[T](fn: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(fn)
     def wrapped(self, *args, **kwargs) -> T:
         start = time.monotonic()
@@ -80,7 +77,7 @@ def count_warnings(fn: Callable[..., T]) -> Callable[..., T]:
     return wrapped
 
 
-def handle_exceptions(fn: Callable[..., T]) -> Callable[..., T]:
+def handle_exceptions[T](fn: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(fn)
     def wrapped(self, *args, **kwargs) -> T:
         try:
