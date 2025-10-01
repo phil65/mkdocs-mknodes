@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import os
 
-from mknodes.utils import log, pathhelpers
-from upathtools import to_upath
+from mknodes.utils import log
+from upathtools import helpers, to_upath
 
 from mkdocs_mknodes.backends import buildbackend
 
@@ -32,7 +32,7 @@ class MarkdownBackend(buildbackend.BuildBackend):
             logger.debug("%s: Writing file to %r", type(self).__name__, str(k))
             target_path = (self.directory / k).with_suffix(self.extension)
             self._files[target_path.as_posix()] = v
-            pathhelpers.write_file(v, target_path)
+            helpers.write_file(v, target_path)
 
     # def write(self):
     #     for k, v in self._files.items():

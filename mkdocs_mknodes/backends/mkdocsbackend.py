@@ -9,10 +9,10 @@ import markdown
 from mkdocs.config import config_options
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.structure import files as files_
-from mknodes.utils import pathhelpers, resources
+from mknodes.utils import resources
 import upath
 from upath.types import JoinablePathLike
-from upathtools.helpers import copy, to_upath
+from upathtools.helpers import copy, to_upath, write_file
 
 from mkdocs_mknodes import mkdocsconfig, telemetry
 from mkdocs_mknodes.backends import buildbackend
@@ -88,11 +88,11 @@ class MkDocsBackend(buildbackend.BuildBackend):
             if asset.target_dir == "docs_dir":
                 abs_path = upath.UPath(self._config.docs_dir) / asset.filename
                 logger.info("Writing asset %s...", abs_path)
-                pathhelpers.write_file(asset.content, abs_path)
+                write_file(asset.content, abs_path)
             else:
                 path = (pathlib.Path("assets") / asset.filename).as_posix()
                 abs_path = upath.UPath(self._config.site_dir) / path
-                pathhelpers.write_file(asset.content, abs_path)
+                write_file(asset.content, abs_path)
 
     def write_css(self, css_files):
         for css in css_files:
@@ -101,7 +101,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 self._config.extra_css.append(path)
                 abs_path = upath.UPath(self._config.site_dir) / path
                 logger.info("Registering css file %s...", abs_path)
-                pathhelpers.write_file(css.content, abs_path)
+                write_file(css.content, abs_path)
             else:
                 logger.debug("Adding remote CSS file %s", css)
                 self._config.extra_css.append(str(css))
@@ -125,7 +125,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             self._config.extra_javascript.append(path)
             abs_path = upath.UPath(self._config.site_dir) / path
             logger.info("Registering js file %s...", abs_path)
-            pathhelpers.write_file(file.content, abs_path)
+            write_file(file.content, abs_path)
 
     def collect_extensions(self, extensions):
         if extensions:
@@ -148,7 +148,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             if html := template.build_html(md):
                 target_path = path / template.filename
                 logger.info("Creating %s...", target_path.as_posix())
-                pathhelpers.write_file(html, target_path)
+                write_file(html, target_path)
 
     def _write_file(self, path: AnyPath, content: str | bytes):
         path = to_upath(path).as_posix()
@@ -168,7 +168,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             self._mk_files[path] = file_for_path
             copy(source_path, new_path)
             target_path = new_path
-        pathhelpers.write_file(content, target_path or source_path)
+        write_file(content, target_path or source_path)
 
 
 if __name__ == "__main__":

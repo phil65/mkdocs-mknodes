@@ -18,6 +18,7 @@ from mkdocs.structure.pages import Page
 from mknodes.utils import pathhelpers
 import upath
 from upath.types import JoinablePathLike
+from upathtools.helpers import write_file
 
 from mkdocs_mknodes import telemetry
 from mkdocs_mknodes.builders import configbuilder
@@ -311,7 +312,7 @@ class HTMLBuilder:
 
             if output.strip():
                 text = output.encode("utf-8", errors="xmlcharrefreplace")
-                pathhelpers.write_file(text, page.file.abs_dest_path)
+                write_file(text, page.file.abs_dest_path)
             else:
                 logger.info(
                     "Page skipped: '%s'. Generated empty output.", page.file.src_uri
@@ -392,7 +393,7 @@ class HTMLBuilder:
 
         if output.strip():
             output_path = upath.UPath(self.config.site_dir) / template_name
-            pathhelpers.write_file(output.encode(), output_path)
+            write_file(output.encode(), output_path)
             if template_name == "sitemap.xml":
                 docs = files.documentation_pages()
                 pages = [f.page for f in docs if f.page is not None]

@@ -171,9 +171,10 @@ def write_gzip(output_path: str | os.PathLike[str], output: str, timestamp: int)
     """
     logger.debug("Gzipping %r", output_path)
     gz_filename = to_upath(output_path)
+    # TODO: need to check whether this really works with UPaths right now
     with (
         gz_filename.open("wb") as f,
-        gzip.GzipFile(gz_filename, fileobj=f, mode="wb", mtime=timestamp) as gz_buf,
+        gzip.GzipFile(gz_filename, fileobj=f, mode="wb", mtime=timestamp) as gz_buf,  # type: ignore
     ):
         gz_buf.write(output.encode())
 
