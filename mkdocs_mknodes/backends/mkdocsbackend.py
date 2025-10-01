@@ -12,7 +12,7 @@ from mkdocs.structure import files as files_
 from mknodes.utils import pathhelpers, resources
 import upath
 from upath.types import JoinablePathLike
-from upathtools import to_upath
+from upathtools.helpers import copy, to_upath
 
 from mkdocs_mknodes import mkdocsconfig, telemetry
 from mkdocs_mknodes.backends import buildbackend
@@ -166,7 +166,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
         source_path = upath.UPath(f.abs_src_path)
         if source_path != new_path:
             self._mk_files[path] = file_for_path
-            pathhelpers.copy(source_path, new_path)
+            copy(source_path, new_path)
             target_path = new_path
         pathhelpers.write_file(content, target_path or source_path)
 
