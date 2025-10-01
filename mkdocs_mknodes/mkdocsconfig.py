@@ -13,17 +13,20 @@ from urllib import parse
 from mknodes.info import contexts
 from mknodes.mdlib import mdconverter
 from mknodes.utils import pathhelpers, reprhelpers
+from upath.types import JoinablePathLike
+from upathtools import to_upath
 
 from mkdocs_mknodes import telemetry
 from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
 
 
 logger = telemetry.get_plugin_logger(__name__)
+AnyPath = str | os.PathLike[str] | JoinablePathLike
 
 
 @contextlib.contextmanager
 def _open_config_file(
-    config_file: str | os.PathLike[str] | TextIO | None,
+    config_file: AnyPath | TextIO | None,
 ) -> Iterator[TextIO]:
     """A context manager which yields an open file descriptor ready to be read.
 
@@ -35,15 +38,15 @@ def _open_config_file(
     """
     match config_file:
         case None:
-            paths_to_try = [pathlib.Path("mkdocs.yml")]
-        case str() | os.PathLike():
-            paths_to_try = [pathlib.Path(config_file)]
+            paths_to_try = [to_upath("mkdocs.yml")]
+        case str() | os.PathLike() | JoinablePathLike():
+            paths_to_try = [to_upath(config_file)]
         case _ if getattr(config_file, "closed", False):
             # If closed file descriptor, get file path to reopen later.
-            paths_to_try = [pathlib.Path(config_file.name)]
+            paths_to_try = [to_upath(config_file.name)]
         case _:
             result_config_file = config_file
-            paths_to_try = None
+            paths_to_try = []
 
     if paths_to_try:
         # config_file is not a file descriptor, so open it as a path.
@@ -51,7 +54,7 @@ def _open_config_file(
             path = path.resolve()
             logger.debug("Loading configuration file: %r", path)
             try:
-                result_config_file = open(path, "rb")  # noqa: SIM115, PTH123
+                result_config_file = path.open("r")
                 break
             except FileNotFoundError:
                 continue
@@ -61,6 +64,7 @@ def _open_config_file(
     else:
         logger.debug("Loading configuration file: %r", result_config_file)
         # Ensure file descriptor is at beginning
+        assert isinstance(result_config_file, TextIO)
         with contextlib.suppress(OSError):
             result_config_file.seek(0)
 
@@ -116,7 +120,7 @@ def load_config(
 class Config:
     """MkDocs config file wrapper."""
 
-    def __init__(self, config: Mapping | str | os.PathLike[str] | None = None):
+    def __init__(self, config: Mapping | AnyPath | None = None):
         """Constructor.
 
         Args:

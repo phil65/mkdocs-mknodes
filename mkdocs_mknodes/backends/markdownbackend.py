@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 
 from mknodes.utils import log, pathhelpers
-import upath
+from upathtools import to_upath
 
 from mkdocs_mknodes.backends import buildbackend
 
@@ -24,7 +24,7 @@ class MarkdownBackend(buildbackend.BuildBackend):
             extension: Extention of files to generate
         """
         self.extension = extension
-        self.directory = upath.UPath(directory or ".")
+        self.directory = to_upath(directory or ".")
         self._files: dict[str, str | bytes] = {}
 
     def write_files(self, files: dict[str, str | bytes]):

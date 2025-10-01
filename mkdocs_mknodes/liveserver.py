@@ -26,10 +26,14 @@ import wsgiref.util
 from jinjarope import htmlfilters
 from mknodes.utils import log
 import upath
+from upath.types import JoinablePathLike
+from upathtools import to_upath
 import watchdog.events
 import watchdog.observers.polling
 from yarl import URL
 
+
+AnyPath = str | os.PathLike[str] | JoinablePathLike
 
 _SCRIPT_TEMPLATE_STR = """
 var livereload = function(epoch, requestId) {
@@ -94,7 +98,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         builder: Callable[[], None],
         host: str,
         port: int,
-        root: str | os.PathLike[str],
+        root: AnyPath,
         mount_path: str = "/",
         polling_interval: float = 0.5,
         shutdown_delay: float = 0.25,
@@ -103,7 +107,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         with contextlib.suppress(Exception):
             if isinstance(ipaddress.ip_address(host), ipaddress.IPv6Address):
                 self.address_family = socket.AF_INET6
-        self.root = upath.UPath(root).resolve()
+        self.root = to_upath(root).resolve()
         self.url = _serve_url(host, port, mount_path)
         self.build_delay = 0.1
         self.shutdown_delay = shutdown_delay
@@ -137,14 +141,14 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         error_page = self.root / f"{code}.html"
         return error_page.read_bytes() if error_page.is_file() else None
 
-    def watch(self, path: str | os.PathLike[str], *, recursive: bool = True) -> None:
+    def watch(self, path: AnyPath, *, recursive: bool = True) -> None:
         """Add the 'path' to watched paths.
 
         Args:
             path: The path to watch.
             recursive: Whether to watch the path recursively
         """
-        path = str(upath.UPath(path).resolve())
+        path = str(to_upath(path).resolve())
         if path in self._watched_paths:
             self._watched_paths[path] += 1
             return
@@ -165,7 +169,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
             handler, path, recursive=recursive
         )
 
-    def unwatch(self, path: str | os.PathLike[str]) -> None:
+    def unwatch(self, path: AnyPath) -> None:
         """Stop watching file changes for path.
 
         Raises if there was no corresponding `watch` call.
@@ -173,7 +177,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         Args:
             path: The path to unwatch
         """
-        path = str(upath.UPath(path).resolve())
+        path = str(to_upath(path).resolve())
 
         self._watched_paths[path] -= 1
         if self._watched_paths[path] <= 0:
@@ -347,7 +351,7 @@ def _log_poll_request(url: str, request_id: int):
     logger.info("Browser connected: %s", url)
 
 
-def _guess_type(path: str | os.PathLike[str]) -> str:
+def _guess_type(path: AnyPath) -> str:
     """Guess the MIME type of given file.
 
     Args:
@@ -356,9 +360,9 @@ def _guess_type(path: str | os.PathLike[str]) -> str:
     Returns:
         The MIME type of the file.
     """
-    if upath.UPath(path).suffix == ".gz":
+    if to_upath(path).suffix == ".gz":
         return "application/gzip"
-    guess, _ = mimetypes.guess_type(path)
+    guess, _ = mimetypes.guess_type(str(path))
     return guess or "application/octet-stream"
 
 
@@ -377,7 +381,7 @@ def _timestamp() -> int:
 
 def _try_relativize_path(path: str) -> str:
     """Make the path relative to current directory if it's under that directory."""
-    p = upath.UPath(path)
+    p = to_upath(path)
     with contextlib.suppress(ValueError):
         p = p.relative_to(upath.UPath.cwd())
     return str(p)

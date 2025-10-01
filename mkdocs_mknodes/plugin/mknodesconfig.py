@@ -19,16 +19,18 @@ from mkdocs.config import config_options as c, defaults
 from mknodes.info import contexts
 from mknodes.mdlib import mdconverter
 from mknodes.utils import classhelpers
-import upath
+from upath.types import JoinablePathLike
+from upathtools import to_upath
 import yamling
 
 
 logger = logging.getLogger(__name__)
+AnyPath = str | os.PathLike[str] | JoinablePathLike
 
 
 @contextlib.contextmanager
 def _open_config_file(
-    config_file: str | os.PathLike[str] | TextIO | None,
+    config_file: AnyPath | TextIO | None,
 ) -> Iterator[TextIO]:
     """A context manager which yields an open file descriptor ready to be read.
 
@@ -116,12 +118,12 @@ class MkNodesConfig(defaults.MkDocsConfig):
     @classmethod
     def from_yaml_file(
         cls,
-        file: str | os.PathLike[str],
+        file: AnyPath,
         config_file_path: str | None = None,
         validate: bool = True,
     ) -> Self:
         # cfg = yamling.load_yaml_file(file, resolve_inherit=True)
-        config_str = upath.UPath(file).read_text()
+        config_str = to_upath(file).read_text()
         str_io = io.StringIO(config_str)
         return cls.from_yaml(str_io, config_file_path=config_file_path, validate=validate)
 

@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.structure import files as files_, nav, pages
+from upath.types import JoinablePathLike
+from upathtools import to_upath
 
 from mkdocs_mknodes import mkdocsconfig, telemetry
 from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
@@ -14,6 +16,8 @@ if TYPE_CHECKING:
     import mknodes as mk
 
 logger = telemetry.get_plugin_logger(__name__)
+
+AnyPath = str | os.PathLike[str] | JoinablePathLike
 
 
 class MkDocsPage(pages.Page):
@@ -55,9 +59,9 @@ class MkDocsBuilder:
 
     def get_file(
         self,
-        path: str | os.PathLike[str],
-        src_dir: str | os.PathLike[str] | None = None,
-        dest_dir: str | os.PathLike[str] | None = None,
+        path: AnyPath,
+        src_dir: AnyPath | None = None,
+        dest_dir: AnyPath | None = None,
         inclusion_level: files_.InclusionLevel = files_.InclusionLevel.UNDEFINED,
     ) -> files_.File:
         """Return a MkDocs File for given path.
@@ -69,7 +73,7 @@ class MkDocsBuilder:
             inclusion_level: Inclusion level of new file
         """
         new_f = files_.File(
-            os.fspath(path),
+            str(to_upath(path)),
             src_dir=str(src_dir) if src_dir else self._config.docs_dir,
             dest_dir=str(dest_dir) if dest_dir else self._config.site_dir,
             use_directory_urls=self._config.use_directory_urls,
@@ -82,7 +86,7 @@ class MkDocsBuilder:
     def get_section_page(
         self,
         title: str,
-        path: str | os.PathLike[str],
+        path: AnyPath,
         children: list[pages.Page | nav.Section | nav.Link],
         inclusion_level: files_.InclusionLevel = files_.InclusionLevel.UNDEFINED,
     ) -> pages.Page:

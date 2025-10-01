@@ -11,6 +11,8 @@ from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.structure import files as files_
 from mknodes.utils import pathhelpers, resources
 import upath
+from upath.types import JoinablePathLike
+from upathtools import to_upath
 
 from mkdocs_mknodes import mkdocsconfig, telemetry
 from mkdocs_mknodes.backends import buildbackend
@@ -18,14 +20,15 @@ from mkdocs_mknodes.plugin import mkdocsbuilder
 
 
 logger = telemetry.get_plugin_logger(__name__)
+AnyPath = str | os.PathLike[str] | JoinablePathLike
 
 
 class MkDocsBackend(buildbackend.BuildBackend):
     def __init__(
         self,
         files: files_.Files | None = None,
-        config: mkdocsconfig.Config | MkDocsConfig | str | os.PathLike[str] | None = None,
-        directory: str | os.PathLike[str] | None = None,
+        config: mkdocsconfig.Config | MkDocsConfig | AnyPath | None = None,
+        directory: AnyPath | None = None,
     ):
         """Constructor.
 
@@ -41,7 +44,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 self._config = config
             case _:
                 self._config = mkdocsconfig.Config(config)._config
-        self.directory = upath.UPath(directory or ".")
+        self.directory = to_upath(directory or ".")
         files_map = {pathlib.PurePath(f.src_path).as_posix(): f for f in files or []}
         self._mk_files: collections.ChainMap[str, files_.File] = collections.ChainMap(
             {},
@@ -147,9 +150,10 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 logger.info("Creating %s...", target_path.as_posix())
                 pathhelpers.write_file(html, target_path)
 
-    def _write_file(self, path: str | os.PathLike[str], content: str | bytes):
-        path = pathlib.PurePath(path).as_posix()
+    def _write_file(self, path: AnyPath, content: str | bytes):
+        path = to_upath(path).as_posix()
         file_for_path = self.builder.get_file(path, src_dir=self.directory)
+        assert file_for_path.abs_src_path is not None
         new_path = upath.UPath(file_for_path.abs_src_path)
         target_path = None
         if path not in self._mk_files:
@@ -158,6 +162,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             target_path = new_path
 
         f = self._mk_files[path]
+        assert f.abs_src_path is not None
         source_path = upath.UPath(f.abs_src_path)
         if source_path != new_path:
             self._mk_files[path] = file_for_path

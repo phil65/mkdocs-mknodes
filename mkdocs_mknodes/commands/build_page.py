@@ -17,6 +17,7 @@ from mkdocs.structure.nav import Navigation, get_navigation
 from mkdocs.structure.pages import Page
 from mknodes.utils import pathhelpers
 import upath
+from upath.types import JoinablePathLike
 
 from mkdocs_mknodes import telemetry
 from mkdocs_mknodes.builders import configbuilder
@@ -29,6 +30,7 @@ if TYPE_CHECKING:
 
 
 logger = telemetry.get_plugin_logger(__name__)
+AnyPath = str | os.PathLike[str] | JoinablePathLike
 
 
 DRAFT_CONTENT = (

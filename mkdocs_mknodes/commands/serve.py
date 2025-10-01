@@ -11,7 +11,8 @@ from urllib.parse import urlsplit
 
 # from mkdocs.commands import serve as serve_
 from mknodes.utils import log
-import upath
+from upath.types import JoinablePathLike
+from upathtools import to_upath
 import yamling
 
 from mkdocs_mknodes import liveserver, paths
@@ -24,9 +25,11 @@ if TYPE_CHECKING:
 
 logger = log.get_logger(__name__)
 
+AnyPath = str | os.PathLike[str] | JoinablePathLike
+
 
 def serve(
-    config_path: str | os.PathLike[str] = paths.CFG_DEFAULT,
+    config_path: AnyPath = paths.CFG_DEFAULT,
     theme: str | None = None,
     **kwargs: Any,
 ):
@@ -39,7 +42,7 @@ def serve(
     """
     if theme and theme != "material":
         kwargs["theme"] = theme
-    text = upath.UPath(config_path).read_text()
+    text = to_upath(config_path).read_text()
     stream = io.StringIO(text)
     stream.name = str(config_path)
     _serve(config_file=stream, livereload=False, **kwargs)  # type: ignore[arg-type]
