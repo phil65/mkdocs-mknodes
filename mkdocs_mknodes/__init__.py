@@ -1,4 +1,7 @@
-__version__ = "0.7.2"
+from __future__ import annotations
+from importlib.metadata import version
+
+__version__ = version("mkdocs-mknodes")
 
 
 from .mkdefaultwebsite import MkDefaultWebsite
