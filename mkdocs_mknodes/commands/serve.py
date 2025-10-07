@@ -42,7 +42,7 @@ def serve(
     """
     if theme and theme != "material":
         kwargs["theme"] = theme
-    text = to_upath(config_path).read_text()
+    text = to_upath(config_path).read_text("utf-8")
     stream = io.StringIO(text)
     stream.name = str(config_path)
     _serve(config_file=stream, livereload=False, **kwargs)  # type: ignore[arg-type]

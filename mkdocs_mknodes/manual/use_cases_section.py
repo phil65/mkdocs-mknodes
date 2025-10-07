@@ -14,6 +14,6 @@ def _(page: mk.MkPage):
 @nav.route.page("Creating a website via config", hide="toc")
 def _(page: mk.MkPage):
     """Create the "Creating a sample website" MkPage."""
-    config = pathlib.Path("configs/mkdocs_mkdocs.yml").read_text()
+    config = pathlib.Path("configs/mkdocs_mkdocs.yml").read_text("utf-8")
     variables = dict(config=config)
     page += mk.MkTemplate("use_case_default_website.jinja", variables=variables)
