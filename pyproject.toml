@@ -1,58 +1,57 @@
 [project]
 name = "mkdocs-mknodes"
-authors = [
-    { name = "Philipp Temminghoff", email = "philipptemminghoff@gmail.com" },
-]
 description = "Don't write docs. Code them."
 readme = "README.md"
-dynamic = ["version"]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: Implementation :: CPython",
-    "Topic :: Software Development :: Documentation",
-    "Topic :: Software Development :: User Interfaces",
-    "Topic :: Documentation",
-    "Topic :: Internet",
-    "Topic :: Text Processing :: Markup :: Markdown",
+requires-python = ">=3.12"
+license = "MIT"
+authors = [
+  { name = "Philipp Temminghoff", email = "philipptemminghoff@gmail.com" },
 ]
 keywords = [
-    "framework",
-    "docs",
-    "docstrings",
-    "documentation",
-    "internet",
-    "markdown",
+  "docs",
+  "docstrings",
+  "documentation",
+  "framework",
+  "internet",
+  "markdown",
 ]
-
-requires-python = ">=3.12"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Topic :: Documentation",
+  "Topic :: Internet",
+  "Topic :: Software Development :: Documentation",
+  "Topic :: Software Development :: User Interfaces",
+  "Topic :: Text Processing :: Markup :: Markdown",
+]
 dependencies = [
-    # MkDocs
-    "mkdocs >=1.5",
-    "pathspec",
-    "mknodes",
-    # CLI
-    "rich",
-    "typer",
-    # Tools
-    "jinja2",
-    "jinjarope",
-    "yamling",
-    "universal_pathlib",
-    "pydantic",
-    "logfire",                               # [requests,aiohttp,system-metrics]
-    "opentelemetry-instrumentation-urllib3",
-    # "opentelemetry-instrumentation-sqlite3",
-    "opentelemetry-instrumentation-urllib",
-    "opentelemetry-instrumentation-jinja2",
-    "yarl>=1.17.1",
+  # Tools
+  "jinja2",
+  "jinjarope",
+  "logfire",  # [requests,aiohttp,system-metrics]
+  # MkDocs
+  "mkdocs >=1.5",
+  "mknodes",
+  "opentelemetry-instrumentation-jinja2",
+  # "opentelemetry-instrumentation-sqlite3",
+  "opentelemetry-instrumentation-urllib",
+  "opentelemetry-instrumentation-urllib3",
+  "pathspec",
+  "pydantic",
+  # CLI
+  "rich",
+  "typer",
+  "universal_pathlib",
+  "yamling",
+  "yarl>=1.17.1",
 ]
-license = "MIT"
+dynamic = ["version"]
 
 [project.scripts]
 mknodes = "mkdocs_mknodes.cli:cli"
@@ -62,11 +61,11 @@ mknodes = "mkdocs_mknodes.plugin:MkNodesPlugin"
 
 [project.urls]
 Documentation = "https://phil65.github.io/mkdocs-mknodes/"
-Source = "https://github.com/phil65/mkdocs_mknodes"
 Gitter = "https://app.gitter.im/#/room/#mknodes:gitter.im"
+Source = "https://github.com/phil65/mkdocs_mknodes"
 
 [build-system]
-requires = ["hatchling", "hatch-regex-commit"]
+requires = ["hatch-regex-commit", "hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
@@ -76,28 +75,28 @@ path = "mkdocs_mknodes/__init__.py"
 
 [tool.uv]
 dev-dependencies = [
-    # lint
-    "ruff",
-    "mypy[faster-cache]; python_version < '3.14'",
-    "mypy; python_version >= '3.14'",
-    # test
-    "pytest",
-    "pytest-cov",
-    # docs
-    "mkdocs-material >= 9.5",
-    "pymdown-extensions",
-    "mkdocstrings[python]",
-    "griffe-fieldz",
-    # dev
-    "pyreadline3",
-    "pyinstrument",
-    "devtools",
-    # used for formatting signature
-    "black",
-    "pygments",
-    # Material Social addon
-    "cairosvg; python_version < '3.14'",
-    "pillow; python_version < '3.14'",
+  # lint
+  "ruff",
+  "mypy[faster-cache]; python_version < '3.14'",
+  "mypy; python_version >= '3.14'",
+  # test
+  "pytest",
+  "pytest-cov",
+  # docs
+  "mkdocs-material >= 9.5",
+  "pymdown-extensions",
+  "mkdocstrings[python]",
+  "griffe-fieldz",
+  # dev
+  "pyreadline3",
+  "pyinstrument",
+  "devtools",
+  # used for formatting signature
+  "black",
+  "pygments",
+  # Material Social addon
+  "cairosvg; python_version < '3.14'",
+  "pillow; python_version < '3.14'",
 ]
 
 [tool.pytest.ini_options]
@@ -111,11 +110,11 @@ addopts = "--cov=mkdocs_mknodes/ --cov-report=term-missing"
 
 [tool.coverage.report]
 exclude_lines = [
-    "pragma: no cover",
-    "if TYPE_CHECKING:",
-    "@overload",
-    "except ImportError",
-    'if __name__ == "__main__":',
+  "pragma: no cover",
+  "if TYPE_CHECKING:",
+  "@overload",
+  "except ImportError",
+  'if __name__ == "__main__":',
 ]
 
 [tool.mypy]
@@ -126,103 +125,103 @@ plugins = ["pydantic.mypy"]
 
 [tool.ruff]
 line-length = 90
-extend-exclude = ['docs']
+extend-exclude = ["docs"]
 target-version = "py312"
 
 [tool.ruff.lint]
 select = [
-    "A", # Flake8-builtins
-    # "ANN",  # Flake8-Annotations
-    # "ASYNC",  # Flake8-Async
-    # "ARG",  # # Flake8-Unused-Arguments
-    "B",   # flake8-bugbear
-    "BLE", # Flake8-blind-except
-    "C",
-    "C4",  # flake8-comprehensions
-    # "C90",  # MCCabe
-    "COM", #  Flake8-commas
-    # "CPY",  #  Copyright-related rules
-    "D", # PyDocStyle
-    # "DTZ",  # Flake8- Datetimez
-    "E",  # PyCodeStyle Error
-    "EM", # flake8-errmsg
-    # "ERA",  #  Eradicate
-    "EXE", # flake8-executable
-    "F",   # PyFlakes
-    "FA",  # flake8-future-annotations
-    # "FBT",  # flake8-boolean-trap
-    # "FIX",  # flake8-fixme
-    "FLY", # flynt
-    "G",   #  flake8-logging-format
-    "I",   # ISort
-    "ICN", # Flake8-import-conventions
-    "INP", # flake8-no-pep420
-    "INT", # flake8-gettext
-    "ISC", # flake8-implicit-str-concat
-    "N",   # pep8-naming
-    # "NPY",  # numpy-specific rules
-    # "PD",   # pandas-vet
-    "PERF", # perflint
-    # "PGH",  # pygrep-hooks
-    "PIE", # flake8-pie
-    "PLE", # PyLint Error
-    "PLC", # PyLint convention
-    # "PLW",  # PyLint Warning
-    "PLR", # PyLint refactor
-    "PT",  # flake8-pytest-style
-    "PTH", # flake8-use-pathlib
-    "PYI", # flake8-pyi
-    "Q",   # flake8-quotes
-    "RET", # flake8-return
-    "RSE", # flake8-raise
-    "RUF", # ruff-specific rules
-    # "S",    # flake8-bandit
-    "SIM",  # flake8-simplify
-    "SLF",  # flake8-self
-    "SLOT", # flake8-slots
-    # "T",
-    # "TD",   # flake8-todos
-    "T10", # flake8-debugger
-    # "T20",  # flake8-print
-    # "TCH",  # flake8-type-checking
-    "TID", # flake8-tidy-imports
-    "TRY", # tryceratops
-    "UP",  # PyUpgrade
-    "W",   # PyCodeStyle warning
-    "YTT", # flake8-2020
+  "A",  # Flake8-builtins
+  # "ANN",  # Flake8-Annotations
+  # "ASYNC",  # Flake8-Async
+  # "ARG",  # # Flake8-Unused-Arguments
+  "B",  # flake8-bugbear
+  "BLE",  # Flake8-blind-except
+  "C",
+  "C4",  # flake8-comprehensions
+  # "C90",  # MCCabe
+  "COM",  # Flake8-commas
+  # "CPY",  #  Copyright-related rules
+  "D",  # PyDocStyle
+  # "DTZ",  # Flake8- Datetimez
+  "E",  # PyCodeStyle Error
+  "EM",  # flake8-errmsg
+  # "ERA",  #  Eradicate
+  "EXE",  # flake8-executable
+  "F",  # PyFlakes
+  "FA",  # flake8-future-annotations
+  # "FBT",  # flake8-boolean-trap
+  # "FIX",  # flake8-fixme
+  "FLY",  # flynt
+  "G",  # flake8-logging-format
+  "I",  # ISort
+  "ICN",  # Flake8-import-conventions
+  "INP",  # flake8-no-pep420
+  "INT",  # flake8-gettext
+  "ISC",  # flake8-implicit-str-concat
+  "N",  # pep8-naming
+  # "NPY",  # numpy-specific rules
+  # "PD",   # pandas-vet
+  "PERF",  # perflint
+  # "PGH",  # pygrep-hooks
+  "PIE",  # flake8-pie
+  "PLE",  # PyLint Error
+  "PLC",  # PyLint convention
+  # "PLW",  # PyLint Warning
+  "PLR",  # PyLint refactor
+  "PT",  # flake8-pytest-style
+  "PTH",  # flake8-use-pathlib
+  "PYI",  # flake8-pyi
+  "Q",  # flake8-quotes
+  "RET",  # flake8-return
+  "RSE",  # flake8-raise
+  "RUF",  # ruff-specific rules
+  # "S",    # flake8-bandit
+  "SIM",  # flake8-simplify
+  "SLF",  # flake8-self
+  "SLOT",  # flake8-slots
+  # "T",
+  # "TD",   # flake8-todos
+  "T10",  # flake8-debugger
+  # "T20",  # flake8-print
+  # "TCH",  # flake8-type-checking
+  "TID",  # flake8-tidy-imports
+  "TRY",  # tryceratops
+  "UP",  # PyUpgrade
+  "W",  # PyCodeStyle warning
+  "YTT",  # flake8-2020
 ]
 ignore = [
-    "C408", # Unnecessary {obj_type} call (rewrite as a literal)
-    "B905", # zip() without an explicit strict= parameter
-    "C901", # {name} is too complex ({complexity} > {max_complexity})
-    # "CPY001", # Missing copyright notice at top of file
-    "COM812",
-    "D100",    # Missing docstring in public module
-    "D101",    # Missing docstring in public class
-    "D102",    # Missing docstring in public method
-    "D103",    # Missing docstring in public function
-    "D104",    # Missing docstring in public package
-    "D105",    # Missing docstring in magic method
-    "D106",    # Missing docstring in public nested class
-    "D107",    # Missing docstring in __init__
-    "D203",    # 1 blank line required before class docstring
-    "D204",    # 1 blank line required after class docstring
-    "D213",    # Multi-line docstring summary should start at the second line
-    "D215",    # Section underline is over-indented ("{name}")
-    "D400",    # First line should end with a period
-    "D401",    # First line of docstring should be in imperative mood: "{first_line}"
-    "D404",    # First word of the docstring should not be "This"
-    "D406",    # Section name should end with a newline ("{name}")
-    "D407",    # Missing dashed underline after section ("{name}")
-    "D408",    # Section underline should be in the line following the section's name ("{name}")
-    "D409",    # Section underline should match the length of its name ("{name}")
-    "D413",    # Missing blank line after last section ("{name}")
-    "ISC001",
-    "PLR0912", # Too many branches
-    "PLR0913", # Too many arguments to function call
-    "PLR0915", # Too many statements
-    "SLF001",  # Private member accessed
-    "TRY003",  # Avoid specifying long messages outside the exception class
+  "C408",  # Unnecessary {obj_type} call (rewrite as a literal)
+  "B905",  # zip() without an explicit strict= parameter
+  "C901",  # {name} is too complex ({complexity} > {max_complexity})
+  # "CPY001", # Missing copyright notice at top of file
+  "COM812",
+  "D100",  # Missing docstring in public module
+  "D101",  # Missing docstring in public class
+  "D102",  # Missing docstring in public method
+  "D103",  # Missing docstring in public function
+  "D104",  # Missing docstring in public package
+  "D105",  # Missing docstring in magic method
+  "D106",  # Missing docstring in public nested class
+  "D107",  # Missing docstring in __init__
+  "D203",  # 1 blank line required before class docstring
+  "D204",  # 1 blank line required after class docstring
+  "D213",  # Multi-line docstring summary should start at the second line
+  "D215",  # Section underline is over-indented ("{name}")
+  "D400",  # First line should end with a period
+  "D401",  # First line of docstring should be in imperative mood: "{first_line}"
+  "D404",  # First word of the docstring should not be "This"
+  "D406",  # Section name should end with a newline ("{name}")
+  "D407",  # Missing dashed underline after section ("{name}")
+  "D408",  # Section underline should be in the line following the section's name ("{name}")
+  "D409",  # Section underline should match the length of its name ("{name}")
+  "D413",  # Missing blank line after last section ("{name}")
+  "ISC001",
+  "PLR0912",  # Too many branches
+  "PLR0913",  # Too many arguments to function call
+  "PLR0915",  # Too many statements
+  "SLF001",  # Private member accessed
+  "TRY003",  # Avoid specifying long messages outside the exception class
 ]
 
 [tool.ruff.format]
@@ -254,12 +253,12 @@ reportUnannotatedClassAttribute = false
 
 [tool.mknodes]
 allowed-commit-types = [
-    "fix",
-    "feat",
-    "refactor",
-    "docs",
-    "test",
-    "build",
-    "chore",
+  "fix",
+  "feat",
+  "refactor",
+  "docs",
+  "test",
+  "build",
+  "chore",
 ]
 docstring-style = "google"
