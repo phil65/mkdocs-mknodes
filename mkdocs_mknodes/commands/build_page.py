@@ -341,7 +341,7 @@ def _build_extra_template(template_name: str, files: Files, config: MkNodesConfi
         return
     output = _build_template(template_name, template, files, config, nav)
     if output.strip():
-        pathhelpers.write_file(output.encode(), file.abs_dest_path)
+        helpers.write_file(output.encode(), file.abs_dest_path)
     else:
         logger.info("Template skipped: %r generated empty output.", template_name)
 

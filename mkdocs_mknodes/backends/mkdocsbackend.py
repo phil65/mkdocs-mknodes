@@ -9,7 +9,7 @@ import markdown
 from mkdocs.config import config_options
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.structure import files as files_
-from mknodes.utils import pathhelpers, resources
+from mknodes.utils import resources
 import upath
 from upathtools import helpers
 
@@ -95,7 +95,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 self._config.extra_css.append(path)
                 abs_path = upath.UPath(self._config.site_dir) / path
                 logger.info("Registering css file %s...", abs_path)
-                pathhelpers.write_file(css.content, abs_path)
+                helpers.write_file(css.content, abs_path)
             else:
                 logger.debug("Adding remote CSS file %s", css)
                 self._config.extra_css.append(str(css))
@@ -119,7 +119,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             self._config.extra_javascript.append(path)
             abs_path = upath.UPath(self._config.site_dir) / path
             logger.info("Registering js file %s...", abs_path)
-            pathhelpers.write_file(file.content, abs_path)
+            helpers.write_file(file.content, abs_path)
 
     def collect_extensions(self, extensions):
         if extensions:
@@ -160,7 +160,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             self._mk_files[path] = file_for_path
             helpers.copy(source_path, new_path)
             target_path = new_path
-        pathhelpers.write_file(content, target_path or source_path)
+        helpers.write_file(content, target_path or source_path)
 
 
 if __name__ == "__main__":
