@@ -116,7 +116,6 @@ graph LR
   2257954981984["mkshields.MkShields"]
   2257954992720["mkinstallguide.MkInstallGuide"]
   2257991178064["mkcommitconventions.MkCommitConventions"]
-  2257991156592["mkpullrequestguidelines.MkPullRequestGuidelines"]
   2257952053104["mkdevenvsetup.MkDevEnvSetup"]
   2257952110688["mkcommentedcode.MkCommentedCode"]
   2257952114592["mkpluginflow.MkPluginFlow"]

@@ -5,58 +5,58 @@ site_description: A MkDocs page created by MkNodes
 repo_url: "https://github.com/mkdocs/mkdocs/"
 site_url: https://phil65.github.io/mknodes/mkdocs/
 plugins:
-  - mknodes:
-      repo_path: https://github.com/mkdocs/mkdocs.git
-      clone_depth: 100
-      build_fn: mkdocs_mknodes:parse
-      kwargs:
-        pages:
-          - title: Home
-            type: MkText
-            text: "{{ metadata.description }}"
-            is_index: true
-          - Usage:
-              - type: MkTemplate
-                title: Getting started
-                template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/getting-started.md
-              - type: MkTemplate
-                title: Configuration
-                template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/configuration.md
-              - type: MkTemplate
-                title: Deploying your docs
-                template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/deploying-your-docs.md
-              - type: MkTemplate
-                title: Installation
-                template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/installation.md
-          - title: API
-            type: MkDoc
-            section_name: "API"
-            recursive: true
-          - title: CLI
-            type: MkCliDoc
-            show_subcommands: true
-            condition: "{{ metadata.cli }}"
-          - Development:
-              - title: Changelog
-                type: MkChangelog
-              - title: Code of Conduct
-                type: MkCodeOfConduct
-              - title: Contributing
-                type: MkCommitConventions
-              - title: Pull requests
-                type: MkPullRequestGuidelines
-              - title: Dependencies
-                type: MkPage
-                items:
-                  - title: Dependency table
-                    type: MkDependencyTable
-                  - title: Dependency tree
-                    type: MkPipDepTree
-                    direction: LR
-              - title: Dependencies
-                type: MkDependencyTable
-              - title: MkDocs Plugins
-                condition: '{{ "mkdocs.plugins" in metadata.entry_points }}'
-                type: MkPluginFlow
-              - title: License
-                type: MkLicense
+    - mknodes:
+          repo_path: https://github.com/mkdocs/mkdocs.git
+          clone_depth: 100
+          build_fn: mkdocs_mknodes:parse
+          kwargs:
+              pages:
+                  - title: Home
+                    type: MkText
+                    text: "{{ metadata.description }}"
+                    is_index: true
+                  - Usage:
+                        - type: MkTemplate
+                          title: Getting started
+                          template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/getting-started.md
+                        - type: MkTemplate
+                          title: Configuration
+                          template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/configuration.md
+                        - type: MkTemplate
+                          title: Deploying your docs
+                          template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/deploying-your-docs.md
+                        - type: MkTemplate
+                          title: Installation
+                          template: https://raw.githubusercontent.com/mkdocs/mkdocs/master/docs/user-guide/installation.md
+                  - title: API
+                    type: MkDoc
+                    section_name: "API"
+                    recursive: true
+                  - title: CLI
+                    type: MkCliDoc
+                    show_subcommands: true
+                    condition: "{{ metadata.cli }}"
+                  - Development:
+                        - title: Changelog
+                          type: MkChangelog
+                        - title: Code of Conduct
+                          type: MkCodeOfConduct
+                        - title: Contributing
+                          type: MkCommitConventions
+                        # - title: Pull requests
+                        #   type: MkPullRequestGuidelines
+                        - title: Dependencies
+                          type: MkPage
+                          items:
+                              - title: Dependency table
+                                type: MkDependencyTable
+                              - title: Dependency tree
+                                type: MkPipDepTree
+                                direction: LR
+                        - title: Dependencies
+                          type: MkDependencyTable
+                        - title: MkDocs Plugins
+                          condition: '{{ "mkdocs.plugins" in metadata.entry_points }}'
+                          type: MkPluginFlow
+                        - title: License
+                          type: MkLicense
