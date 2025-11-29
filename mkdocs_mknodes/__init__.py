@@ -1,10 +1,10 @@
-__version__ = "0.7.5"
-
-
 from .mkdefaultwebsite import MkDefaultWebsite
 from . import telemetry
+from importlib.metadata import version
 
 telemetry.setup_logfire()
+
+__version__ = version("mkdocs-mknodes")
 
 
 def parse(root, theme, pages):
