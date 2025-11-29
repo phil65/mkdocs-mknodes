@@ -16,6 +16,7 @@ from mkdocs.structure.nav import get_navigation
 from mkdocs.structure.pages import Page
 from mknodes.utils import pathhelpers
 import upath
+from upathtools import helpers
 
 from mkdocs_mknodes import telemetry
 from mkdocs_mknodes.builders import configbuilder
@@ -316,7 +317,7 @@ def _build_theme_template(
 
     if output.strip():
         output_path = upath.UPath(config.site_dir) / template_name
-        pathhelpers.write_file(output.encode(), output_path)
+        helpers.write_file(output.encode(), output_path)
         if template_name == "sitemap.xml":
             docs = files.documentation_pages()
             ts = get_build_timestamp(pages=[f.page for f in docs if f.page is not None])
