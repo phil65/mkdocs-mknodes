@@ -18,7 +18,6 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from mkdocs import exceptions
 from mkdocs.structure.files import File, Files, InclusionLevel, _file_sort_key
 import pathspec
-import upath
 
 from mkdocs_mknodes import telemetry
 
@@ -174,7 +173,7 @@ def write_gzip(output_path: str | os.PathLike[str], output: str, timestamp: int)
                    If omitted or None, the current time is used.
     """
     logger.debug("Gzipping %r", output_path)
-    gz_filename = upath.UPath(output_path)
+    gz_filename = pathlib.Path(output_path)
     with (
         gz_filename.open("wb") as f,
         gzip.GzipFile(gz_filename, fileobj=f, mode="wb", mtime=timestamp) as gz_buf,

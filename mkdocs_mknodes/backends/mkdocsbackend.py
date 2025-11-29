@@ -11,6 +11,7 @@ from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.structure import files as files_
 from mknodes.utils import pathhelpers, resources
 import upath
+from upathtools import helpers
 
 from mkdocs_mknodes import mkdocsconfig, telemetry
 from mkdocs_mknodes.backends import buildbackend
@@ -77,11 +78,11 @@ class MkDocsBackend(buildbackend.BuildBackend):
             if asset.target_dir == "docs_dir":
                 abs_path = upath.UPath(self._config.docs_dir) / asset.filename
                 logger.info("Writing asset %s...", abs_path)
-                pathhelpers.write_file(asset.content, abs_path)
+                helpers.write_file(asset.content, abs_path)
             else:
                 path = (pathlib.Path("assets") / asset.filename).as_posix()
                 abs_path = upath.UPath(self._config.site_dir) / path
-                pathhelpers.write_file(asset.content, abs_path)
+                helpers.write_file(asset.content, abs_path)
 
     def write_css(self, css_files):
         for css in css_files:
@@ -137,7 +138,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             if html := template.build_html(md):
                 target_path = path / template.filename
                 logger.info("Creating %s...", target_path.as_posix())
-                pathhelpers.write_file(html, target_path)
+                helpers.write_file(html, target_path)
 
     def _write_file(self, path: str | os.PathLike[str], content: str | bytes):
         path = pathlib.PurePath(path).as_posix()
@@ -153,7 +154,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
         source_path = upath.UPath(f.abs_src_path)
         if source_path != new_path:
             self._mk_files[path] = file_for_path
-            pathhelpers.copy(source_path, new_path)
+            helpers.copy(source_path, new_path)
             target_path = new_path
         pathhelpers.write_file(content, target_path or source_path)
 

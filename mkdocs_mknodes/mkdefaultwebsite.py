@@ -35,7 +35,6 @@ class MkDefaultWebsite(mk.MkNav):
 
         page = nav.add_page("Contributing")
         page += mk.MkCommitConventions()
-        page += mk.MkPullRequestGuidelines()
 
         page = nav.add_page("Setting up the environment")
         page += mk.MkDevEnvSetup()

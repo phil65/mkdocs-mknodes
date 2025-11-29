@@ -332,7 +332,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         else:
             content_len = file_path.stat().st_size
 
-        content_type = _guess_type(file_path)
+        content_type = _guess_type(str(file_path))
         headers = [("Content-Type", content_type), ("Content-Length", str(content_len))]
         start_response("200 OK", headers)
         return wsgiref.util.FileWrapper(file)
