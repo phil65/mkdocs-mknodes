@@ -255,7 +255,7 @@ def _build_page(
         # Write the output file.
         if output.strip():
             text = output.encode("utf-8", errors="xmlcharrefreplace")
-            pathhelpers.write_file(text, page.file.abs_dest_path)
+            helpers.write_file(text, page.file.abs_dest_path)
         else:
             logger.info("Page skipped: '%s'. Generated empty output.", page.file.src_uri)
 
