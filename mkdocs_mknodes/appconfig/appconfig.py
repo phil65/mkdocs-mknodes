@@ -6,28 +6,16 @@ from typing import TYPE_CHECKING, Annotated, Any
 
 from mknodes.utils import classhelpers
 from pathspec import gitignore
-from pydantic import (
-    BaseModel,
-    Field,
-    field_validator,
-)
+from pydantic import BaseModel, DirectoryPath, Field, HttpUrl, ValidationInfo, field_validator
 from pydantic.functional_validators import BeforeValidator
 from pydantic_core import PydanticCustomError
 
-from mkdocs_mknodes.appconfig import jinjaconfig, themeconfig
+from mkdocs_mknodes.appconfig import jinjaconfig, themeconfig, validationconfig
 from mkdocs_mknodes.appconfig.base import ConfigFile
 
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-
-    from pydantic import (
-        DirectoryPath,
-        HttpUrl,
-        ValidationInfo,
-    )
-
-    from mkdocs_mknodes.appconfig import validationconfig
 
 
 def validate_gitignore_patterns(pattern: list[str] | str) -> str:
