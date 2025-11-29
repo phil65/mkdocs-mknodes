@@ -1,6 +1,6 @@
 [project]
 name = "mkdocs-mknodes"
-version = "0.7.5"
+version = "0.7.6"
 description = "Don't write docs. Code them."
 readme = "README.md"
 requires-python = ">=3.13"
