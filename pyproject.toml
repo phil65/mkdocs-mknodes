@@ -2,7 +2,7 @@
 name = "mkdocs-mknodes"
 description = "Don't write docs. Code them."
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 license = "MIT"
 authors = [
   { name = "Philipp Temminghoff", email = "philipptemminghoff@gmail.com" },
@@ -21,8 +21,8 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython",
   "Topic :: Documentation",
   "Topic :: Internet",
@@ -118,7 +118,7 @@ exclude_lines = [
 ]
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.13"
 disable_error_code = ["assignment", "misc", "import", "has-type"]
 pretty = true
 plugins = ["pydantic.mypy"]
@@ -126,7 +126,7 @@ plugins = ["pydantic.mypy"]
 [tool.ruff]
 line-length = 90
 extend-exclude = ["docs"]
-target-version = "py312"
+target-version = "py313"
 
 [tool.ruff.lint]
 select = [
@@ -242,7 +242,7 @@ combine-as-imports = true
 "__init__.py" = ["E402", "I001"]
 
 [tool.pyright]
-pythonVersion = "3.12"
+pythonVersion = "3.13"
 pythonPlatform = "All"
 deprecateTypingAliases = true
 reportUnusedCallResult = false
