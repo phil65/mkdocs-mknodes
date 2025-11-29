@@ -3,10 +3,15 @@
 from __future__ import annotations
 
 import pathlib
+from typing import TYPE_CHECKING
 
-from mkdocs.structure.files import File, Files
+from mkdocs.structure.files import Files
 
 from mkdocs_mknodes import telemetry
+
+
+if TYPE_CHECKING:
+    from mkdocs.structure.files import File
 
 
 logger = telemetry.get_plugin_logger(__name__)
@@ -15,8 +20,7 @@ logger = telemetry.get_plugin_logger(__name__)
 def file_sorter(f: File):
     parts = pathlib.PurePath(f.src_path).parts
     return tuple(
-        chr(f.name != "index" if i == len(parts) - 1 else 2) + p
-        for i, p in enumerate(parts)
+        chr(f.name != "index" if i == len(parts) - 1 else 2) + p for i, p in enumerate(parts)
     )
 
 

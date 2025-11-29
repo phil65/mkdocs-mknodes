@@ -15,5 +15,5 @@ def _(page: mk.MkPage):
 def _(page: mk.MkPage):
     """Create the "Creating a sample website" MkPage."""
     config = pathlib.Path("configs/mkdocs_mkdocs.yml").read_text()
-    variables = dict(config=config)
+    variables = {"config": config}
     page += mk.MkTemplate("use_case_default_website.jinja", variables=variables)

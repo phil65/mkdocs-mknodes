@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from mknodes.utils import log
 import upath
-from upath.types import JoinablePathLike
 from upathtools import helpers
 
 from mkdocs_mknodes.backends import buildbackend
+
+
+if TYPE_CHECKING:
+    from upath.types import JoinablePathLike
 
 
 logger = log.get_logger(__name__)

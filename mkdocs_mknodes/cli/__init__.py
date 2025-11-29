@@ -31,9 +31,7 @@ cli = t.Typer(
 REPO_HELP = "Repository URL of the target package. Can be remote or local."
 BUILD_HELP = "Path to the build script. (form: `path.to.module:function` )"
 SITE_DIR_HELP = "Path to the folder where the HTML should get written."
-DEPTH_HELP = (
-    "Git clone depth in case repository is remote. Important for changelog generation."
-)
+DEPTH_HELP = "Git clone depth in case repository is remote. Important for changelog generation."
 CFG_PATH_HELP = "Path to the config file."
 STRICT_HELP = "Strict mode (fails on warnings)"
 THEME_HELP = "Theme to use for the build. Overrides config setting."
@@ -151,7 +149,7 @@ def create_config(
     config = appconfig.AppConfig.from_yaml_file(paths.RESOURCES / "mkdocs_basic.yml")
     theme_name = theme or "material"
     if theme_name != "material":
-        theme_dict = dict(name=theme_name, override_dir="overrides")
+        theme_dict = {"name": theme_name, "override_dir": "overrides"}
         config.set_theme(theme_dict)
     config.use_directory_urls = use_directory_urls
     skin = mk.Theme(theme_name)
@@ -170,9 +168,7 @@ def create_config(
     config.site_name = info.distribution_name
     config.site_author = info.author_name
     config.copyright = f"Copyright © {datetime.now().year} {info.author_name}"
-    result = yamling.dump_yaml(
-        config.model_dump(exclude_unset=True, exclude_defaults=True)
-    )
+    result = yamling.dump_yaml(config.model_dump(exclude_unset=True, exclude_defaults=True))
     print(result)
 
 

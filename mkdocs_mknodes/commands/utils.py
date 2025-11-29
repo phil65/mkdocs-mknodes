@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import collections
-from collections.abc import Callable, Iterable
 import contextlib
 import datetime
 import functools
@@ -23,6 +22,8 @@ from mkdocs_mknodes import telemetry
 
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable
+
     from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
 
 
@@ -49,10 +50,7 @@ class CountHandler(logging.NullHandler):
         return rv
 
     def get_counts(self) -> list[tuple[str, int]]:
-        return [
-            (logging.getLevelName(k), v)
-            for k, v in sorted(self.counts.items(), reverse=True)
-        ]
+        return [(logging.getLevelName(k), v) for k, v in sorted(self.counts.items(), reverse=True)]
 
 
 def count_warnings[T](fn: Callable[..., T]) -> Callable[..., T]:

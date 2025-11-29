@@ -1,6 +1,12 @@
 from __future__ import annotations
 
-from mknodes.utils import log, resources
+from typing import TYPE_CHECKING
+
+from mknodes.utils import log
+
+
+if TYPE_CHECKING:
+    from mknodes.utils import resources
 
 
 logger = log.get_logger(__name__)

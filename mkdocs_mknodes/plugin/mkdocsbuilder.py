@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
-from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.structure import files as files_, nav, pages
 
 from mkdocs_mknodes import mkdocsconfig, telemetry
@@ -11,6 +10,7 @@ from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
 
 
 if TYPE_CHECKING:
+    from mkdocs.config.defaults import MkDocsConfig
     import mknodes as mk
 
 logger = telemetry.get_plugin_logger(__name__)
@@ -33,11 +33,7 @@ class MkDocsPage(pages.Page):
 class MkDocsBuilder:
     def __init__(
         self,
-        config: mkdocsconfig.Config
-        | MkNodesConfig
-        | str
-        | os.PathLike[str]
-        | None = None,
+        config: mkdocsconfig.Config | MkNodesConfig | str | os.PathLike[str] | None = None,
     ):
         """Constructor.
 
@@ -134,6 +130,7 @@ class MkDocsBuilder:
         return page
 
     def get_nav(self) -> nav.Navigation:
+        """Get the navigation for the site."""
         return nav.get_navigation(self.mk_files, self._config)
 
 

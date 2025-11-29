@@ -121,9 +121,7 @@ def process_resources(page: mk.MkPage) -> resources.Resources:
     css_reqs: list[resources.CSSFile] = []
     for css_item in req.css:
         if isinstance(css_item, resources.CSSText):
-            css_file = resources.CSSFile(
-                link=f"{prefix}assets/{css_item.resolved_filename}"
-            )
+            css_file = resources.CSSFile(link=f"{prefix}assets/{css_item.resolved_filename}")
         else:
             css_file = css_item
         css_reqs.append(css_file)
@@ -212,10 +210,7 @@ class BuildCollector:
             i.template if isinstance(i, mk.MkPage) else i.page_template
             for i in self.mapping.values()
         ]
-        if isinstance(theme.templates, dict):
-            vals = theme.templates.values()
-        else:
-            vals = theme.templates
+        vals = theme.templates.values() if isinstance(theme.templates, dict) else theme.templates
         templates += list(vals)
         templates = [i for i in templates if i]
         build_files = self.node_files | self.extra_files

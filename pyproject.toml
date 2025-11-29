@@ -124,11 +124,12 @@ pretty = true
 plugins = ["pydantic.mypy"]
 
 [tool.ruff]
-line-length = 90
+line-length = 100
 extend-exclude = ["docs"]
 target-version = "py313"
 
 [tool.ruff.lint]
+future-annotations = true
 select = [
   "A",  # Flake8-builtins
   # "ANN",  # Flake8-Annotations
@@ -141,7 +142,7 @@ select = [
   # "C90",  # MCCabe
   "COM",  # Flake8-commas
   # "CPY",  #  Copyright-related rules
-  "D",  # PyDocStyle
+  # "D",  # PyDocStyle
   # "DTZ",  # Flake8- Datetimez
   "E",  # PyCodeStyle Error
   "EM",  # flake8-errmsg
@@ -177,13 +178,13 @@ select = [
   "RUF",  # ruff-specific rules
   # "S",    # flake8-bandit
   "SIM",  # flake8-simplify
-  "SLF",  # flake8-self
+  # "SLF",  # flake8-self
   "SLOT",  # flake8-slots
   # "T",
   # "TD",   # flake8-todos
   "T10",  # flake8-debugger
   # "T20",  # flake8-print
-  # "TCH",  # flake8-type-checking
+  "TC",  # flake8-type-checking
   "TID",  # flake8-tidy-imports
   "TRY",  # tryceratops
   "UP",  # PyUpgrade
@@ -191,24 +192,14 @@ select = [
   "YTT",  # flake8-2020
 ]
 ignore = [
-  "C408",  # Unnecessary {obj_type} call (rewrite as a literal)
-  "B905",  # zip() without an explicit strict= parameter
   "C901",  # {name} is too complex ({complexity} > {max_complexity})
-  # "CPY001", # Missing copyright notice at top of file
   "COM812",
-  "D100",  # Missing docstring in public module
-  "D101",  # Missing docstring in public class
-  "D102",  # Missing docstring in public method
-  "D103",  # Missing docstring in public function
-  "D104",  # Missing docstring in public package
   "D105",  # Missing docstring in magic method
   "D106",  # Missing docstring in public nested class
   "D107",  # Missing docstring in __init__
   "D203",  # 1 blank line required before class docstring
-  "D204",  # 1 blank line required after class docstring
   "D213",  # Multi-line docstring summary should start at the second line
   "D215",  # Section underline is over-indented ("{name}")
-  "D400",  # First line should end with a period
   "D401",  # First line of docstring should be in imperative mood: "{first_line}"
   "D404",  # First word of the docstring should not be "This"
   "D406",  # Section name should end with a newline ("{name}")
@@ -216,20 +207,34 @@ ignore = [
   "D408",  # Section underline should be in the line following the section's name ("{name}")
   "D409",  # Section underline should match the length of its name ("{name}")
   "D413",  # Missing blank line after last section ("{name}")
+  "EM101",  # Exception must not use a string literal, assign to variable first
+  "EM102",  # Exception must not use an f-string literal, assign to variable first
   "ISC001",
+  "PLC0415",
   "PLR0912",  # Too many branches
   "PLR0913",  # Too many arguments to function call
   "PLR0915",  # Too many statements
-  "SLF001",  # Private member accessed
-  "TRY003",  # Avoid specifying long messages outside the exception class
+  # "PLR2004", # Magic values instead of named consts
+  "TC006",  # runtime-cast-value
 ]
-
-[tool.ruff.format]
-# Enable preview style formatting.
-preview = true
 
 [tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = [
+  "pydantic.BaseModel",
+  "sqlalchemy.orm.DeclarativeBase",
+  "schemez.Schema",
+  "sqlmodel.SQLModel",
+]
+runtime-evaluated-decorators = [
+  "pydantic.validate_call",
+  "fastapi.FastAPI.get",
+  "fastapi.FastAPI.post",
+  "fastmcp.FastMCP.tool",
+  "typer.Typer.command",
+]
 
 [tool.ruff.lint.isort]
 lines-after-imports = 2
@@ -240,6 +245,11 @@ combine-as-imports = true
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402", "I001"]
+"scripts/*" = ["INP001"]
+"*tests/*" = ["D100"]
+
+[tool.ruff.format]
+preview = true
 
 [tool.pyright]
 pythonVersion = "3.13"

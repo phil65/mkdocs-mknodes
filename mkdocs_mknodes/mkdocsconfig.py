@@ -1,22 +1,27 @@
 from __future__ import annotations
 
-from collections.abc import Iterator, Mapping
+from collections.abc import Mapping
 import contextlib
 from datetime import datetime
 import functools
 import os
 import pathlib
 import sys
-from typing import Any, TextIO
+from typing import TYPE_CHECKING, Any, TextIO
 from urllib import parse
 
 import jinjarope
-from mknodes.info import contexts
 from mknodes.mdlib import mdconverter
 from mknodes.utils import pathhelpers, reprhelpers
 
 from mkdocs_mknodes import telemetry
 from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
+
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    from mknodes.info import contexts
 
 
 logger = telemetry.get_plugin_logger(__name__)

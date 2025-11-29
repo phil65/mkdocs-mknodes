@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
 import contextlib
 import functools
 import io
@@ -8,7 +7,6 @@ import ipaddress
 import logging
 import mimetypes
 import os
-import os.path
 import posixpath
 import re
 import socket
@@ -18,7 +16,7 @@ import sys
 import threading
 import time
 import traceback
-from typing import Any
+from typing import TYPE_CHECKING, Any
 import webbrowser
 import wsgiref.simple_server
 import wsgiref.util
@@ -29,6 +27,11 @@ import upath
 import watchdog.events
 import watchdog.observers.polling
 from yarl import URL
+
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable
+    import os.path
 
 
 _SCRIPT_TEMPLATE_STR = """
@@ -123,12 +126,8 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         self._rebuild_cond = threading.Condition()
         """Hold this lock when accessing _want_rebuild."""
         self._shutdown = False
-        self.serve_thread = threading.Thread(
-            target=lambda: self.serve_forever(shutdown_delay)
-        )
-        self.observer = watchdog.observers.polling.PollingObserver(
-            timeout=polling_interval
-        )
+        self.serve_thread = threading.Thread(target=lambda: self.serve_forever(shutdown_delay))
+        self.observer = watchdog.observers.polling.PollingObserver(timeout=polling_interval)
 
         self._watched_paths: dict[str, int] = {}
         self._watch_refs: dict[str, Any] = {}
@@ -157,9 +156,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         handler = watchdog.events.FileSystemEventHandler()
         handler.on_any_event = callback  # type: ignore[method-assign]
         logger.debug("Watching %r", path)
-        self._watch_refs[path] = self.observer.schedule(
-            handler, path, recursive=recursive
-        )
+        self._watch_refs[path] = self.observer.schedule(handler, path, recursive=recursive)
 
     def unwatch(self, path: str | os.PathLike[str]) -> None:
         """Stop watching file changes for path.
@@ -290,9 +287,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
                     # Stall the browser, respond as soon as there's something new.
                     # If there's not, respond anyway after a minute.
                     _log_poll_request(environ.get("HTTP_REFERER"), request_id=path)
-                    self._epoch_cond.wait_for(
-                        condition, timeout=self.poll_response_timeout
-                    )
+                    self._epoch_cond.wait_for(condition, timeout=self.poll_response_timeout)
                 return [b"%d" % self._visible_epoch]
 
         if (path + "/").startswith(str(self.url.path)):

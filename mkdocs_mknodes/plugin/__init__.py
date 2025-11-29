@@ -16,9 +16,10 @@ import jinjarope
 
 from mkdocs_mknodes import buildcollector, mkdocsconfig, telemetry
 from mkdocs_mknodes.backends import markdownbackend, mkdocsbackend
-from mkdocs_mknodes.plugin import mknodesconfig, pluginconfig, rewriteloader
+from mkdocs_mknodes.plugin import pluginconfig, rewriteloader
 
 if TYPE_CHECKING:
+    from mkdocs_mknodes.plugin import mknodesconfig
     import jinja2
     from mkdocs.config.defaults import MkDocsConfig
     from mkdocs.structure.files import Files

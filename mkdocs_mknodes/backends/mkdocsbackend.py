@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import collections
-import os
 import pathlib
+from typing import TYPE_CHECKING
 
 from jinjarope import serializefilters
 import markdown
@@ -16,6 +16,10 @@ from upathtools import helpers
 from mkdocs_mknodes import mkdocsconfig, telemetry
 from mkdocs_mknodes.backends import buildbackend
 from mkdocs_mknodes.plugin import mkdocsbuilder, mkdocshelpers
+
+
+if TYPE_CHECKING:
+    import os
 
 
 logger = telemetry.get_plugin_logger(__name__)

@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from collections.abc import MutableMapping
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import logfire
+
+
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
 
 
 # from opentelemetry.instrumentation.jinja2 import Jinja2Instrumentor

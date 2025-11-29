@@ -135,9 +135,7 @@ class ThemeConfig(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_theme_config(
-        cls, data: Self | dict[str, Any] | str
-    ) -> Self | dict[str, Any]:
+    def validate_theme_config(cls, data: Self | dict[str, Any] | str) -> Self | dict[str, Any]:
         if isinstance(data, cls):
             # Return the ThemeConfig instance as is
             return data

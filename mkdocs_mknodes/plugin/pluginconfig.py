@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
 import functools
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import jinjarope
 from mkdocs.config import base, config_options as c
 from mknodes.utils import classhelpers
+
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class PluginConfig(base.Config):

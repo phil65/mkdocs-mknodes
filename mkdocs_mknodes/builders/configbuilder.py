@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 import io
-import os
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from mknodes.info import mkdocsconfigfile
 import yamling
 
 from mkdocs_mknodes import telemetry
 from mkdocs_mknodes.plugin import mknodesconfig
+
+
+if TYPE_CHECKING:
+    import os
 
 
 logger = telemetry.get_plugin_logger(__name__)

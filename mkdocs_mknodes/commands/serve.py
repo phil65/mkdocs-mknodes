@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import contextlib
 import io
-import os
 import pathlib
 import shutil
 import tempfile
@@ -20,7 +19,8 @@ from mkdocs_mknodes.plugin import mknodesconfig
 
 
 if TYPE_CHECKING:
-    pass
+    import os
+
 
 logger = log.get_logger(__name__)
 

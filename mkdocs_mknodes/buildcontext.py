@@ -4,10 +4,14 @@ from __future__ import annotations
 
 import collections
 import dataclasses
+from typing import TYPE_CHECKING
 
-import mknodes as mk
 from mknodes.info import contexts
 from mknodes.utils import log, resources
+
+
+if TYPE_CHECKING:
+    import mknodes as mk
 
 
 logger = log.get_logger(__name__)

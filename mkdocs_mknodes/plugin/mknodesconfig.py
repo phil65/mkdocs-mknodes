@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator
 import contextlib
 from datetime import datetime
 import functools
@@ -11,16 +10,21 @@ import logging
 import os
 import pathlib
 import sys
-from typing import Any, Self, TextIO
+from typing import TYPE_CHECKING, Any, Self, TextIO
 from urllib import parse
 
 import jinjarope
 from mkdocs.config import config_options as c, defaults
-from mknodes.info import contexts
 from mknodes.mdlib import mdconverter
 from mknodes.utils import classhelpers
 import upath
 import yamling
+
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterator
+
+    from mknodes.info import contexts
 
 
 logger = logging.getLogger(__name__)

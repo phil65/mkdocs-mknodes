@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-import os
-from typing import Any, Self
+from typing import TYPE_CHECKING, Any, Self
 
 from pydantic import BaseModel, Field
 import yamling
+
+
+if TYPE_CHECKING:
+    import os
 
 
 class ConfigFile(BaseModel):

@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Collection, Sequence
 from datetime import UTC, datetime
-import os
 from typing import TYPE_CHECKING, Any, TypedDict
 from urllib.parse import urljoin, urlsplit
 
@@ -14,7 +12,7 @@ from jinjarope import envtests, htmlfilters
 import logfire
 from mkdocs import exceptions, utils as mkdocs_utils
 from mkdocs.structure.files import Files, InclusionLevel
-from mkdocs.structure.nav import Navigation, get_navigation
+from mkdocs.structure.nav import get_navigation
 from mkdocs.structure.pages import Page
 from mknodes.utils import pathhelpers
 import upath
@@ -25,7 +23,11 @@ from mkdocs_mknodes.commands import utils
 
 
 if TYPE_CHECKING:
+    from collections.abc import Collection, Sequence
+    import os
+
     from mkdocs.structure.files import File
+    from mkdocs.structure.nav import Navigation
 
     from mkdocs_mknodes.plugin.mknodesconfig import MkNodesConfig
 
@@ -47,9 +49,7 @@ class TemplateContext(TypedDict):
 
 
 DRAFT_CONTENT = (
-    '<div class="mkdocs-draft-marker" title="This page wont be included into the site.">'
-    "DRAFT"
-    "</div>"
+    '<div class="mkdocs-draft-marker" title="This page wont be included into the site.">DRAFT</div>'
 )
 
 
@@ -130,9 +130,7 @@ def _build(
         nav = config.plugins.on_nav(nav, config=config, files=files)
     logger.debug("Reading markdown pages.")
     excluded: list[str] = []
-    inclusion = (
-        InclusionLevel.is_in_serve if live_server_url else InclusionLevel.is_included
-    )
+    inclusion = InclusionLevel.is_in_serve if live_server_url else InclusionLevel.is_included
     with logfire.span("populate pages"):
         for file in files.documentation_pages(inclusion=inclusion):
             with logfire.span(f"populate page for {file.src_uri}", file=file):
@@ -181,9 +179,7 @@ def _build(
         config.plugins.on_post_build(config=config)
 
 
-def _populate_page(
-    page: Page, config: MkNodesConfig, files: Files, dirty: bool = False
-) -> None:
+def _populate_page(page: Page, config: MkNodesConfig, files: Files, dirty: bool = False) -> None:
     """Read page content from docs_dir and render Markdown."""
     config._current_page = page
     try:
@@ -329,9 +325,7 @@ def _build_theme_template(
         logger.info("Template skipped: %r generated empty output.", template_name)
 
 
-def _build_extra_template(
-    template_name: str, files: Files, config: MkNodesConfig, nav: Navigation
-):
+def _build_extra_template(template_name: str, files: Files, config: MkNodesConfig, nav: Navigation):
     """Build user templates which are not part of the theme."""
     logger.debug("Building extra template: %s", template_name)
 
@@ -387,9 +381,7 @@ def get_context(
         mkdocs_utils.normalize_url(str(script), page, base_url)
         for script in config.extra_javascript
     ]
-    extra_css = [
-        mkdocs_utils.normalize_url(path, page, base_url) for path in config.extra_css
-    ]
+    extra_css = [mkdocs_utils.normalize_url(path, page, base_url) for path in config.extra_css]
 
     if isinstance(files, Files):
         files = files.documentation_pages()
