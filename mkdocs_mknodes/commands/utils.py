@@ -56,7 +56,7 @@ class CountHandler(logging.NullHandler):
         ]
 
 
-def count_warnings(fn: Callable[..., T]) -> Callable[..., T]:
+def count_warnings[T](fn: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(fn)
     def wrapped(config: MkNodesConfig, *args, **kwargs) -> T:
         start = time.monotonic()
@@ -79,7 +79,7 @@ def count_warnings(fn: Callable[..., T]) -> Callable[..., T]:
     return wrapped
 
 
-def handle_exceptions(fn: Callable[..., T]) -> Callable[..., T]:
+def handle_exceptions[T](fn: Callable[..., T]) -> Callable[..., T]:
     @functools.wraps(fn)
     def wrapped(config: MkNodesConfig, *args, **kwargs) -> T:
         try:
