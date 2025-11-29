@@ -42,7 +42,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 self._config = config
             case _:
                 self._config = mkdocsconfig.Config(config)._config
-        self.directory = upath.UPath(directory or ".")
+        self.directory = pathlib.Path(directory or ".")
         files_map = {pathlib.PurePath(f.src_path).as_posix(): f for f in files or []}
         self._mk_files: collections.ChainMap[str, files_.File] = collections.ChainMap(
             {},
@@ -143,7 +143,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
     def _write_file(self, path: str | os.PathLike[str], content: str | bytes):
         path = pathlib.PurePath(path).as_posix()
         file_for_path = self.builder.get_file(path, src_dir=self.directory)
-        new_path = upath.UPath(file_for_path.abs_src_path)
+        new_path = upath.UPath(file_for_path.abs_src_path or "")
         target_path = None
         if path not in self._mk_files:
             new_path.parent.mkdir(exist_ok=True, parents=True)
@@ -151,7 +151,7 @@ class MkDocsBackend(buildbackend.BuildBackend):
             target_path = new_path
 
         f = self._mk_files[path]
-        source_path = upath.UPath(f.abs_src_path)
+        source_path = upath.UPath(f.abs_src_path or "")
         if source_path != new_path:
             self._mk_files[path] = file_for_path
             helpers.copy(source_path, new_path)

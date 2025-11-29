@@ -119,11 +119,13 @@ def process_resources(page: mk.MkPage) -> resources.Resources:
         logger.info(msg)
         page.template.scripts.add_script_file(lib)
     css_reqs: list[resources.CSSFile] = []
-    for i in req.css:
-        if isinstance(i, resources.CSSText):
-            css_file = resources.CSSFile(link=f"{prefix}assets/{i.resolved_filename}")
+    for css_item in req.css:
+        if isinstance(css_item, resources.CSSText):
+            css_file = resources.CSSFile(
+                link=f"{prefix}assets/{css_item.resolved_filename}"
+            )
         else:
-            css_file = i
+            css_file = css_item
         css_reqs.append(css_file)
     assets = [i.get_asset() for i in req.css if isinstance(i, resources.CSSText)]
     req.assets += assets
