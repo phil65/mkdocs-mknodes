@@ -41,13 +41,13 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         self.link_replacer = linkreplacer.LinkReplacer()
         logger.debug("Finished initializing plugin")
         self.build_folder: pathlib.Path | None = None
-        self._dir = None
+        self._dir: tempfile.TemporaryDirectory | None = None
         self.linkprovider: linkprovider.LinkProvider | None = None
         self.theme = None
         self.build_info: BuildContext | None = None
         self.folderinfo: folderinfo.FolderInfo | None = None
         self.context = None
-        self.root = None
+        self.root: mk.MkNav | None = None
 
     def on_startup(self, *, command: CommandStr, dirty: bool):
         """Activates new-style MkDocs plugin lifecycle."""

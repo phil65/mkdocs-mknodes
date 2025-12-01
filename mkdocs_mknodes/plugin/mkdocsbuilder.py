@@ -101,12 +101,12 @@ class MkDocsBuilder:
             mkpage.resolved_file_path,
             inclusion_level=files_.InclusionLevel.UNDEFINED,
         )
-        page = MkDocsPage(mkpage, file, self._config)
+        mkdocs_page = MkDocsPage(mkpage, file, self._config)
 
         if run_event_hooks:
-            self._config._current_page = page
+            self._config._current_page = mkdocs_page
             page = self._config.plugins.on_pre_page(
-                page,
+                mkdocs_page,
                 config=self._config,
                 files=self.mk_files,
             )

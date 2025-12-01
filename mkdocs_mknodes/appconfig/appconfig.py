@@ -816,7 +816,6 @@ if __name__ == "__main__":
     ]
     for url in tests:
         config = AppConfig.from_yaml_file(url)
-        config.theme = {"name": "xyz", "override_dir": "overrides"}
 
         devtools.debug(config.theme)
         print(config.theme, type(config.theme))

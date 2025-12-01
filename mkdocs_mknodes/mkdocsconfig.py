@@ -41,7 +41,7 @@ def _open_config_file(
     """
     match config_file:
         case None:
-            paths_to_try = [pathlib.Path("mkdocs.yml")]
+            paths_to_try: list[pathlib.Path] | None = [pathlib.Path("mkdocs.yml")]
         case str() | os.PathLike():
             paths_to_try = [pathlib.Path(config_file)]
         case _ if getattr(config_file, "closed", False):

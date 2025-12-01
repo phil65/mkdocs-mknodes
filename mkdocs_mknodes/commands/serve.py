@@ -174,10 +174,10 @@ def _serve(
                     server.watch(d)
 
             # Run `serve` plugin events.
-            server = config.plugins.on_serve(server, config=config, builder=builder)  # type: ignore[arg-type]
+            mkdocs_server = config.plugins.on_serve(server, config=config, builder=builder)  # type: ignore[arg-type]
 
             for item in config.watch:
-                server.watch(item)
+                mkdocs_server.watch(item)
 
         try:
             server.serve()
