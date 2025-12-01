@@ -19,16 +19,16 @@ class ValidationLevelForAbsolute(Enum):
 
 
 class Nav(BaseModel):
-    omitted_files: ValidationLevel | None = "info"
-    not_found: ValidationLevel | None = "warn"
-    absolute_links: ValidationLevel | None = "info"
+    omitted_files: ValidationLevel | None = ValidationLevel.info
+    not_found: ValidationLevel | None = ValidationLevel.warn
+    absolute_links: ValidationLevel | None = ValidationLevel.info
 
 
 class Links(BaseModel):
-    not_found: ValidationLevel | None = "warn"
-    anchors: ValidationLevel | None = "info"
-    absolute_links: ValidationLevelForAbsolute | None = "info"
-    unrecognized_links: ValidationLevel | None = "info"
+    not_found: ValidationLevel | None = ValidationLevel.warn
+    anchors: ValidationLevel | None = ValidationLevel.info
+    absolute_links: ValidationLevelForAbsolute | None = ValidationLevelForAbsolute.info
+    unrecognized_links: ValidationLevel | None = ValidationLevel.info
 
 
 class ValidationConfig(BaseModel):

@@ -40,7 +40,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         super().__init__(**kwargs)
         self.link_replacer = linkreplacer.LinkReplacer()
         logger.debug("Finished initializing plugin")
-        self.build_folder = None
+        self.build_folder: pathlib.Path | None = None
         self._dir = None
         self.linkprovider: linkprovider.LinkProvider | None = None
         self.theme = None

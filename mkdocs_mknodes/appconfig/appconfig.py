@@ -315,7 +315,7 @@ class AppConfig(ConfigFile):
 
     Allows setting up loaders, extensions and the render behavior.
     """
-    docs_dir: DirectoryPath = Field("docs")
+    docs_dir: str = Field("docs")
     """Directory containing documentation markdown source files.
 
     !!! info "Path Resolution"
@@ -335,7 +335,7 @@ class AppConfig(ConfigFile):
         ```
     """
 
-    site_dir: DirectoryPath = Field("site")
+    site_dir: str = Field("site")
     """Directory where the built HTML site will be created.
 
     !!! warning "Version Control"
