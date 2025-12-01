@@ -1,3 +1,5 @@
+#:tombi schema.strict = false
+
 [project]
 name = "mkdocs-mknodes"
 version = "1.0.0"
@@ -5,6 +7,7 @@ description = "Don't write docs. Code them."
 readme = "README.md"
 requires-python = ">=3.13"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [
   { name = "Philipp Temminghoff", email = "philipptemminghoff@gmail.com" },
 ]
@@ -87,10 +90,9 @@ docs = [
   "pymdown-extensions",
 ]
 lint = [
-  "mypy",
+  "mypy; python_version >= '3.14'",
+  "mypy[faster-cache]; python_version < '3.14'",
   "ruff",
-  # "mypy[faster-cache]; python_version < '3.14'",
-  # "mypy; python_version >= '3.14'",
   # Only add below (Copier)
 ]
 
@@ -153,7 +155,8 @@ log_date_format = "%Y-%m-%d %H:%M:%S"
 # log_cli_level = "DEBUG"
 log_format = "%(asctime)s %(levelname)s %(message)s"
 minversion = "9.0"
-testpaths = ["tests"]
+testpaths = ["tests/"]
+asyncio_mode = "auto"
 
 [tool.ruff]
 line-length = 100
@@ -161,6 +164,7 @@ extend-exclude = ["docs"]
 target-version = "py313"
 
 [tool.ruff.lint]
+future-annotations = true
 select = [
   "A",  # Flake8-builtins
   # "ANN",  # Flake8-Annotations
@@ -248,6 +252,8 @@ ignore = [
   "D408",  # Section underline should be in the line following the section's name ("{name}")
   "D409",  # Section underline should match the length of its name ("{name}")
   "D413",  # Missing blank line after last section ("{name}")
+  "EM101",  # Exception must not use a string literal, assign to variable first
+  "EM102",  # Exception must not use an f-string literal, assign to variable first
   "ISC001",
   "PLC0415",
   "PLR0912",  # Too many branches
@@ -261,6 +267,21 @@ ignore = [
 [tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"
 
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = [
+  "pydantic.BaseModel",
+  "sqlalchemy.orm.DeclarativeBase",
+  "schemez.Schema",
+  "sqlmodel.SQLModel",
+]
+runtime-evaluated-decorators = [
+  "pydantic.validate_call",
+  "fastapi.FastAPI.get",
+  "fastapi.FastAPI.post",
+  "fastmcp.FastMCP.tool",
+  "typer.Typer.command",
+]
+
 [tool.ruff.lint.isort]
 lines-after-imports = 2
 # lines-between-types = 1
@@ -270,10 +291,15 @@ combine-as-imports = true
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402", "I001"]
+"scripts/*" = ["INP001"]
+"*tests/*" = ["D100"]
 
 [tool.ruff.format]
-# Enable preview style formatting.
 preview = true
+
+[tool.ty.environment]
+python-version = "3.13"
+python-platform = "all"
 
 [tool.uv]
 default-groups = ["dev", "lint", "docs"]
