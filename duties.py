@@ -66,11 +66,9 @@ def docs_test_build(ctx):
 @duty(capture=False)
 def version(
     ctx,
-    bump_type: Literal[
-        "major", "minor", "patch", "stable", "alpha", "beta", "rc", "post", "dev"
-    ] = "patch",
+    *bump_type: Literal["major", "minor", "patch", "stable", "alpha", "beta", "rc", "post", "dev"],
 ):
-    """Release a new version with git operations. (major|minor|patch|stable|alpha|beta|rc|post|dev)."""  # noqa: E501
+    """Release a new version. (major|minor|patch|stable|alpha|beta|rc|post|dev)."""
     # Check for uncommitted changes
     result = ctx.run("git status --porcelain", capture=True)
     if result.strip():
@@ -80,7 +78,8 @@ def version(
     # Read current version
     old_version = ctx.run("uv version --short", capture=True).strip()
     print(f"Current version: {old_version}")
-    ctx.run(f"uv version --bump {bump_type}")
+    bump_str = " ".join(f"--bump {i}" for i in bump_type)
+    ctx.run(f"uv version {bump_str}")
     new_version = ctx.run("uv version --short", capture=True).strip()
     print(f"New version: {new_version}")
     ctx.run("git add pyproject.toml")

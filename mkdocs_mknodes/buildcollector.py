@@ -66,9 +66,10 @@ def update_page_template(page: mk.MkPage):
         html_path = node_path.with_suffix(".html").as_posix()
         logger.debug("Updated template for MkPage %r: %r", page.title, html_path)
         page.metadata.template = html_path
-        page.template.filename = html_path
-        if extends := _get_extends_from_parent(page):
-            page.template.extends = extends
+        if page.template:
+            page.template.filename = html_path
+            if extends := _get_extends_from_parent(page):
+                page.template.extends = extends
 
 
 def update_nav_template(nav: mk.MkNav):
@@ -87,9 +88,9 @@ def update_nav_template(nav: mk.MkNav):
             nav.page_template.extends = extends
 
 
-def process_resources(page: mk.MkPage) -> resources.Resources:
+async def process_resources(page: mk.MkPage) -> resources.Resources:
     """Add resources from page to its template and return the "filtered" resources."""
-    req = page.get_resources()
+    req = await page.get_resources()
     js_reqs: list[resources.JSFile] = []
     prefix = "../" * (len(page.resolved_parts) + 1)
     for i in req.js:
@@ -113,11 +114,13 @@ def process_resources(page: mk.MkPage) -> resources.Resources:
     for lib in libs:
         msg = f"Adding {lib.link!r} lib to {page.resolved_file_path!r} template"
         logger.info(msg)
-        page.template.libs.add_script_file(lib)
+        if page.template:
+            page.template.libs.add_script_file(lib)
     for lib in non_libs:
         msg = f"Adding {lib.link!r} script to {page.resolved_file_path!r} template"
         logger.info(msg)
-        page.template.scripts.add_script_file(lib)
+        if page.template:
+            page.template.scripts.add_script_file(lib)
     css_reqs: list[resources.CSSFile] = []
     for css_item in req.css:
         if isinstance(css_item, resources.CSSText):
@@ -131,7 +134,8 @@ def process_resources(page: mk.MkPage) -> resources.Resources:
     for css_ in css_reqs:
         msg = f"Adding {css_.link!r} stylesheet to {page.resolved_file_path!r} template"
         logger.info(msg)
-        page.template.styles.add_stylesheet(css_)
+        if page.template:
+            page.template.styles.add_stylesheet(css_)
     return req
 
 
@@ -177,7 +181,7 @@ class BuildCollector:
         self.resources = resources.Resources()
         self.mapping: dict[str, mk.MkPage | mk.MkNav] = {}
 
-    def collect(self, root: mk.MkNode, theme: mk.Theme):
+    async def collect(self, root: mk.MkNode, theme: mk.Theme):
         """Collect build stuff from given node + theme.
 
         Args:
@@ -190,18 +194,18 @@ class BuildCollector:
             self.extra_files |= node.files
             match node:
                 case mk.MkPage() as page:
-                    self.collect_page(page)
+                    await self.collect_page(page)
                 case mk.MkNav() as nav:
-                    self.collect_nav(nav)
+                    await self.collect_nav(nav)
         for node in self.mapping.values():
             match node:
                 case mk.MkPage() as page:
-                    self.render_page(page)
+                    await self.render_page(page)
                 case mk.MkNav() as nav:
-                    self.render_nav(nav)
+                    await self.render_nav(nav)
         # theme
         logger.debug("Collecting theme resources...")
-        reqs = theme.get_resources()
+        reqs = await theme.get_resources()
         self.resources.merge(reqs)
         logger.debug("Adapting collected extensions to theme...")
         theme.adapt_extensions(self.resources.markdown_extensions)
@@ -210,23 +214,23 @@ class BuildCollector:
             i.template if isinstance(i, mk.MkPage) else i.page_template
             for i in self.mapping.values()
         ]
-        vals = theme.templates.values() if isinstance(theme.templates, dict) else theme.templates
+        vals = theme.templates
         templates += list(vals)
-        templates = [i for i in templates if i]
+        final_templates = [i for i in templates if i]
         build_files = self.node_files | self.extra_files
         for backend in self.backends:
             logger.info("%s: Writing data..", type(backend).__name__)
-            backend.collect(build_files, self.resources, templates)
+            backend.collect(build_files, self.resources, final_templates)
         return buildcontext.BuildContext(
             page_mapping=self.mapping,
             resources=self.resources,
             node_counter=self.node_counter,
             build_files=build_files,
-            templates=templates,
+            templates=final_templates,
         )
 
     @logfire.instrument("collect_page: {page.title}")
-    def collect_page(self, page: mk.MkPage):
+    async def collect_page(self, page: mk.MkPage):
         """Preprocess page and collect its data.
 
         Args:
@@ -236,7 +240,7 @@ class BuildCollector:
             return
         path = page.resolved_file_path
         self.mapping[path] = page
-        req = page.get_resources() if self.global_resources else process_resources(page)
+        req = await page.get_resources() if self.global_resources else await process_resources(page)
         self.resources.merge(req)
         update_page_template(page)
         show_info = page.resolved_metadata.get("show_page_info")
@@ -245,23 +249,23 @@ class BuildCollector:
             add_page_info(page, req)
 
     @logfire.instrument("render_page: {page.title}")
-    def render_page(self, page: mk.MkPage):
+    async def render_page(self, page: mk.MkPage):
         """Convert a page to markdown/HTML.
 
         Args:
             page: Page to render.
         """
-        md = page.to_markdown()
+        md = await page.to_markdown()
         do_render = self.render_by_default
         if (render := page.metadata.get("render_macros")) is not None:
             do_render = render
         if do_render:
-            md = page.env.render_string(md)
+            md = await page.env.render_string_async(md)
 
         self.node_files[page.resolved_file_path] = md
 
     @logfire.instrument("collect_nav: {nav.title}")
-    def collect_nav(self, nav: mk.MkNav):
+    async def collect_nav(self, nav: mk.MkNav):
         """Preprocess nav and collect its data.
 
         Args:
@@ -270,18 +274,18 @@ class BuildCollector:
         logger.info("Processing section %r...", nav.title or "[ROOT]")
         path = nav.resolved_file_path
         self.mapping[path] = nav
-        req = nav.get_node_resources()
+        req = await nav.get_node_resources()
         self.resources.merge(req)
         update_nav_template(nav)
 
     @logfire.instrument("render_nav: {nav.title}")
-    def render_nav(self, nav: mk.MkNav):
+    async def render_nav(self, nav: mk.MkNav):
         """Convert a nav to markdown/HTML.
 
         Args:
             nav: Nav to render.
         """
-        md = nav.to_markdown()
+        md = await nav.to_markdown()
         self.node_files[nav.resolved_file_path] = md
 
 

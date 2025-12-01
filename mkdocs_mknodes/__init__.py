@@ -7,10 +7,10 @@ telemetry.setup_logfire()
 __version__ = version("mkdocs-mknodes")
 
 
-def parse(root, theme, pages):
+async def parse(root, theme, pages):
     from mknodes.navs.navparser import parse_new_style_nav
 
-    parse_new_style_nav(root, pages)
+    await parse_new_style_nav(root, pages)
     return root
 
 

@@ -157,19 +157,25 @@ def create_config(
     builder = classhelpers.to_callable(build_fn)
     builder(context=nav.ctx)
     collector = buildcollector.BuildCollector([])
-    info = collector.collect(nav, skin)
-    resources = info.resources
-    info = nav.ctx.metadata
-    if social := info.social_info:
-        config.extra["social"] = social  # type: ignore[index]
-    config.markdown_extensions = resources.markdown_extensions
-    config.repo_path = info.repository_url
-    config.site_description = info.summary
-    config.site_name = info.distribution_name
-    config.site_author = info.author_name
-    config.copyright = f"Copyright © {datetime.now().year} {info.author_name}"
-    result = yamling.dump_yaml(config.model_dump(exclude_unset=True, exclude_defaults=True))
-    print(result)
+
+    async def main():
+        info = await collector.collect(nav, skin)
+        resources = info.resources
+        info = nav.ctx.metadata
+        if social := info.social_info:
+            config.extra["social"] = social  # type: ignore[index]
+        config.markdown_extensions = resources.markdown_extensions
+        config.repo_path = info.repository_url
+        config.site_description = info.summary
+        config.site_name = info.distribution_name
+        config.site_author = info.author_name
+        config.copyright = f"Copyright © {datetime.now().year} {info.author_name}"
+        result = yamling.dump_yaml(config.model_dump(exclude_unset=True, exclude_defaults=True))
+        print(result)
+
+    import asyncio
+
+    asyncio.run(main())
 
 
 if __name__ == "__main__":

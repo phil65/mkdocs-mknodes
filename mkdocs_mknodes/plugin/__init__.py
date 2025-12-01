@@ -6,7 +6,7 @@ import pathlib
 import urllib.parse
 import tempfile
 from typing import TYPE_CHECKING, Literal
-
+from anyenv import run_sync
 from mkdocs.plugins import BasePlugin
 import mknodes as mk
 from mknodes.info import contexts, folderinfo, linkprovider, reporegistry
@@ -136,7 +136,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             global_resources=self.config.global_resources,
             render_by_default=self.config.render_by_default,
         )
-        self.build_info = collector.collect(self.root, self.theme)
+        self.build_info = run_sync(collector.collect(self.root, self.theme))
         if nav_dict := self.root.nav.to_nav_dict():
             match config.nav:
                 case list():
