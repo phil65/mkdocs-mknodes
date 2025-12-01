@@ -63,7 +63,7 @@ Gitter = "https://app.gitter.im/#/room/#mknodes:gitter.im"
 Source = "https://github.com/phil65/mkdocs_mknodes"
 
 [project.scripts]
-mknodes = "mkdocs_mknodes.cli:cli"
+mkdocs-mknodes = "mkdocs_mknodes.cli:cli"
 
 [project.entry-points."mkdocs.plugins"]
 mknodes = "mkdocs_mknodes.plugin:MkNodesPlugin"
