@@ -123,7 +123,7 @@ class MkNodesConfig(defaults.MkDocsConfig):
         config_file_path: str | None = None,
     ) -> Self:
         # cfg = yamling.load_yaml_file(file, resolve_inherit=True)
-        config_str = upath.UPath(file).read_text()
+        config_str = upath.UPath(file).read_text("utf-8")
         str_io = io.StringIO(config_str)
         return cls.from_yaml(str_io, config_file_path=config_file_path)
 
