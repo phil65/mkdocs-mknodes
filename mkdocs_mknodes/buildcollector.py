@@ -220,7 +220,7 @@ class BuildCollector:
         build_files = self.node_files | self.extra_files
         for backend in self.backends:
             logger.info("%s: Writing data..", type(backend).__name__)
-            backend.collect(build_files, self.resources, final_templates)
+            await backend.collect(build_files, self.resources, final_templates)
         return buildcontext.BuildContext(
             page_mapping=self.mapping,
             resources=self.resources,
@@ -293,10 +293,15 @@ if __name__ == "__main__":
     theme = mk.MaterialTheme()
     from mkdocs_mknodes.manual import root
 
-    log.basic()
-    build = root.Build()
-    nav = mk.MkNav.with_context()
-    build.on_root(nav)
-    collector = BuildCollector([])
-    ctx = collector.collect(nav, mk.MaterialTheme())
-    print(ctx)
+    async def main():
+        log.basic()
+        build = root.Build()
+        nav = mk.MkNav.with_context()
+        build.on_root(nav)
+        collector = BuildCollector([])
+        ctx = await collector.collect(nav, mk.MaterialTheme())
+        print(ctx)
+
+    import asyncio
+
+    asyncio.run(main())

@@ -13,7 +13,7 @@ logger = log.get_logger(__name__)
 
 
 class BuildBackend:
-    def collect(
+    async def collect(
         self,
         files: dict[str, str | bytes],
         reqs: resources.Resources,
@@ -23,7 +23,7 @@ class BuildBackend:
         self.write_js_links(reqs.js_links)
         self.write_js_files(reqs.js_files)
         self.write_css(reqs.css)
-        self.write_templates(templates)
+        await self.write_templates(templates)
         self.write_files(files)
         self.write_assets(reqs.assets)
 
@@ -45,7 +45,7 @@ class BuildBackend:
     def collect_extensions(self, extensions):
         pass
 
-    def write_templates(self, templates):
+    async def write_templates(self, templates):
         pass
 
     def write_assets(self, assets):

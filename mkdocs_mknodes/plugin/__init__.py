@@ -41,9 +41,9 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         logger.debug("Finished initializing plugin")
         self.build_folder = None
         self._dir = None
-        self.linkprovider = None
+        self.linkprovider: linkprovider.LinkProvider | None = None
         self.theme = None
-        self.folderinfo = None
+        self.folderinfo: folderinfo.FolderInfo | None = None
         self.context = None
         self.root = None
 
@@ -110,6 +110,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             for _level, node in self.root.iter_nodes()
             if hasattr(node, "resolved_file_path")
         ]
+        assert self.linkprovider
         self.linkprovider.set_excludes(paths)
 
         # now we add our stuff to the MkDocs build environment
@@ -117,6 +118,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
 
         logger.info("Updating MkDocs config metadata...")
         cfg.update_from_context(self.root.ctx)
+        assert self.theme
         self.theme.adapt_extras(cfg.extra)
 
         logger.info("Setting up build backends...")

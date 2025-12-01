@@ -9,6 +9,7 @@ import markdown
 from mkdocs.config import config_options
 from mkdocs.config.defaults import MkDocsConfig
 from mkdocs.structure import files as files_
+import mknodes as mk
 from mknodes.utils import resources
 import upath
 from upathtools import helpers
@@ -132,14 +133,15 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 extensions,
             )
 
-    def write_templates(self, templates):
+    async def write_templates(self, templates: list[mk.PageTemplate]):
         if not self._config.theme.custom_dir:
             logger.warning("Cannot write template. No custom_dir set in config.")
             return
         path = upath.UPath(self._config.theme.custom_dir)
         for template in templates:
             md = self._get_parser()
-            if html := template.build_html(md):
+            if html := await template.build_html(md):
+                assert template.filename
                 target_path = path / template.filename
                 logger.info("Creating %s...", target_path.as_posix())
                 helpers.write_file(html, target_path)
