@@ -38,7 +38,7 @@ dependencies = [
   "jinjarope",
   "logfire",
   "mkdocs >=1.5",
-  "mknodes >= 2.0.0.alpha3",
+  "mknodes >= 2.0.0",
   "opentelemetry-instrumentation-jinja2",
   # "opentelemetry-instrumentation-sqlite3",
   "opentelemetry-instrumentation-urllib",
