@@ -123,7 +123,7 @@ docstring-style = "google"
 
 [tool.mypy]
 python_version = "3.13"
-disable_error_code = ["assignment", "misc", "import", "has-type"]
+disable_error_code = ["assignment", "import"]
 pretty = true
 plugins = ["pydantic.mypy"]
 

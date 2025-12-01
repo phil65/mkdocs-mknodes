@@ -5,7 +5,7 @@ from __future__ import annotations
 import pathlib
 import urllib.parse
 import tempfile
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal
 from anyenv import run_sync
 from mkdocs.plugins import BasePlugin
 import mknodes as mk
@@ -16,6 +16,7 @@ import jinjarope
 
 from mkdocs_mknodes import buildcollector, mkdocsconfig, telemetry
 from mkdocs_mknodes.backends import markdownbackend, mkdocsbackend
+from mkdocs_mknodes.buildcontext import BuildContext
 from mkdocs_mknodes.plugin import pluginconfig, rewriteloader
 
 if TYPE_CHECKING:
@@ -35,7 +36,7 @@ CommandStr = Literal["build", "serve", "gh-deploy"]
 
 
 class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.link_replacer = linkreplacer.LinkReplacer()
         logger.debug("Finished initializing plugin")
@@ -43,6 +44,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         self._dir = None
         self.linkprovider: linkprovider.LinkProvider | None = None
         self.theme = None
+        self.build_info: BuildContext | None = None
         self.folderinfo: folderinfo.FolderInfo | None = None
         self.context = None
         self.root = None
@@ -55,12 +57,13 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         if self.config.build_folder:
             self.build_folder = pathlib.Path(self.config.build_folder)
         else:
-            self._dir = tempfile.TemporaryDirectory(
+            temp_dir = tempfile.TemporaryDirectory(
                 prefix="mknodes_",
                 ignore_cleanup_errors=True,
             )
-            self.build_folder = pathlib.Path(self._dir.name)
-            logger.debug("Creating temporary dir %s", self._dir.name)
+            self._dir = temp_dir
+            self.build_folder = pathlib.Path(temp_dir.name)
+            logger.debug("Creating temporary dir %s", temp_dir.name)
 
         if not self.config.build_fn:
             return
@@ -77,6 +80,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
             str(self.config.repo_path or "."),
             clone_depth=self.config.clone_depth,
         )
+        assert self.theme
         self.folderinfo = folderinfo.FolderInfo(git_repo.working_dir)
         self.context = contexts.ProjectContext(
             metadata=self.folderinfo.context,
@@ -103,6 +107,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         logger.info("Generating pages...")
         build_fn = self.config.get_builder()
         self.root = mk.MkNav(context=self.context)
+        assert self.root
         build_fn(theme=self.theme, root=self.root)
         logger.debug("Finished building page.")
         paths = [
@@ -194,6 +199,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         files: Files,
     ) -> Page | None:
         """During this phase we set the edit paths."""
+        assert self.build_info
         node = self.build_info.page_mapping.get(page.file.src_uri)
         edit_path = node._edit_path if isinstance(node, mk.MkPage) else None
         cfg = mkdocsconfig.Config(config)
@@ -218,6 +224,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         if not config.theme.custom_dir or not self.config.build_fn:
             return
         if self.config.auto_delete_generated_templates:
+            assert self.build_info
             logger.debug("Deleting page templates...")
             for template in self.build_info.templates:
                 assert template.filename

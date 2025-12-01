@@ -272,12 +272,12 @@ class MkNodesConfig(defaults.MkDocsConfig):
     def update_from_context(self, context: contexts.ProjectContext):
         if not super().extra.get("social"):
             super().extra["social"] = context.metadata.social_info
-        super().repo_url = context.metadata.repository_url
-        super().site_description = context.metadata.summary
-        super().site_name = context.metadata.distribution_name
-        super().site_author = context.metadata.author_name
+        self.repo_url = context.metadata.repository_url
+        self.site_description = context.metadata.summary
+        self.site_name = context.metadata.distribution_name
+        self.site_author = context.metadata.author_name
         text = f"Copyright © {datetime.now().year} {context.metadata.author_name}"
-        super().copyright = text
+        self.copyright = text
 
     def get_markdown_instance(
         self,
