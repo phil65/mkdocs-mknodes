@@ -108,7 +108,7 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         paths = [
             pathlib.Path(node.resolved_file_path).stem
             for _level, node in self.root.iter_nodes()
-            if hasattr(node, "resolved_file_path")
+            if isinstance(node, mk.MkPage | mk.MkNav)
         ]
         assert self.linkprovider
         self.linkprovider.set_excludes(paths)
