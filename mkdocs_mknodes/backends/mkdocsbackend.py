@@ -101,19 +101,19 @@ class MkDocsBackend(buildbackend.BuildBackend):
                 logger.debug("Adding remote CSS file %s", css)
                 self._config.extra_css.append(str(css))
 
-    def write_js_links(self, js_links):
+    def write_js_links(self, js_links: list[resources.JSFile]):
         for file in js_links:
             logger.debug("Adding remote JS file %s", str(file))
-            val = config_options.ExtraScriptValue(str(file))
+            val: config_options.ExtraScriptValue = config_options.ExtraScriptValue(str(file))
             val.async_ = file.async_
             val.defer = file.defer
             val.type = file.typ
             self._config.extra_javascript.append(val)
 
-    def write_js_files(self, js_files):
+    def write_js_files(self, js_files: list[resources.JSText]):
         for file in js_files:
             path = (pathlib.Path("assets") / file.resolved_filename).as_posix()
-            val = config_options.ExtraScriptValue(str(path))
+            val: config_options.ExtraScriptValue = config_options.ExtraScriptValue(str(path))
             val.async_ = file.async_
             val.defer = file.defer
             val.type = file.typ
