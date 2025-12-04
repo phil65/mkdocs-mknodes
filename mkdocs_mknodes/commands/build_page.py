@@ -14,7 +14,6 @@ from mkdocs import exceptions, utils as mkdocs_utils
 from mkdocs.structure.files import Files, InclusionLevel
 from mkdocs.structure.nav import get_navigation
 from mkdocs.structure.pages import Page
-from mknodes.utils import pathhelpers
 import upath
 from upathtools import helpers
 
@@ -109,7 +108,7 @@ def _build(
 
     if not dirty:
         logger.info("Cleaning site directory")
-        pathhelpers.clean_directory(config.site_dir)
+        helpers.clean_directory(config.site_dir)
     else:  # pragma: no cover
         logger.warning("A 'dirty' build is being performed (for site dev purposes only)")
     if not live_server_url:  # pragma: no cover
