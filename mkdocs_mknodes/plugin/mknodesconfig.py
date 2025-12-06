@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
 
     from mknodes.info import contexts
+    from upath.types import JoinablePathLike
 
 
 logger = logging.getLogger(__name__)
@@ -119,7 +120,7 @@ class MkNodesConfig(defaults.MkDocsConfig):
     @classmethod
     def from_yaml_file(
         cls,
-        file: str | os.PathLike[str],
+        file: JoinablePathLike,
         config_file_path: str | None = None,
     ) -> Self:
         # cfg = yamling.load_yaml_file(file, resolve_inherit=True)
