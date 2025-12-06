@@ -88,9 +88,17 @@ def update_nav_template(nav: mk.MkNav):
             nav.page_template.extends = extends
 
 
-async def process_resources(page: mk.MkPage) -> resources.Resources:
-    """Add resources from page to its template and return the "filtered" resources."""
-    req = await page.get_resources()
+async def process_resources(
+    page: mk.MkPage, req: resources.Resources | None = None
+) -> resources.Resources:
+    """Add resources from page to its template and return the "filtered" resources.
+
+    Args:
+        page: Page to process resources for
+        req: Pre-computed resources. If None, will call page.get_resources()
+    """
+    if req is None:
+        req = await page.get_resources()
     js_reqs: list[resources.JSFile] = []
     prefix = "../" * (len(page.resolved_parts) + 1)
     for i in req.js:
@@ -194,15 +202,9 @@ class BuildCollector:
             self.extra_files |= node.files
             match node:
                 case mk.MkPage() as page:
-                    await self.collect_page(page)
+                    await self.collect_and_render_page(page)
                 case mk.MkNav() as nav:
-                    await self.collect_nav(nav)
-        for node in self.mapping.values():
-            match node:
-                case mk.MkPage() as page:
-                    await self.render_page(page)
-                case mk.MkNav() as nav:
-                    await self.render_nav(nav)
+                    await self.collect_and_render_nav(nav)
         # theme
         logger.debug("Collecting theme resources...")
         reqs = await theme.get_resources()
@@ -229,64 +231,73 @@ class BuildCollector:
             templates=final_templates,
         )
 
-    @logfire.instrument("collect_page: {page.title}")
-    async def collect_page(self, page: mk.MkPage):
-        """Preprocess page and collect its data.
+    @logfire.instrument("collect_and_render_page: {page.title}")
+    async def collect_and_render_page(self, page: mk.MkPage):
+        """Collect and render page in single pass.
 
         Args:
-            page: Page to collect the data from.
+            page: Page to process.
         """
         if page.resolved_metadata.inclusion_level is False:
             return
         path = page.resolved_file_path
         self.mapping[path] = page
-        req = await page.get_resources() if self.global_resources else await process_resources(page)
+
+        # Single-pass: get both markdown and resources together
+        content = await page.get_content()
+
+        # Apply page processors
+        md = content.markdown
+        for proc in page.get_processors():
+            md = proc.run(md)
+
+        # Handle resources
+        if self.global_resources:
+            req = content.resources
+        else:
+            req = await process_resources(page, content.resources)
         self.resources.merge(req)
+
         update_page_template(page)
         show_info = page.resolved_metadata.get("show_page_info")
         show_info = self.show_page_info if show_info is None else show_info
         if show_info:
             add_page_info(page, req)
 
-    @logfire.instrument("render_page: {page.title}")
-    async def render_page(self, page: mk.MkPage):
-        """Convert a page to markdown/HTML.
-
-        Args:
-            page: Page to render.
-        """
-        md = await page.to_markdown()
+        # Render with jinja if needed
         do_render = self.render_by_default
         if (render := page.metadata.get("render_macros")) is not None:
             do_render = render
         if do_render:
             md = await page.env.render_string_async(md)
 
-        self.node_files[page.resolved_file_path] = md
+        self.node_files[path] = md
 
-    @logfire.instrument("collect_nav: {nav.title}")
-    async def collect_nav(self, nav: mk.MkNav):
-        """Preprocess nav and collect its data.
+    @logfire.instrument("collect_and_render_nav: {nav.title}")
+    async def collect_and_render_nav(self, nav: mk.MkNav):
+        """Collect and render nav in single pass.
 
         Args:
-            nav: Nav to collect the data from.
+            nav: Nav to process.
         """
         logger.info("Processing section %r...", nav.title or "[ROOT]")
         path = nav.resolved_file_path
         self.mapping[path] = nav
-        req = await nav.get_node_resources()
-        self.resources.merge(req)
+
+        # Single-pass: get both markdown and resources together
+        content = await nav.get_content()
+
+        # Apply nav processors
+        md = content.markdown
+        for proc in nav.get_processors():
+            md = proc.run(md)
+
+        # Merge resources
+        self.resources.merge(content.resources)
         update_nav_template(nav)
 
-    @logfire.instrument("render_nav: {nav.title}")
-    async def render_nav(self, nav: mk.MkNav):
-        """Convert a nav to markdown/HTML.
-
-        Args:
-            nav: Nav to render.
-        """
-        md = await nav.to_markdown()
-        self.node_files[nav.resolved_file_path] = md
+        # Store rendered markdown
+        self.node_files[path] = md
 
 
 if __name__ == "__main__":
