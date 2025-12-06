@@ -31,7 +31,6 @@ from yarl import URL
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
-    import os.path
 
 
 _SCRIPT_TEMPLATE_STR = """
