@@ -7,6 +7,7 @@ import ipaddress
 import logging
 import mimetypes
 import os
+import pathlib
 import posixpath
 import re
 import socket
@@ -23,7 +24,7 @@ import wsgiref.util
 
 from jinjarope import htmlfilters
 from mknodes.utils import log
-import upath
+from upathtools import to_upath
 import watchdog.events
 import watchdog.observers.polling
 from yarl import URL
@@ -105,7 +106,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         with contextlib.suppress(Exception):
             if isinstance(ipaddress.ip_address(host), ipaddress.IPv6Address):
                 self.address_family = socket.AF_INET6
-        self.root = upath.UPath(root).resolve()
+        self.root = to_upath(root).resolve()
         self.url = _serve_url(host, port, mount_path)
         self.build_delay = 0.1
         self.shutdown_delay = shutdown_delay
@@ -138,7 +139,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
             path: The path to watch.
             recursive: Whether to watch the path recursively
         """
-        path = str(upath.UPath(path).resolve())
+        path = str(to_upath(path).resolve())
         if path in self._watched_paths:
             self._watched_paths[path] += 1
             return
@@ -165,7 +166,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
         Args:
             path: The path to unwatch
         """
-        path = str(upath.UPath(path).resolve())
+        path = str(pathlib.Path(path).resolve())
 
         self._watched_paths[path] -= 1
         if self._watched_paths[path] <= 0:
@@ -346,7 +347,7 @@ def _guess_type(path: str | os.PathLike[str]) -> str:
     Returns:
         The MIME type of the file.
     """
-    if upath.UPath(path).suffix == ".gz":
+    if to_upath(path).suffix == ".gz":
         return "application/gzip"
     guess, _ = mimetypes.guess_type(path)
     return guess or "application/octet-stream"
@@ -367,7 +368,7 @@ def _timestamp() -> int:
 
 def _try_relativize_path(path: str) -> str:
     """Make the path relative to current directory if it's under that directory."""
-    p = upath.UPath(path)
+    p = to_upath(path)
     with contextlib.suppress(ValueError):
-        p = p.relative_to(upath.UPath.cwd())
+        p = p.relative_to(str(pathlib.Path.cwd()))
     return str(p)

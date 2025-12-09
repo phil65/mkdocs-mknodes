@@ -14,8 +14,7 @@ from mkdocs import exceptions, utils as mkdocs_utils
 from mkdocs.structure.files import Files, InclusionLevel
 from mkdocs.structure.nav import get_navigation
 from mkdocs.structure.pages import Page
-import upath
-from upathtools import helpers
+from upathtools import helpers, to_upath
 
 from mkdocs_mknodes import telemetry
 from mkdocs_mknodes.builders import configbuilder
@@ -315,7 +314,7 @@ def _build_theme_template(
     output = _build_template(template_name, template, files, config, nav)
 
     if output.strip():
-        output_path = upath.UPath(config.site_dir) / template_name
+        output_path = to_upath(config.site_dir) / template_name
         helpers.write_file(output.encode(), output_path)
         if template_name == "sitemap.xml":
             docs = files.documentation_pages()
