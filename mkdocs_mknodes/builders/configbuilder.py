@@ -40,8 +40,12 @@ class ConfigBuilder:
         cfg = self.configs[0]
         if site_dir:
             cfg["site_dir"] = site_dir
-        for plugin in cfg["plugins"]:
-            if "mknodes" in plugin:
+        plugins = cfg["plugins"]
+        for i, plugin in enumerate(plugins):
+            if plugin == "mknodes":  # bare `- mknodes` entry without options
+                plugin = plugins[i] = {"mknodes": {}}
+            if isinstance(plugin, dict) and "mknodes" in plugin:
+                plugin["mknodes"] = plugin["mknodes"] or {}
                 if self.repo_path is not None:
                     plugin["mknodes"]["repo_path"] = self.repo_path
                 if self.build_fn is not None:
