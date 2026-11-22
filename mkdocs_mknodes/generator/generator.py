@@ -205,7 +205,7 @@ class SiteGenerator:
     def generate(self) -> BuildOutput:
         """Run the build function and collect pages, nav and resources.
 
-        Like the MkDocs plugin, setup and the build function run synchronously (nodes may
+        Setup and the build function run synchronously (nodes may
         do blocking I/O on creation), only the collection step runs in an event loop.
         """
         theme = self.create_theme()

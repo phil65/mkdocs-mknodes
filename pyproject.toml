@@ -3,7 +3,7 @@
 [project]
 name = "mkdocs-mknodes"
 version = "1.2.0"
-description = "MkDocs plugin to build documentation websites from MkNodes node trees written in Python"
+description = "Generate documentation websites from MkNodes node trees written in Python (built with Zensical)"
 readme = "README.md"
 requires-python = ">=3.13"
 license = "MIT"
@@ -18,14 +18,12 @@ keywords = [
   "documentation-generator",
   "jinja2",
   "markdown",
-  "mkdocs",
-  "mkdocs-plugin",
   "mknodes",
   "static-site-generator",
+  "zensical",
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
-  "Framework :: MkDocs",
   "Intended Audience :: Developers",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
@@ -40,21 +38,14 @@ classifiers = [
 ]
 dependencies = [
   "anyenv>=0.1.0",
-  # Tools
-  "jinja2",
   "jinjarope",
   "logfire>4.0",
-  "mkdocs >=1.5",
-  "mknodes>=2.2.16",
-  "pathspec",
-  "pydantic",
+  "mknodes>=2.3.1",
+  "pyyaml",
   # CLI
   "rich",
   "typer",
-  "universal_pathlib",
-  "upathtools>=0.6.5",
-  "yamling",
-  "yarl>=1.17.1",
+  # Site engine
   "zensical>=0.1.2",
 ]
 
@@ -67,9 +58,6 @@ Source = "https://github.com/phil65/mkdocs-mknodes"
 
 [project.scripts]
 mkdocs-mknodes = "mkdocs_mknodes.cli:cli"
-
-[project.entry-points."mkdocs.plugins"]
-mknodes = "mkdocs_mknodes.plugin:MkNodesPlugin"
 
 [dependency-groups]
 dev = [
@@ -86,8 +74,6 @@ docs = [
   # Material Social addon
   "cairosvg; python_version < '3.14'",
   "griffe-fieldz",
-  "mkdocs-material",
-  "mkdocs-mknodes>=1.2.0",
   "mkdocstrings[python]",
   "pillow; python_version < '3.14'",
   "pymdown-extensions",
@@ -114,6 +100,10 @@ exclude_lines = [
 ]
 
 [tool.mknodes]
+# docs: site generator settings (see https://phil65.github.io/mkdocs-mknodes/)
+build-fn = "mkdocs_mknodes.manual.root:Build.build"
+show-page-info = true
+global-resources = false
 allowed-commit-types = [
   "fix",
   "feat",
@@ -129,7 +119,6 @@ docstring-style = "google"
 python_version = "3.13"
 disable_error_code = ["assignment", "import"]
 pretty = true
-plugins = ["pydantic.mypy"]
 
 [tool.pyright]
 venvPath = "."

@@ -9,14 +9,14 @@ from duty import duty
 def build(ctx, *args: str):
     """Build a MkNodes page."""
     args_str = " " + " ".join(args) if args else ""
-    ctx.run(f"uv run mkdocs-mknodes build --engine zensical{args_str}")
+    ctx.run(f"uv run mkdocs-mknodes build{args_str}")
 
 
 @duty(capture=False)
 def serve(ctx, *args: str):
     """Serve a MkNodes page."""
     args_str = " " + " ".join(args) if args else ""
-    ctx.run(f"uv run mkdocs-mknodes serve --engine zensical{args_str}")
+    ctx.run(f"uv run mkdocs-mknodes serve{args_str}")
 
 
 @duty(capture=False)
@@ -57,10 +57,8 @@ def lint_check(ctx):
 
 @duty(capture=False)
 def docs_test_build(ctx):
-    """Build some test pages."""
-    ctx.run("uv run mkdocs-mknodes build --engine zensical -v")
-    opts = "-d ../site/mkdocs -p configs/mkdocs_mkdocs.yml -v --clone-depth 100"
-    ctx.run(f"uv run mkdocs-mknodes build {opts}")
+    """Build the documentation."""
+    ctx.run("uv run mkdocs-mknodes build -v")
 
 
 @duty(capture=False)

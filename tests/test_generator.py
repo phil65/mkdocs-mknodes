@@ -5,6 +5,7 @@ import pathlib
 import subprocess
 import sys
 
+from mknodes.info.gitrepository import GitRepository
 import pytest
 from typer.testing import CliRunner
 
@@ -284,6 +285,63 @@ def test_writer_build_command(project: pathlib.Path):
     assert cmd[-2].endswith("mkdocs.generated.yml")
 
 
+TEMPLATE_SCRIPT = """\
+import mknodes as mk
+
+
+def build(root, theme, **_kwargs):
+    root.page_template.announcement_bar = "Hello announcement"
+    page = root.add_page("Intro", is_index=True)
+    page += mk.MkText("intro")
+    details = root.add_nav("Section").add_page("Details")
+    details += mk.MkText("details")
+    details.template.announcement_bar = "Page specific"
+"""
+
+
+def test_page_templates_get_referenced(project: pathlib.Path):
+    (project / "build.py").write_text(TEMPLATE_SCRIPT)
+    output = generate_output(_settings(project, global_resources=False))
+    assert "template: SUMMARY.html\n" in output.pages["index.md"]
+    assert "template: Section/details.html\n" in output.pages["Section/details.md"]
+    assert "Hello announcement" in output.templates["SUMMARY.html"]
+    page_tpl = output.templates["Section/details.html"]
+    assert '{% extends "SUMMARY.html" %}' in page_tpl
+    assert "Page specific" in page_tpl
+
+
+def test_page_info_box(project: pathlib.Path):
+    output = generate_output(_settings(project, show_page_info=True))
+    assert "Page info" in output.pages["Section/details.md"]
+
+
+@pytest.mark.skipif(
+    not hasattr(GitRepository, "remote_url"),
+    reason="needs a MkNodes version supporting repositories without remote",
+)
+def test_repository_without_origin_remote(project: pathlib.Path, monkeypatch):
+    import os
+    import shutil
+
+    import git
+
+    for var in [k for k in os.environ if k.startswith("GIT_")]:
+        monkeypatch.delenv(var)
+    repo_dir = project / "repo"
+    repo_dir.mkdir()
+    for name in ("pyproject.toml", "LICENSE", "README.md"):
+        shutil.copy(REPO_ROOT / name, repo_dir / name)
+    repo = git.Repo.init(repo_dir, initial_branch="main")
+    with repo.config_writer() as cw:
+        cw.set_value("user", "name", "Test")
+        cw.set_value("user", "email", "test@example.com")
+    repo.index.add(["pyproject.toml", "LICENSE", "README.md"])
+    repo.index.commit("chore: initial commit")
+    output = generate_output(_settings(project, repo_path=str(repo_dir)))
+    assert "Section/details.md" in output.pages
+    assert output.metadata.site_name == "mkdocs-mknodes"
+
+
 def test_icon_resolver_maps_and_downloads_icons():
     from mkdocs_mknodes.writers.zensical import IconResolver
 
@@ -300,3 +358,15 @@ def test_icon_resolver_maps_and_downloads_icons():
     assert social == [{"icon": "fontawesome/brands/github", "link": "x"}]
     failing = IconResolver(fetch=lambda _key: None)
     assert "icon:" not in failing.update_page("---\nicon: foo:bar\n---\n")
+
+
+def test_pages_example_from_pyproject(tmp_path: pathlib.Path):
+    from mkdocs_mknodes import paths
+
+    example = (paths.RESOURCES / "pages_example.toml").read_text("utf-8")
+    (tmp_path / "pyproject.toml").write_text(example)
+    settings = GeneratorSettings.load(tmp_path, repo_path=REPO_ROOT.as_posix())
+    assert settings.build_fn == "mkdocs_mknodes:parse"
+    output = generate_output(settings)
+    assert [i.title for i in output.nav] == ["Home", "Usage", "API", "CLI", "Development"]
+    assert {"index.md", "Usage/getting_started.md", "Development/license.md"} <= set(output.pages)

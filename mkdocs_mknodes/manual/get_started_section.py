@@ -14,7 +14,7 @@ INTRO = (
 )
 
 
-@router.route_page("MkNodes plugin for MkDocs", hide="toc", is_homepage=True)
+@router.route_page("MkNodes site generator", hide="toc", is_homepage=True)
 def _(page: mk.MkPage):
     page += mk.MkTemplate("index.jinja")
 
@@ -24,12 +24,11 @@ def _(page: mk.MkPage):
     page += mk.MkTemplate("why_should_i_use_mknodes.jinja")
 
 
-@router.route_page("Plugin configuration", hide="toc")
+@router.route_page("Configuration", hide="toc")
 def _(page: mk.MkPage):
-    page += mk.MkTemplate("plugin_configuration.jinja")
-    eps = page.ctx.metadata.entry_points.get_group("mkdocs.plugins")
+    page += mk.MkTemplate("configuration.jinja")
     page += mk.MkDocStrings(
-        eps[0].load().config_class,
+        "mkdocs_mknodes.generator.settings.GeneratorSettings",
         show_root_toc_entry=False,
         show_if_no_docstring=True,
         heading_level=4,
@@ -42,8 +41,3 @@ def _(page: mk.MkPage):
 def _(page: mk.MkPage):
     page += INTRO
     page += mk.MkTimeline(paths.RESOURCES / "timeline_data.toml")
-
-
-# @router.route_page("Plugin flow", icon="dev-to", hide="toc")
-# def _(page: mk.MkPage):
-#     page += mk.MkPluginFlow()

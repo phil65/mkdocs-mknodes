@@ -52,14 +52,3 @@
     </a>
   {% endif %}
 {% endif %}
-
-{% if page is not none and page.file %}
-  <a
-    href="{{ config.site_url | trim('/') + '/src/' + page.file.src_uri | replace('.md', '.original') }}"
-    title="Source"
-    class="md-content__button md-icon"
-  >
-    {% set icon = "material/code-json" %}
-    {% include ".icons/" ~ icon ~ ".svg" %}
-  </a>
-{% endif %}

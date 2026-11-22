@@ -23,6 +23,6 @@ def _(page: mk.MkPage):
     page += mk.MkCliDoc(CLI_PATH, prog_name="serve")
 
 
-@nav.route.page("create-config", icon="folder-wrench")
+@nav.route.page("generate", icon="file-tree")
 def _(page: mk.MkPage):
-    page += mk.MkCliDoc(CLI_PATH, prog_name="create-config")
+    page += mk.MkCliDoc(CLI_PATH, prog_name="generate")

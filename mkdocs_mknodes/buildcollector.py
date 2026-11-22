@@ -22,14 +22,14 @@ if TYPE_CHECKING:
 logger = log.get_logger(__name__)
 
 
-def add_page_info(page: mk.MkPage, req: resources.Resources):
-    """Add a collapsed admonition box showing some page-related data.
+def create_page_info(page: mk.MkPage, req: resources.Resources) -> mk.MkAdmonition:
+    """Create a collapsed admonition box showing some page-related data.
 
     Args:
-        page: Page which should get updated.
+        page: Page to create the info box for.
         req: Resources of the page (passed in to avoid having to collect them again)
     """
-    adm = mk.MkAdmonition([], title="Page info", typ="theme", collapsible=True)
+    adm = mk.MkAdmonition([], title="Page info", typ="theme", collapsible=True, parent=page)
 
     if page.created_by:
         typ = "section" if page.is_index() else "page"
@@ -45,8 +45,7 @@ def add_page_info(page: mk.MkPage, req: resources.Resources):
     code = mk.MkCode(str(page.resolved_metadata), language="yaml")
     details = mk.MkAdmonition(code, title="Metadata", collapsible=True, typ="quote")
     adm += details
-
-    page += adm
+    return adm
 
 
 def update_page_template(page: mk.MkPage):
@@ -245,24 +244,28 @@ class BuildCollector:
 
         # Single-pass: get both markdown and resources together
         content = await page.get_content()
-
-        # Apply page processors
         md = content.markdown
-        for proc in page.get_processors():
-            md = proc.run(md)
 
-        # Handle resources
+        # Handle resources (non-global ones go into the page template)
         if self.global_resources:
             req = content.resources
         else:
             req = await process_resources(page, content.resources)
-        self.resources.merge(req)
 
-        update_page_template(page)
         show_info = page.resolved_metadata.get("show_page_info")
         show_info = self.show_page_info if show_info is None else show_info
         if show_info:
-            add_page_info(page, req)
+            info = await create_page_info(page, req).get_content()
+            md = f"{md}\n\n{info.markdown}"
+            req.merge(info.resources)
+        self.resources.merge(req)
+
+        # The template must be known before the metadata header gets rendered
+        update_page_template(page)
+
+        # Apply page processors (metadata header, footnotes, annotations)
+        for proc in page.get_processors():
+            md = proc.run(md)
 
         # Render with jinja if needed
         do_render = self.render_by_default
@@ -284,6 +287,9 @@ class BuildCollector:
         path = nav.resolved_file_path
         self.mapping[path] = nav
 
+        # The template must be known before child pages render their metadata
+        update_nav_template(nav)
+
         # Single-pass: get both markdown and resources together
         content = await nav.get_content()
 
@@ -294,7 +300,6 @@ class BuildCollector:
 
         # Merge resources
         self.resources.merge(content.resources)
-        update_nav_template(nav)
 
         # Store rendered markdown
         self.node_files[path] = md

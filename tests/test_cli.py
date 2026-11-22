@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import pathlib
-import tempfile
 from unittest import mock
 
 import pytest
@@ -10,53 +8,46 @@ from typer.testing import CliRunner
 from mkdocs_mknodes import cli
 
 
-_dir = tempfile.TemporaryDirectory(prefix="mknodes_")
-build_folder = pathlib.Path(_dir.name)
+@pytest.fixture
+def generate():
+    writer = mock.Mock()
+    writer.build_command.return_value = ["zensical", "build"]
+    with mock.patch("mkdocs_mknodes.cli._generate", return_value=writer) as mocked:
+        yield mocked
 
 
-@mock.patch("mkdocs_mknodes.commands.build_page.build", autospec=True)
-def test_build(mock_build):
+@pytest.mark.parametrize("engine_args", [[], ["--engine", "zensical"], ["-e", "zensical"]])
+def test_build(generate, engine_args: list[str]):
     build_fn = "mkdocs_mknodes:MkDefaultWebsite"
-    cfg_file = "mkdocs.yml"
-    runner = CliRunner()
-    result = runner.invoke(
-        cli.cli,
-        ["build", "--config-path", cfg_file, "--build-fn", build_fn],
-        catch_exceptions=False,
-    )
-
+    args = ["build", "--config-path", "mkdocs.yml", "--build-fn", build_fn, "-s"]
+    with mock.patch("subprocess.call", return_value=0) as call:
+        result = CliRunner().invoke(cli.cli, args + engine_args, catch_exceptions=False)
     assert result.exit_code == 0
-    mock_build.assert_called_once_with(
-        config_path=cfg_file,
-        repo_path=None,
-        build_fn=build_fn,
-        clone_depth=None,
-        site_dir="site",
-        strict=False,
-        theme=None,
-        use_directory_urls=True,
-    )
+    settings, engine = generate.call_args.args
+    assert engine == "zensical"
+    assert settings.build_fn == build_fn
+    writer = generate.return_value
+    writer.build_command.assert_called_once_with(extra_args=["--strict"])
+    call.assert_called_once_with(["zensical", "build"])
 
 
-@mock.patch("mkdocs_mknodes.liveserver.LiveServer.serve", autospec=True)
-@mock.patch("mkdocs_mknodes.commands.build_page._build", autospec=True)
-def test_serve_default(mock_build, mock_serve):
-    runner = CliRunner()
-    result = runner.invoke(
-        cli.cli,
-        ["serve", "--config-path", "configs/mkdocs_mkdocs.yml"],
-        catch_exceptions=False,
-    )
-
-    assert result.exit_code == 0
-    mock_build.assert_called_once()
+def test_build_propagates_exit_code(generate):
+    with mock.patch("subprocess.call", return_value=3):
+        result = CliRunner().invoke(cli.cli, ["build"], catch_exceptions=False)
+    assert result.exit_code == 3  # noqa: PLR2004
 
 
-def test_create_config():
-    runner = CliRunner()
-    result = runner.invoke(cli.cli, ["create-config"], catch_exceptions=False)
-    assert result.exit_code == 0
-    assert "site_name: mkdocs-mknodes" in result.output
+@pytest.mark.parametrize("command", ["build", "serve", "generate"])
+def test_unsupported_engine_is_rejected(generate, command: str):
+    result = CliRunner().invoke(cli.cli, [command, "--engine", "mkdocs"])
+    assert result.exit_code == 2  # noqa: PLR2004
+    assert "Unsupported engine 'mkdocs'" in result.output
+    generate.assert_not_called()
+
+
+def test_removed_commands():
+    result = CliRunner().invoke(cli.cli, ["create-config"])
+    assert result.exit_code != 0
 
 
 if __name__ == "__main__":

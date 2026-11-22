@@ -1,19 +1,14 @@
 It is possible to construct a basic documentation website without writing any Python code by
-describing the node tree in the config file. We will construct a small website for **MkDocs**
-(the repository gets cloned automatically).
+describing the node tree in the config. The default build function (`mkdocs_mknodes:parse`)
+builds the nav from the `pages` setting.
 
 The following config...
 
-{{ config | MkCode(language="yaml") }}
+{{ config | MkCode(language="toml") }}
 
 Combined with this CLI call...
 
-{{"mkdocs-mknodes build -p configs/mkdocs_mkdocs.yml -d site/mkdocs" | MkCode(language="terminal")}}
+{{"mkdocs-mknodes build" | MkCode(language="terminal")}}
 
-
-Will create this website:
-
-
-{{ "https://phil65.github.io/mkdocs-mknodes/mkdocs" | MkLink(as_button=True, icon="web") }}
-
-
+...creates a website with a home page, a usage section, API docs, a CLI page
+(if the project has a CLI) and a development section.

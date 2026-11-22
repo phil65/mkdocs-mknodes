@@ -2,8 +2,10 @@
 
 Settings are read from (later sources win):
 
-1. the `mknodes` plugin section of the project's `mkdocs.yml` (the legacy MkDocs setup),
-2. `[tool.mknodes]` in `pyproject.toml` (the keys below, `-` and `_` are interchangeable),
+1. the `mknodes` entry of the `plugins` list in the project's `mkdocs.yml` (kept for sites
+   which were set up for the former MkDocs plugin),
+2. `[tool.mknodes]` in `pyproject.toml` (preferred; the keys below, `-` and `_` are
+   interchangeable),
 3. explicit overrides (CLI options).
 
 Without any configuration, the default website (`mkdocs_mknodes:parse`) gets generated.

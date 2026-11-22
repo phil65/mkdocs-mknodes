@@ -1,0 +1,31 @@
+# pyproject.toml
+[[tool.mknodes.pages]]
+title = "Home"
+type = "MkText"
+text = "{{ metadata.description }}"
+is_index = true
+
+[[tool.mknodes.pages]]
+Usage = [
+  { title = "Getting started", type = "MkText", text = "Install the package and import it." },
+  { title = "Changelog", type = "MkChangelog" },
+]
+
+[[tool.mknodes.pages]]
+title = "API"
+type = "MkDoc"
+section_name = "API"
+recursive = true
+
+[[tool.mknodes.pages]]
+title = "CLI"
+type = "MkCliDoc"
+show_subcommands = true
+condition = "{{ metadata.cli }}"
+
+[[tool.mknodes.pages]]
+Development = [
+  { title = "Contributing", type = "MkCommitConventions" },
+  { title = "Dependencies", type = "MkDependencyTable" },
+  { title = "License", type = "MkLicense" },
+]

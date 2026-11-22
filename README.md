@@ -1,4 +1,4 @@
-# MkNodes (MkDocs plugin)
+# MkDocs-MkNodes
 
 #### Don't write docs. Code them.
 
@@ -29,11 +29,16 @@
 
 [Read the documentation!](https://phil65.github.io/mkdocs-mknodes/)
 
-**mkdocs-mknodes** is a [MkDocs](https://www.mkdocs.org) plugin that builds your documentation
-site from a Python node tree created with [MkNodes](https://github.com/phil65/mknodes).
-Pages, navigation, API docs, changelogs, dependency tables, diagrams and more are generated
-from your project's metadata and code, and you can still mix in hand-written Markdown and
-Jinja templates wherever you like.
+**mkdocs-mknodes** builds your documentation site from a Python node tree created with
+[MkNodes](https://github.com/phil65/mknodes). Pages, navigation, API docs, changelogs,
+dependency tables, diagrams and more are generated from your project's metadata and code, and
+you can still mix in hand-written Markdown and Jinja templates wherever you like.
+The HTML site is built by [Zensical](https://zensical.org).
+
+> **2.0:** The MkDocs plugin is gone. MkNodes generates the site input (pages, nav, assets,
+> config) and Zensical builds it. Existing `mkdocs.yml` files keep working: the `mknodes`
+> entry of the `plugins` list is still read for settings, but `[tool.mknodes]` in
+> `pyproject.toml` is the preferred place now.
 
 ## Installation
 
@@ -45,38 +50,28 @@ pip install mkdocs-mknodes
 
 ### 1. Zero configuration: the default website
 
-Add the plugin to `mkdocs.yml` without any options:
-
-```yaml
-site_name: My project
-theme:
-  name: material
-plugins:
-  - mknodes
-```
-
-Then build:
-
 ```bash
-mkdocs-mknodes build   # or: mkdocs build / mkdocs serve
+mkdocs-mknodes build   # generate + zensical build
+mkdocs-mknodes serve   # live preview on http://localhost:8000/
 ```
 
-Without a `build_fn` or `pages` setting, MkNodes builds a complete default website for the
-project in the current Git repository:
+A `mkdocs.yml` is optional (theme, `site_name`, `markdown_extensions`, ...). Without a
+`build-fn` or `pages` setting, MkNodes builds a complete default website for the project in the
+current Git repository:
 
 - **Home**: your `README.md` (falls back to `.github/README.md`, then the package description)
 - **API**: API reference for your package, generated recursively
 - **CLI**: CLI documentation, if your project defines a command line interface
 - **Development**: changelog (from Git commits), contribution guidelines, dev environment setup,
-  dependency table and tree, MkDocs plugin flow (for MkDocs plugins) and license
+  dependency table and tree and license
 
 ### 2. Custom website: your own build function
 
-Point `build_fn` to any callable (`module:function`, `module:Class.classmethod` or
+Point `build-fn` to any callable (`module:function`, `module:Class.classmethod` or
 `path/to/file.py:function`). It receives the root `MkNav` and the theme and fills the tree:
 
 ```python
-# build_docs.py (next to mkdocs.yml)
+# build_docs.py (in the project root)
 import mknodes as mk
 
 
@@ -87,86 +82,102 @@ def build(root: mk.MkNav, theme: mk.Theme) -> None:
     root.add_doc(section_name="API", recursive=True)
 ```
 
-```yaml
-plugins:
-  - mknodes:
-      build_fn: build_docs.py:build
+```toml
+# pyproject.toml
+[tool.mknodes]
+build-fn = "build_docs.py:build"
 ```
 
 Build functions may also be `async`. Extra keyword arguments can be passed via the `kwargs`
 setting.
 
-### 3. Custom website from YAML
+### 3. Custom website from config
 
-The default build function also accepts a node tree written in YAML:
+The default build function also accepts a node tree via the `pages` setting:
 
-```yaml
-plugins:
-  - mknodes:
-      kwargs:
-        pages:
-          - title: Home
-            type: MkText
-            text: "{{ metadata.description }}"
-            is_index: true
-          - title: API
-            type: MkDoc
-            section_name: API
-            recursive: true
-          - Development:
-              - title: Changelog
-                type: MkChangelog
-              - title: License
-                type: MkLicense
+```toml
+[[tool.mknodes.pages]]
+title = "Home"
+type = "MkText"
+text = "{{ metadata.description }}"
+is_index = true
+
+[[tool.mknodes.pages]]
+title = "API"
+type = "MkDoc"
+section_name = "API"
+recursive = true
+
+[[tool.mknodes.pages]]
+Development = [
+  { title = "Changelog", type = "MkChangelog" },
+  { title = "License", type = "MkLicense" },
+]
 ```
+
+## How it works
+
+`mkdocs-mknodes generate` runs the build function and writes
+
+- the generated pages and assets into the docs folder (listed in a generated `docs/.gitignore`;
+  hand-written pages are never overwritten and keep working next to the generated ones),
+- HTML template overrides (announcement bars, per-page resources, error page, ...) into the
+  theme `custom_dir` (default `overrides/`),
+- `mkdocs.generated.yml`, which `INHERIT`s `mkdocs.yml` and adds the nav, the required Markdown
+  extensions and extra CSS / JS.
+
+`mkdocs-mknodes build` then runs `zensical build -f mkdocs.generated.yml`; `serve` runs
+`generate --watch` next to `zensical serve`.
 
 ## Features
 
-- Hooks into the regular MkDocs build: pages, navigation, CSS/JS resources and required Markdown
-  extensions are collected from the node tree and added to the MkDocs config automatically.
 - Project metadata (pyproject, Git, installed distribution, ...) is available to all nodes and to
   the built-in Jinja environment (powered by [JinjaRope](https://github.com/phil65/jinjarope)).
-- Pages can be Jinja templates; links between pages are resolved automatically.
-- Edit-page links point to the code that generated a page; `show_page_info: true` appends
+- Pages can be Jinja templates; bare links between generated pages are resolved automatically.
+- Edit-page links point to the code that generated a page; `show-page-info = true` appends
   build information (metadata, resources, generating code) to every page.
-- Optional rewriting of MkDocs-Material templates for extra features (iconify icons,
-  per-page `navigation.indexes` / `navigation.expand`).
-- Build documentation for remote repositories (`repo_path` can be a Git URL).
-- A CLI (`mkdocs-mknodes build | serve | create-config`) closely aligned with the MkDocs CLI,
-  with rich logging output.
+- Build documentation for remote repositories (`--repo-url` can be a Git URL).
 
 ## CLI
 
 ```bash
-# build the site for the current repository using mkdocs.yml
-mkdocs-mknodes build
-
-# build docs for a remote repository with a different config and output dir
-mkdocs-mknodes build -r https://github.com/mkdocs/mkdocs.git -p configs/mkdocs_mkdocs.yml -d site/mkdocs
-
-# live preview
-mkdocs-mknodes serve
-
-# print a MkDocs config inferred from a build function and the project metadata
-mkdocs-mknodes create-config
+mkdocs-mknodes generate [--watch]       # only write the site input
+mkdocs-mknodes build [-d site] [-s]     # generate + zensical build (strict mode with -s)
+mkdocs-mknodes serve                    # generate --watch + zensical serve
+mkdocs-mknodes build -r https://github.com/owner/repo.git   # docs for a remote repository
 ```
 
+`--engine zensical` / `-e zensical` is accepted for compatibility (Zensical is the only engine).
 Run `mkdocs-mknodes <command> --help` for all options.
 
-## Plugin options
+## Settings
 
+Read from `[tool.mknodes]` in `pyproject.toml` (preferred) and the `mknodes` entry of the
+`plugins` list in `mkdocs.yml` (`pyproject.toml` wins, CLI options win over both).
 The most important settings (see the [docs](https://phil65.github.io/mkdocs-mknodes/) for all):
 
-| Option | Default | Description |
+| Setting | Default | Description |
 | --- | --- | --- |
-| `build_fn` | `mkdocs_mknodes:parse` | Callable that builds the node tree |
-| `kwargs` | | Keyword arguments for the build function (e.g. `pages`) |
-| `repo_path` | `.` | Local path or Git URL of the repository to document |
-| `clone_depth` | `100` | Clone depth for remote repositories |
-| `show_page_info` | `false` | Append build information to every page |
-| `global_resources` | `true` | Put CSS/JS into all pages instead of only the pages that need them |
-| `render_by_default` | `true` | Render all pages with Jinja |
-| `build_folder` | temporary dir | Where generated Markdown files are written |
+| `build-fn` | `mkdocs_mknodes:parse` | Callable that builds the node tree |
+| `kwargs` | | Keyword arguments for the build function |
+| `pages` | | Node tree for the default build function |
+| `repo-path` | `.` | Local path or Git URL of the repository to document |
+| `clone-depth` | `100` | Clone depth for remote repositories |
+| `show-page-info` | `false` | Append build information to every page |
+| `global-resources` | `true` | Put CSS/JS into all pages instead of only the pages that need them |
+| `render-by-default` | `true` | Render generated pages with Jinja |
+| `generated-dir` | docs dir | Where generated pages are written |
+
+## Migrating from 1.x
+
+- Build with `mkdocs-mknodes build` (`--engine zensical` still works), not `mkdocs build`.
+- `mkdocs` is no longer a dependency; add `zensical` (pulled in by mkdocs-mknodes) and keep
+  `mkdocstrings[python]` in your docs dependencies for API pages.
+- Removed: the MkDocs plugin (`mkdocs.plugins` entry point), `create-config`, the `--theme` and
+  `--use-directory-urls` options, the Jinja rendering of hand-written pages, the link replacer
+  for hand-written pages and the MkDocs template rewriting. The plugin options `build_folder`,
+  `rewrite_theme_templates`, `auto_delete_generated_templates`, `jinja_on_undefined` and
+  `llm_*` are ignored.
 
 ## License
 

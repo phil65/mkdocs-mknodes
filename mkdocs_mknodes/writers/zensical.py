@@ -3,7 +3,7 @@
 Zensical has no plugin API, so the generated pages are written into the docs folder and a
 generated config (`mkdocs.generated.yml` by default) `INHERIT`s the project's `mkdocs.yml`
 and adds the nav, the required Markdown extensions, extra CSS / JS and site metadata.
-Build with `zensical build -f mkdocs.generated.yml` (or `mkdocs-mknodes build --engine zensical`).
+Build with `zensical build -f mkdocs.generated.yml` (or `mkdocs-mknodes build`).
 """
 
 from __future__ import annotations

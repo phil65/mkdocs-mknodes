@@ -1,11 +1,11 @@
 [step_1]
 label = "Step 1"
 content = """
-### Set up working directory
+### Load settings
 
-The target repository gets cloned in case it is a
-remote one. If no explicit build directory for the later steps is provided by the
-config, a temporary build folder is created.
+Settings are read from the `mknodes` entry of the `plugins` list in `mkdocs.yml`,
+`[tool.mknodes]` in `pyproject.toml` and the CLI options. The target repository gets
+cloned in case it is a remote one.
 """
 
 [step_2]
@@ -13,124 +13,63 @@ label = "Step 2"
 content = """
 ### Create theme
 
-Initialize the theme object based on which theme is chosen in the **MkDocs** config / CLI.
+Initialize the theme object based on the theme configured in `mkdocs.yml`
+(default: `material`).
 """
 
 [step_3]
 label = "Step 3"
 content = """
-### Collect project info
+### Create context
 
-The theme, the **Git** repository (in most cases the current working dir) and a
-URL linker are set up as the basis for the project context.
+All available information from following sources is extracted in order to build
+a project context:
+
+* metadata.Distribution
+* PyProject File
+* Site config file (`mkdocs.yml`)
+* Other config files in the repository
+* Git repository info
+* Information from GitHub
 """
 
 [step_4]
 label = "Step 4"
 content = """
-### Create context
+### Build **MkNodes** tree
 
-All available information from following sources are extracted in order to build
-a context object:
-
-* metadata.Distribution
-* PyProject File
-* MkDocs Config file
-* Other config files in the cwd
-* Git repository info
-* Information from GitHub
+The build function (`build_fn`) is executed with the root `MkNav` and the theme
+and the node tree is generated. Without any configuration, the default build function
+creates a default website (README, API docs, CLI docs, development pages).
 """
 
 [step_5]
 label = "Step 5"
 content = """
-### Create environment
+### Collect build artifacts
 
-Create the **jinja2** environment and populate it with all the data provided by the
-context object.
+The `BuildCollector` walks the node tree and renders every page and nav
+(Markdown incl. front matter, rendered with **jinja2**). It aggregates the required
+resources (CSS / JS / Markdown extensions) and the page templates and converts the
+template blocks to HTML. The result is an engine-neutral `BuildOutput`.
 """
 
 [step_6]
 label = "Step 6"
 content = """
-### Build **MkNodes** tree
+### Write the site input
 
-Now, since all needed information is available, the
-build function (`build_fn`) is executed with the root `MkNav` and the theme
-and the node tree is generated. Without any configuration, the default build function
-creates a default website (README, API docs, CLI docs, development pages).
+The `ZensicalWriter` writes the pages and assets into the docs folder and the
+template overrides into the theme `custom_dir` (both tracked in a generated
+`.gitignore`, hand-written files are never overwritten) as well as
+`mkdocs.generated.yml`, which inherits from `mkdocs.yml` and adds the nav,
+the Markdown extensions and the extra CSS / JS.
 """
 
 [step_7]
 label = "Step 7"
 content = """
-### Initialize backends
+### Build with **Zensical**
 
-The build backends are initialized. Right now there is one
-simple Markdown backend and one **MkDocs** build backend.
-"""
-
-[step_8]
-label = "Step 8"
-content = """
-### Collect build artifacts
-
-The `BuildCollector` aggregates and preprocesses all the data from the node tree
-(navigation hierarchy, Markdown output, required resources, templates, ...)
-and passes the prepared data to the build backends.
-"""
-
-[step_9]
-label = "Step 9"
-content = """
-### Convert templates
-
-If required, convert the template pages which were populated
-with Markdown by the user to HTML using the **Python-Markdown** parser.
-"""
-
-[step_10]
-label = "Step 10"
-content = """
-### Write to disk using backends
-
-* The Markdown backend creates plain Markdown pages and index files on disk.
-  `SUMMARY.md` files are generated to describe the hierarchy.
-* The **MkDocs** backend updates the **Mkdocs**
-  configuration with information from the node tree and adds the required CSS / JS /
-  etc. resources as well as the required Markdown extensions. All Markdown files
-  and templates are written to the location where **MkDocs**
-  expects them to be and a suiting nav section is written to config.
-"""
-
-[step_11]
-label = "Step 11"
-content = """
-### Set edit URIs
-
-Set the page edit URIs to the recorded caller location (gathered from `FrameInfo` objects).
-"""
-
-[step_12]
-label = "Step 12"
-content = """
-### Render **jinja2** templates
-
-The pages get rendered by **jinja2** and a custom `LinkReplacer` is doing a bit of work.
-"""
-
-[step_13]
-label = "Step 13"
-content = """
-### Finished!
-
-After letting **MkDocs** do its work, the website is ready.
-"""
-
-[step_14]
-label = "Step 14"
-content = """
-### Clean up
-
-Remove possible temporarily created HTML templates from disk.
+`zensical build -f mkdocs.generated.yml` renders the website.
 """

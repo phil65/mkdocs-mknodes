@@ -45,11 +45,8 @@ jobs:
             - name: Install dependencies
               run: uv sync --all-extras
 
-            - name: Build main documentation page
-              run: uv run mkdocs-mknodes build --engine zensical -v
-
-            - name: Build example sub-page (MkDocs)
-              run: uv run mkdocs-mknodes build -d ../site/mkdocs -p configs/mkdocs_mkdocs.yml -v --clone-depth 100
+            - name: Build documentation
+              run: uv run mkdocs-mknodes build -v
 
             - name: Package and upload page artifact
               uses: actions/upload-pages-artifact@v5

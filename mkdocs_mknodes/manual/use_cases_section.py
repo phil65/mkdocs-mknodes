@@ -1,6 +1,6 @@
-import pathlib
-
 import mknodes as mk
+
+from mkdocs_mknodes import paths
 
 
 nav = mk.MkNav("Use cases")
@@ -13,7 +13,7 @@ def _(page: mk.MkPage):
 
 @nav.route.page("Creating a website via config", hide="toc")
 def _(page: mk.MkPage):
-    """Create the "Creating a sample website" MkPage."""
-    config = pathlib.Path("configs/mkdocs_mkdocs.yml").read_text("utf-8")
+    """Create the "Creating a website via config" MkPage."""
+    config = (paths.RESOURCES / "pages_example.toml").read_text("utf-8")
     variables = {"config": config}
     page += mk.MkTemplate("use_case_default_website.jinja", variables=variables)

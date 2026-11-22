@@ -1,4 +1,4 @@
-site_name: MkNodes (MkDocs plugin)
+site_name: MkDocs-MkNodes
 site_description: "Don´t write docs. Code them."
 repo_url: "https://github.com/phil65/mkdocs-mknodes/"
 site_url: https://phil65.github.io/mkdocs-mknodes/
@@ -55,10 +55,6 @@ theme:
 
 plugins:
     - search
-    - mknodes:
-          build_fn: mkdocs_mknodes.manual.root:Build.build
-          show_page_info: true
-          global_resources: false
     - mkdocstrings:
           default_handler: python
           handlers:

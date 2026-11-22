@@ -50,10 +50,6 @@ def populate_default_website(
     page += mk.MkDependencyTable()
     page += mk.MkPipDepTree(direction="LR")
 
-    if "mkdocs.plugins" in nav.ctx.metadata.entry_points:
-        page = dev_nav.add_page("MkDocs Plugins")
-        page += mk.MkPluginFlow()
-
     page = dev_nav.add_page("License", hide="toc")
     page += mk.MkLicense()
     return nav
