@@ -1,5 +1,5 @@
 default_language_version:
-    python: python3.12
+    python: python3.13
 default_stages: [pre-commit]
 repos:
     - repo: local
@@ -28,18 +28,30 @@ repos:
           # - id: check-added-large-files
     # https://pre-commit.com/hooks.html
 
-    - repo: https://github.com/pre-commit/mirrors-mypy
-      rev: v1.13.0
+    - repo: local
       hooks:
           - id: mypy
-            # args: [--ignore-missing-imports]
-            additional_dependencies: [mkdocs, orjson, pydantic]
+            name: mypy
+            entry: uv run mypy mkdocs_mknodes/
+            language: system
+            types: [python]
+            pass_filenames: false
+            require_serial: true
 
-    - repo: https://github.com/charliermarsh/ruff-pre-commit
-      rev: v0.7.3
+    - repo: local
       hooks:
           - id: ruff
+            name: ruff
+            entry: uv run ruff check
+            language: system
+            types: [python]
+            require_serial: true
           - id: ruff-format
+            name: ruff-format
+            entry: uv run ruff format
+            language: system
+            types: [python]
+            require_serial: true
 
     - repo: https://github.com/commitizen-tools/commitizen
       rev: v3.30.0
