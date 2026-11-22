@@ -40,7 +40,7 @@ dependencies = [
   "anyenv>=0.1.0",
   "jinjarope",
   "logfire>4.0",
-  "mknodes>=3.0.0",
+  "mknodes>=3.1.0",
   "pyyaml",
   # CLI
   "rich",

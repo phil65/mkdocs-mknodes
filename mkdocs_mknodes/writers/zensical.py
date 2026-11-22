@@ -89,10 +89,12 @@ def _bundled_icons_dir() -> pathlib.Path | None:
 
 
 def _fetch_svg(key: str) -> str | None:
-    from jinjarope import iconfilters
+    # mknodes' on-disk icon cache: icons are fetched once per machine/CI cache, and a
+    # cached copy keeps working while the Iconify API is down or rate-limiting.
+    from mknodes.utils.iconcache import get_icon_svg
 
     try:
-        return iconfilters.get_icon_svg(key) or None
+        return get_icon_svg(key) or None
     except Exception:  # noqa: BLE001
         logger.warning("Could not fetch icon %s", key)
         return None
