@@ -13,16 +13,44 @@ This plugin acts as a bridge: It embeds **MkNodes** into the **MkDocs** event ho
     In addition, all pages on this website include an Admonition box at the bottom, which also includes the code which generated the page. That might be a helpful resource to understand how **MkNodes** can be used.
 
 
-## Hello, world
+## Two ways to use it
 
-A minimum example for a **MkNodes** website:
+**1. Zero configuration.** Add the plugin without options:
 
-``` py
-def build(project: Project):
-    index_page = project.root.get_index_page(hide="toc")
-    index += mk.MkAdmonition("Hello world!")
+``` yaml
+plugins:
+  - mknodes
 ```
 
+Running `mkdocs-mknodes build` (or `mkdocs build`) then creates a default website for the
+project in the current repository: the `README.md` as index page, API docs, CLI docs (if the
+project has a CLI) and a "Development" section with changelog, contribution guidelines,
+dependencies and license.
+
+**2. Your own build function.** Point `build_fn` to a callable which populates the root nav:
+
+``` yaml
+plugins:
+  - mknodes:
+      build_fn: build_docs.py:build
+```
+
+``` py
+import mknodes as mk
+
+
+def build(root: mk.MkNav, theme: mk.Theme) -> None:
+    page = root.add_page("Home", is_index=True, hide="toc")
+    page += mk.MkAdmonition("Hello world!")
+    root.add_doc(section_name="API", recursive=True)
+```
+
+The build function gets called with the keyword arguments `root` and `theme` (plus everything
+set via the `kwargs` setting) and may also be `async`. Alternatively, the default build
+function `mkdocs_mknodes:parse` accepts a node tree written in YAML via `kwargs: {pages: [...]}`
+(see the use cases section).
+
 Additional features:
+
 - Rewrite MkDocs-Material templates on-the-fly to add additional functionality
 - An upgraded MkDocs CLI with nicer output and additional functionality

@@ -13,16 +13,16 @@ label = "Step 2"
 content = """
 ### Create theme
 
-Initialize the theme object based on which theme is chosen in the **MkDocs** config / CLI."
+Initialize the theme object based on which theme is chosen in the **MkDocs** config / CLI.
 """
 
 [step_3]
 label = "Step 3"
 content = """
-### Create project
+### Collect project info
 
-The theme, the build function, the **Git** repository (in most cases the current
-working dir) and a URL linker are consolidated into one project instance.
+The theme, the **Git** repository (in most cases the current working dir) and a
+URL linker are set up as the basis for the project context.
 """
 
 [step_4]
@@ -56,8 +56,9 @@ content = """
 ### Build **MkNodes** tree
 
 Now, since all needed information is available, the
-user-coded build function is executed and the node tree is generated
-(alternatively, a website template like `MkDefaultWebSite` can be used)
+build function (`build_fn`) is executed with the root `MkNav` and the theme
+and the node tree is generated. Without any configuration, the default build function
+creates a default website (README, API docs, CLI docs, development pages).
 """
 
 [step_7]

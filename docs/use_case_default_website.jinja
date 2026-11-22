@@ -1,5 +1,6 @@
-It is possible to construct a basic documentation websites for without much effort. We will construct a small
-website for MkDocs.
+It is possible to construct a basic documentation website without writing any Python code by
+describing the node tree in the config file. We will construct a small website for **MkDocs**
+(the repository gets cloned automatically).
 
 The following config...
 
@@ -7,7 +8,7 @@ The following config...
 
 Combined with this CLI call...
 
-{{"mkdocs-mknodes build" | MkCode(language="terminal")}}
+{{"mkdocs-mknodes build -p configs/mkdocs_mkdocs.yml -d site/mkdocs" | MkCode(language="terminal")}}
 
 
 Will create this website:
