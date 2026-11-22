@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import inspect
 import logging
 
 import typer as t
@@ -155,10 +156,12 @@ def create_config(
     skin = mk.Theme(theme_name)
     nav = mk.MkNav.with_context(repo_url=repo_path)
     builder = classhelpers.to_callable(build_fn)
-    builder(context=nav.ctx)
     collector = buildcollector.BuildCollector([])
 
     async def main():
+        result = builder(root=nav, theme=skin)
+        if inspect.iscoroutine(result):
+            await result
         info = await collector.collect(nav, skin)
         resources = info.resources
         info = nav.ctx.metadata
@@ -166,6 +169,7 @@ def create_config(
             config.extra["social"] = social  # type: ignore[index]
         config.markdown_extensions = resources.markdown_extensions
         config.repo_path = info.repository_url
+        config.repo_url = info.repository_url  # type: ignore[assignment]
         config.site_description = info.summary
         config.site_name = info.distribution_name
         config.site_author = info.author_name
@@ -179,4 +183,4 @@ def create_config(
 
 
 if __name__ == "__main__":
-    cli(["create-config", "--build-fn", "mkdocs_mknodes:MkDefaultWebsite"])
+    cli(["create-config"])

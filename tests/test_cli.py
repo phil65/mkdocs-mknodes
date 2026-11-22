@@ -53,14 +53,10 @@ def test_serve_default(mock_build, mock_serve):
 
 
 def test_create_config():
-    build_fn = "mkdocs_mknodes:MkDefaultWebsite"
     runner = CliRunner()
-    result = runner.invoke(
-        cli.cli,
-        ["create-config", "--build-fn", build_fn],
-        catch_exceptions=False,
-    )
+    result = runner.invoke(cli.cli, ["create-config"], catch_exceptions=False)
     assert result.exit_code == 0
+    assert "site_name: mkdocs-mknodes" in result.output
 
 
 if __name__ == "__main__":
