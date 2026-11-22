@@ -53,9 +53,9 @@
   {% endif %}
 {% endif %}
 
-{% if page is not none %}
+{% if page is not none and page.file %}
   <a
-    href="{{ config.site_url | rstrip('/') + '/src/' + page.file.src_uri | replace('.md', '.original') }}"
+    href="{{ config.site_url | trim('/') + '/src/' + page.file.src_uri | replace('.md', '.original') }}"
     title="Source"
     class="md-content__button md-icon"
   >
