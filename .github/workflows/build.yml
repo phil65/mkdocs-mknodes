@@ -11,15 +11,15 @@ jobs:
 
         steps:
             - name: Check out repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: Set up Python ${{ matrix.python_version }}
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                   python-version: ${{ matrix.python_version }}
 
             - name: Install uv
-              uses: yezz123/setup-uv@v4
+              uses: astral-sh/setup-uv@v7
 
             - name: Setup Graphviz
               uses: ts-graphviz/setup-graphviz@v2
@@ -38,7 +38,7 @@ jobs:
               run: |
                   uv run pytest --cov-report=xml
 
-            - uses: codecov/codecov-action@v4
+            - uses: codecov/codecov-action@v5
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
                   fail_ci_if_error: false
@@ -54,15 +54,15 @@ jobs:
             contents: write
         steps:
             - name: Check out repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: Set up Python 3.13
-              uses: actions/setup-python@v5
+              uses: actions/setup-python@v6
               with:
                   python-version: "3.13"
 
             - name: Install uv
-              uses: yezz123/setup-uv@v4
+              uses: astral-sh/setup-uv@v7
 
             - name: Build package
               run: |
