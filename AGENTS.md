@@ -40,8 +40,9 @@ Unknown keys are ignored (old plugin options like `build_folder` don't error).
 - `generator/generator.py` `SiteGenerator.generate()`: theme (`mk.Theme.get_theme` from the
   `theme` section), git repo (`reporegistry.get_repo`, remote repos are cloned), `FolderInfo`,
   `ProjectContext`, runs the build fn, runs `BuildCollector` with `OutputBackend`, converts the
-  nav, renames URL collisions (`resolve_url_collisions`, class page vs same-named module ->
-  `-1` suffix) and resolves bare `[x](file.md)` links (`replace_links`).
+  nav, renames URL collisions (`resolve_url_collisions`, `-1` suffix with a
+  warning; only a safety net for hand-built navs: since mknodes 3.1 MkDoc API pages are
+  nested below their module and can't collide) and resolves bare `[x](file.md)` links (`replace_links`).
 - `generator/output.py` `BuildOutput` (pages, assets, nav, markdown_extensions, extra css/js,
   templates, extra, metadata, edit_paths). Keep it engine-neutral (a Hugo writer may follow).
 - `generator/yamlconfig.py`: YAML round-trip keeping `!ENV` / `!!python/name` tags, `INHERIT`.
