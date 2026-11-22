@@ -2,7 +2,7 @@
 
 [project]
 name = "mkdocs-mknodes"
-version = "2.0.2"
+version = "2.1.0"
 description = "Generate documentation websites from MkNodes node trees written in Python (built with Zensical)"
 readme = "README.md"
 requires-python = ">=3.13"
