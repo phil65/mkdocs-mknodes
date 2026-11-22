@@ -10,7 +10,6 @@ def create_github_index_md() -> mk.MkPage:
     page += mk.MkHeader("All the nodes!")
     page += mk.MkClassDiagram(mk.MkNode, mode="subclasses", direction="LR")
     return page
-
 ```
 
 # MkNodes (Mkdocs Plugin)

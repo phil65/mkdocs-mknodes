@@ -167,7 +167,7 @@ def _build(
             assert file.page
             excl = file.inclusion.is_excluded()
             with logfire.span(f"build_page {file.page.url}", page=file.page):
-                _build_page(file.page, config, doc_files, nav, env, dirty, excl)
+                _build_page(file.page, config, doc_files, nav, env, dirty=dirty, excluded=excl)
     log_level = config.validation.links.anchors
     with logfire.span("validate_anchor_links"):
         for file in doc_files:
@@ -225,6 +225,7 @@ def _build_page(
     doc_files: Sequence[File],
     nav: Navigation,
     env: jinja2.Environment,
+    *,
     dirty: bool = False,
     excluded: bool = False,
 ) -> None:

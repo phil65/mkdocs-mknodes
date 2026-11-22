@@ -90,7 +90,7 @@ def catch_exceptions(config: mknodesconfig.MkNodesConfig):
 
 
 def _serve(
-    config_file: str | None | yamling.YAMLInput = None,
+    config_file: str | yamling.YAMLInput | None = None,
     livereload: bool = True,
     build_type: Literal["clean", "dirty"] | None = None,
     watch_theme: bool = False,

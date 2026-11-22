@@ -65,7 +65,7 @@ def quiet(ctx: t.Context, _param: t.CallbackParam, value: bool):
 
 
 @cli.command()
-def build(
+def build(  # noqa: PLR0917
     repo_path: str = t.Option(None, *REPO_CMDS, help=REPO_HELP, show_default=False),
     build_fn: str = t.Option(None, *BUILD_CMS, help=BUILD_HELP, show_default=False),
     site_dir: str = t.Option("site", *SITE_DIR_CMDS, help=SITE_DIR_HELP),
@@ -97,7 +97,7 @@ def build(
 
 
 @cli.command()
-def serve(
+def serve(  # noqa: PLR0917
     repo_path: str = t.Option(None, *REPO_CMDS, help=REPO_HELP, show_default=False),
     build_fn: str = t.Option(None, *BUILD_CMS, help=BUILD_HELP, show_default=False),
     clone_depth: int = t.Option(None, *DEPTH_CMDS, help=DEPTH_HELP, show_default=False),

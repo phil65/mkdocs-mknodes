@@ -94,6 +94,7 @@ class LiveServer(socketserver.ThreadingMixIn, wsgiref.simple_server.WSGIServer):
 
     def __init__(
         self,
+        *,
         builder: Callable[[], None],
         host: str,
         port: int,

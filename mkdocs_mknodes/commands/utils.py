@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import collections
 import contextlib
-import datetime
+import datetime as dt
 import functools
 import gzip
 import logging
@@ -179,7 +179,7 @@ def write_gzip(output_path: str | os.PathLike[str], output: str, timestamp: int)
         gz_buf.write(output.encode())
 
 
-def get_build_datetime() -> datetime.datetime:
+def get_build_datetime() -> dt.datetime:
     """Get the build datetime, respecting SOURCE_DATE_EPOCH if set.
 
     Support SOURCE_DATE_EPOCH environment variable for reproducible builds.
@@ -190,9 +190,9 @@ def get_build_datetime() -> datetime.datetime:
     """
     source_date_epoch = os.environ.get("SOURCE_DATE_EPOCH")
     if source_date_epoch is None:
-        return datetime.datetime.now(datetime.UTC)
+        return dt.datetime.now(dt.UTC)
 
-    return datetime.datetime.fromtimestamp(int(source_date_epoch), datetime.UTC)
+    return dt.datetime.fromtimestamp(int(source_date_epoch), dt.UTC)
 
 
 _ERROR_TEMPLATE_RE = re.compile(r"^\d{3}\.html?$")
