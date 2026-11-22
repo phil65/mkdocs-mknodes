@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 def setup_logfire():
     code_source = logfire.CodeSource(
-        repository="https://github.com/phil65/mkdocs_mknodes",
+        repository="https://github.com/phil65/mkdocs-mknodes",
         revision="main",
         root_path=".",
     )

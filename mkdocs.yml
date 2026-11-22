@@ -1,6 +1,6 @@
 site_name: MkNodes (MkDocs plugin)
 site_description: "Don´t write docs. Code them."
-repo_url: "https://github.com/phil65/mkdocs_mknodes/"
+repo_url: "https://github.com/phil65/mkdocs-mknodes/"
 site_url: https://phil65.github.io/mkdocs-mknodes/
 site_author: Philipp Temminghoff
 copyright: Copyright &copy; 2023 Philipp Temminghoff
