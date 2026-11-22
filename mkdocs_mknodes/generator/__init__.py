@@ -1,0 +1,54 @@
+"""Engine-agnostic site generator.
+
+Runs a MkNodes build function, collects the result into an engine-neutral
+[BuildOutput][mkdocs_mknodes.generator.output.BuildOutput] and lets a writer
+(see `mkdocs_mknodes.writers`) produce the input files for a site engine.
+"""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
+from mkdocs_mknodes.generator.output import BuildOutput, NavItem, Script, SiteMetadata
+from mkdocs_mknodes.generator.settings import GeneratorSettings
+
+
+if TYPE_CHECKING:
+    import pathlib
+
+
+def generate_output(settings: GeneratorSettings) -> BuildOutput:
+    """Run the build function of given settings and return the collected output."""
+    from mkdocs_mknodes.generator.generator import SiteGenerator
+
+    return SiteGenerator(settings).generate()
+
+
+def generate(
+    settings: GeneratorSettings | None = None,
+    engine: str = "zensical",
+    **overrides: Any,
+) -> pathlib.Path:
+    """Generate the site input for given engine. Returns the config file to build with.
+
+    Args:
+        settings: Generator settings (default: loaded from the current folder)
+        engine: Name of the writer to use
+        overrides: Setting overrides used when settings get loaded
+    """
+    from mkdocs_mknodes.writers import get_writer
+
+    settings = settings or GeneratorSettings.load(**overrides)
+    output = generate_output(settings)
+    return get_writer(engine)(settings).write(output)
+
+
+__all__ = [
+    "BuildOutput",
+    "GeneratorSettings",
+    "NavItem",
+    "Script",
+    "SiteMetadata",
+    "generate",
+    "generate_output",
+]

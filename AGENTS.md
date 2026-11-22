@@ -27,6 +27,29 @@ Not copier-managed. Type checking uses **mypy** (not ty). Package lives at top l
    (awaited via `anyenv.run_sync`). It mutates `root`; the return value is ignored.
    This repo's own docs use `mkdocs_mknodes.manual.root:Build.build`.
 
+## Site generator (engine-agnostic, Zensical)
+
+Phase 1 of the move away from MkDocs (see `DOCS_REWORK_PLAN.md` in the workspace): the build
+function can also run *before* a site engine instead of inside the MkDocs plugin.
+
+- `generator/settings.py` `GeneratorSettings.load()`: reads the `mknodes` plugin section of
+  `mkdocs.yml`, then `[tool.mknodes]` in `pyproject.toml` (`build-fn`, `kwargs`, `pages`,
+  `generated-dir`, ...), then CLI overrides. Zero config = default website.
+- `generator/generator.py` `SiteGenerator.generate()`: same setup as the plugin's `on_config` /
+  `on_files` (theme, `ProjectContext`, build fn, `BuildCollector`), collected by `OutputBackend`
+  into the engine-neutral `generator/output.py` `BuildOutput` (pages, assets, nav, markdown
+  extensions, extra css/js, templates, extra, metadata). Also renames pages whose URLs collide
+  (`a/b.md` vs `a/b/index.md`) and runs the link replacer on generated pages.
+- `writers/zensical.py` `ZensicalWriter`: writes pages/assets into `docs_dir` (generated files are
+  listed in `docs/.gitignore`, hand-written files are never overwritten, stale generated files are
+  removed), templates + downloaded Iconify icons into `theme.custom_dir`, and
+  `mkdocs.generated.yml` (`INHERIT: mkdocs.yml` + nav, merged `markdown_extensions`, extra_css/js).
+  `generator/yamlconfig.py` round-trips `!ENV` / `!!python/name:` tags without executing them.
+- `generator/watch.py`: mtime polling, regenerates in a subprocess (`python -m mkdocs_mknodes`).
+- CLI: `mkdocs-mknodes generate [--watch] [--generated-dir DIR]`,
+  `mkdocs-mknodes build|serve --engine zensical` (default engine is still `mkdocs`).
+  Build manually with `zensical build -f mkdocs.generated.yml`.
+
 ## Architecture
 
 - `plugin/__init__.py` `MkNodesPlugin` - the MkDocs hooks:
