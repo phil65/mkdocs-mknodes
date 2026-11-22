@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Any, TextIO
 from urllib import parse
 
 import jinjarope
+from mkdocs.config.defaults import MkDocsConfig
 from mknodes.mdlib import mdconverter
 from mknodes.utils import pathhelpers, reprhelpers
 
@@ -129,8 +130,8 @@ class Config:
             config: MkDocs config
         """
         match config:
-            case MkNodesConfig():
-                self._config: MkNodesConfig = config
+            case MkDocsConfig():  # also covers MkNodesConfig (used by our CLI)
+                self._config: MkNodesConfig = config  # type: ignore[assignment]
             case Mapping():
                 self._config = load_config(config)
             case str() | os.PathLike() as path:
