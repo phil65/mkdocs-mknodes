@@ -2,7 +2,7 @@
 
 [project]
 name = "mkdocs-mknodes"
-version = "1.1.2"
+version = "1.2.0"
 description = "MkDocs plugin to build documentation websites from MkNodes node trees written in Python"
 readme = "README.md"
 requires-python = ">=3.13"
