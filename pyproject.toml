@@ -41,7 +41,7 @@ dependencies = [
   "jinjarope",
   "logfire>4.0",
   "mkdocs >=1.5",
-  "mknodes >= 2.1.0alpha1",
+  "mknodes>=2.2.16",
   "pathspec",
   "pydantic",
   # CLI
