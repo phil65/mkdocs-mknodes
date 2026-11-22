@@ -3,7 +3,7 @@
 [project]
 name = "mkdocs-mknodes"
 version = "1.1.1"
-description = "Don't write docs. Code them."
+description = "MkDocs plugin to build documentation websites from MkNodes node trees written in Python"
 readme = "README.md"
 requires-python = ">=3.13"
 license = "MIT"
@@ -12,15 +12,20 @@ authors = [
   { name = "Philipp Temminghoff", email = "philipptemminghoff@gmail.com" },
 ]
 keywords = [
+  "api-documentation",
   "docs",
-  "docstrings",
   "documentation",
-  "framework",
-  "internet",
+  "documentation-generator",
+  "jinja2",
   "markdown",
+  "mkdocs",
+  "mkdocs-plugin",
+  "mknodes",
+  "static-site-generator",
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
+  "Framework :: MkDocs",
   "Intended Audience :: Developers",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
@@ -29,10 +34,9 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython",
   "Topic :: Documentation",
-  "Topic :: Internet",
   "Topic :: Software Development :: Documentation",
-  "Topic :: Software Development :: User Interfaces",
   "Topic :: Text Processing :: Markup :: Markdown",
+  "Typing :: Typed",
 ]
 dependencies = [
   "anyenv>=0.1.0",
@@ -56,7 +60,9 @@ dependencies = [
 [project.urls]
 Documentation = "https://phil65.github.io/mkdocs-mknodes/"
 Gitter = "https://app.gitter.im/#/room/#mknodes:gitter.im"
-Source = "https://github.com/phil65/mkdocs_mknodes"
+Homepage = "https://phil65.github.io/mkdocs-mknodes/"
+Issues = "https://github.com/phil65/mkdocs-mknodes/issues"
+Source = "https://github.com/phil65/mkdocs-mknodes"
 
 [project.scripts]
 mkdocs-mknodes = "mkdocs_mknodes.cli:cli"
