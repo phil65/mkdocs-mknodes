@@ -16,12 +16,12 @@ def build(ctx, *args: str):
 def serve(ctx, *args: str):
     """Serve a MkNodes page."""
     args_str = " " + " ".join(args) if args else ""
-    ctx.run(f"uv run mknodes serve{args_str}")
+    ctx.run(f"uv run mkdocs-mknodes serve{args_str}")
 
 
 @duty(capture=False)
 def test(ctx, *args: str):
-    """Serve a MkNodes page."""
+    """Run the tests."""
     args_str = " " + " ".join(args) if args else ""
     ctx.run(f"uv run pytest{args_str}")
 
