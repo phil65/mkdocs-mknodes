@@ -87,10 +87,11 @@ docs = [
   "cairosvg; python_version < '3.14'",
   "griffe-fieldz",
   "mkdocs-material",
-  "mkdocs-mknodes",
+  "mkdocs-mknodes>=1.2.0",
   "mkdocstrings[python]",
   "pillow; python_version < '3.14'",
   "pymdown-extensions",
+  "zensical",
 ]
 lint = [
   "mypy; python_version >= '3.14'",

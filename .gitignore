@@ -54,4 +54,4 @@ ENV/
 uv.lock
 
 # mkdocs-mknodes generate (generated pages in docs/ are ignored via docs/.gitignore)
-mkdocs.generated.yml
+/mkdocs.generated.yml
