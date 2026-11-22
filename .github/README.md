@@ -65,7 +65,6 @@ graph LR
   2257944738416["mkheader.MkHeader"]
   2257955065920["mktext.MkText"]
   2257991175136["mkchangelog.MkChangelog"]
-  2257991176112["mkcodeofconduct.MkCodeOfConduct"]
   2257952121424["mklicense.MkLicense"]
   2257955088368["mkcontainer.MkContainer"]
   2257955064944["mkblock.MkBlock"]

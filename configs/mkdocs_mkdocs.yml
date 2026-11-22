@@ -39,8 +39,6 @@ plugins:
                   - Development:
                         - title: Changelog
                           type: MkChangelog
-                        - title: Code of Conduct
-                          type: MkCodeOfConduct
                         - title: Contributing
                           type: MkCommitConventions
                         # - title: Pull requests
