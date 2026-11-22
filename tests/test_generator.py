@@ -83,10 +83,11 @@ def test_yaml_roundtrip_keeps_tags():
     text = "a: !ENV [X, 1]\nb: !!python/name:os.path.join\nc: [1, 2]\n"
     data = yamlconfig.loads(text)
     assert isinstance(data["a"], yamlconfig.Tagged)
-    dumped = yamlconfig.dumps({**data, "d": pathlib.Path.cwd})
+    dumped = yamlconfig.dumps({**data, "d": GeneratorSettings.load, "e": yamlconfig.loads})
     assert "!ENV" in dumped
     assert "!!python/name:os.path.join" in dumped
-    assert "!!python/name:pathlib.Path.cwd" in dumped
+    assert "!!python/name:mkdocs_mknodes.generator.settings.GeneratorSettings.load" in dumped
+    assert "!!python/name:mkdocs_mknodes.generator.yamlconfig.loads" in dumped
 
 
 def test_settings_from_mkdocs_yml(project: pathlib.Path):

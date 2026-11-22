@@ -68,7 +68,11 @@ def _represent_tagged(dumper: _Dumper, data: Tagged) -> yaml.Node:
 
 
 def _represent_callable(dumper: _Dumper, data: Any) -> yaml.Node:
-    name = f"{data.__module__}.{data.__qualname__}"
+    owner = getattr(data, "__self__", None)
+    if isinstance(owner, type):  # classmethod: refer to it via the class it is bound to
+        name = f"{owner.__module__}.{owner.__qualname__}.{data.__name__}"
+    else:
+        name = f"{data.__module__}.{data.__qualname__}"
     return dumper.represent_scalar(PYTHON_NAME_TAG + name, "")
 
 
