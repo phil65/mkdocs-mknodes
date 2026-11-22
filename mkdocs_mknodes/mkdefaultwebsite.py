@@ -14,6 +14,9 @@ def add_index_page(nav: mk.MkNav) -> mk.MkPage:
     repo_path = nav.ctx.metadata.repository_path
     readme = next((p for name in README_NAMES if (p := repo_path / name).is_file()), None)
     if readme is not None:
+        # A README is plain Markdown, not a template: code examples with `{{ ... }}`
+        # must not be rendered by Jinja.
+        page.metadata.render_macros = False
         page += mk.MkInclude(readme)
     else:
         page += mk.MkText(nav.ctx.metadata.description)

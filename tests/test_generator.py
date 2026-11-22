@@ -370,3 +370,16 @@ def test_pages_example_from_pyproject(tmp_path: pathlib.Path):
     output = generate_output(settings)
     assert [i.title for i in output.nav] == ["Home", "Usage", "API", "CLI", "Development"]
     assert {"index.md", "Usage/getting_started.md", "Development/license.md"} <= set(output.pages)
+
+
+def test_readme_index_page_is_not_rendered_with_jinja(tmp_path: pathlib.Path):
+    """README code examples like `{{ agent.name }}` must not be treated as Jinja."""
+    import mknodes as mk
+    from mknodes.info import contexts
+
+    from mkdocs_mknodes.mkdefaultwebsite import add_index_page
+
+    (tmp_path / "README.md").write_text('# Demo\n\n`Template("Hello {{ agent.name }}!")`\n')
+    ctx = contexts.ProjectContext(metadata=contexts.PackageContext(repository_path=tmp_path))
+    page = add_index_page(mk.MkNav(context=ctx))
+    assert page.metadata.render_macros is False
