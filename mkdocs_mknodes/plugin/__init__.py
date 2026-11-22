@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 import pathlib
 import urllib.parse
 import tempfile
@@ -108,7 +109,9 @@ class MkNodesPlugin(BasePlugin[pluginconfig.PluginConfig]):
         build_fn = self.config.get_builder()
         self.root = mk.MkNav(context=self.context)
         assert self.root
-        build_fn(theme=self.theme, root=self.root)
+        result = build_fn(theme=self.theme, root=self.root)
+        if inspect.iscoroutine(result):
+            run_sync(result)
         logger.debug("Finished building page.")
         paths = [
             pathlib.Path(node.resolved_file_path).stem
