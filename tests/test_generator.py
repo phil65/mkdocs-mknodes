@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import importlib.util
 import pathlib
 import subprocess
@@ -110,6 +111,23 @@ def test_settings_pyproject_and_overrides_win(project: pathlib.Path):
     settings = _settings(project, build_fn="third:fn", clone_depth=None)
     assert settings.build_fn == "third:fn"
     assert settings.clone_depth == 100  # noqa: PLR2004
+
+
+def test_get_builder_resolves_relative_build_script(project: pathlib.Path):
+    builder = _settings(project).get_builder()
+    assert isinstance(builder, functools.partial)
+    assert getattr(builder.func, "__name__", None) == "build"
+    assert builder.keywords == {"greeting": "Hi there"}
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="drive letters only exist on Windows")
+def test_get_builder_accepts_absolute_windows_path(project: pathlib.Path):
+    """An absolute Windows path contains a colon itself (drive letter)."""
+    script = (project / "build.py").resolve()
+    assert ":" in str(script)
+    builder = _settings(project, build_fn=f"{script}:build").get_builder()
+    assert isinstance(builder, functools.partial)
+    assert getattr(builder.func, "__name__", None) == "build"
 
 
 def test_zero_config_uses_default_website(tmp_path: pathlib.Path):

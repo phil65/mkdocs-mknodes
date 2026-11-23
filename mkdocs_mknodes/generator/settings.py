@@ -104,7 +104,7 @@ class GeneratorSettings:
         from mknodes.utils import classhelpers
 
         build_fn_path = self.build_fn
-        module, sep, qualname = build_fn_path.partition(":")
+        module, sep, qualname = build_fn_path.rpartition(":")
         if module.endswith(".py") and not pathlib.Path(module).is_absolute():
             build_fn_path = f"{(self.project_dir / module).as_posix()}{sep}{qualname}"
         build_fn = classhelpers.to_callable(build_fn_path)
