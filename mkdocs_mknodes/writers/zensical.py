@@ -355,7 +355,8 @@ class ZensicalWriter(Writer):
             cfg["site_name"] = self.settings.project_dir.name
         gen_dir = self.settings.resolved_generated_dir
         if gen_dir.resolve() != self.settings.resolved_docs_dir.resolve():
-            cfg["docs_dir"] = os.path.relpath(gen_dir, self.settings.project_dir)
+            rel_docs = os.path.relpath(gen_dir, self.settings.project_dir)
+            cfg["docs_dir"] = pathlib.Path(rel_docs).as_posix()
         if self.settings.site_dir:
             cfg["site_dir"] = self.settings.site_dir
         if templates_dir:
