@@ -401,3 +401,43 @@ def test_readme_index_page_is_not_rendered_with_jinja(tmp_path: pathlib.Path):
     ctx = contexts.ProjectContext(metadata=contexts.PackageContext(repository_path=tmp_path))
     page = add_index_page(mk.MkNav(context=ctx))
     assert page.metadata.render_macros is False
+
+
+def test_flavor_setting(project: pathlib.Path):
+    output = generate_output(_settings(project, flavor="github"))
+    assert "> [!NOTE]\n> Hi there" in output.pages["index.md"]
+    assert "!!! info" not in output.pages["index.md"]
+    assert "!!! info" in generate_output(_settings(project)).pages["index.md"]
+
+
+def test_markdown_writer(project: pathlib.Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.chdir(project)
+    args = ["build", "--engine", "markdown"]
+    result = CliRunner().invoke(cli.cli, args, catch_exceptions=False)
+    assert result.exit_code == 0
+    docs = project / "docs"
+    index = (docs / "index.md").read_text()
+    assert index.startswith("# Intro\n")  # title heading instead of front matter
+    assert "> [!NOTE]" in index
+    summary = (docs / "SUMMARY.md").read_text()
+    assert "- [Intro](index.md)" in summary
+    assert "    - [Details](Section/details.md)" in summary
+    assert "/SUMMARY.md" in (docs / ".gitignore").read_text()
+    assert not (project / "mkdocs.generated.yml").exists()
+
+
+def test_markdown_writer_has_no_server(project: pathlib.Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.chdir(project)
+    result = CliRunner().invoke(cli.cli, ["serve", "--engine", "markdown"])
+    assert result.exit_code != 0
+    assert "generate --watch" in result.output
+
+
+def test_flavor_option_overrides_engine_flavor(
+    project: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.chdir(project)
+    args = ["generate", "--engine", "markdown", "--flavor", "material"]
+    result = CliRunner().invoke(cli.cli, args, catch_exceptions=False)
+    assert result.exit_code == 0
+    assert "!!! info" in (project / "docs" / "index.md").read_text()

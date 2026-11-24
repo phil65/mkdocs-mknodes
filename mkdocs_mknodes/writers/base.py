@@ -9,7 +9,8 @@ from mknodes.utils import log
 
 
 if TYPE_CHECKING:
-    from mkdocs_mknodes.generator.output import BuildOutput
+    from mknodes.build import BuildOutput
+
     from mkdocs_mknodes.generator.settings import GeneratorSettings
 
 
@@ -121,6 +122,8 @@ class Writer:
     """Turns a `BuildOutput` into the input files of a static site engine."""
 
     name: str = ""
+    flavor: str = "material"
+    """Markdown flavour the engine renders (used unless the `flavor` setting is set)."""
 
     def __init__(self, settings: GeneratorSettings) -> None:
         self.settings = settings
@@ -131,6 +134,14 @@ class Writer:
 
     def build_command(
         self, *, serve: bool = False, extra_args: list[str] | None = None
-    ) -> list[str]:
-        """Return the command which builds (or serves) the written site."""
+    ) -> list[str] | None:
+        """Return the command which builds (or serves) the written site.
+
+        None if the engine has no build step (the written files are the result).
+        """
         raise NotImplementedError
+
+    @property
+    def resolved_flavor(self) -> str:
+        """The flavour to render: the `flavor` setting, else the engine's flavour."""
+        return self.settings.flavor or self.flavor

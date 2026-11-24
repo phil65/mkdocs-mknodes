@@ -42,7 +42,8 @@ CFG_PATH_HELP = "Path to the config file."
 STRICT_HELP = "Strict mode (fails on warnings)"
 VERBOSE_HELP = "Enable verbose output. (`DEBUG` level)"
 QUIET_HELP = "Suppress output during build."
-ENGINE_HELP = "Site engine. Only `zensical` (the default) is supported."
+ENGINE_HELP = "Site engine: `zensical` (HTML site, default) or `markdown` (plain Markdown files)."
+FLAVOR_HELP = "Markdown flavour (`material`, `github`). Default: the engine's flavour."
 WATCH_HELP = "Keep running and regenerate when project sources change."
 GEN_DIR_HELP = "Folder for generated pages (default: the docs dir)."
 
@@ -56,6 +57,7 @@ STRICT_CMDS = "-s", "--strict"
 VERBOSE_CMDS = "-v", "--verbose"
 QUIET_CMDS = "-q", "--quiet"
 ENGINE_CMDS = "-e", "--engine"
+FLAVOR_CMDS = ("--flavor",)
 DEFAULT_ENGINE = "zensical"
 
 
@@ -79,7 +81,7 @@ def check_engine(value: str) -> str:
         msg = (
             f"Unsupported engine {value!r} (available: {', '.join(WRITERS)}). "
             "The MkDocs engine was removed in mkdocs-mknodes 2.0: MkNodes generates the "
-            "pages and Zensical builds the site."
+            "pages and Zensical builds the site (or `markdown` writes plain Markdown)."
         )
         raise t.BadParameter(msg)
     return value
@@ -98,6 +100,7 @@ def build(  # noqa: PLR0917
     config_path: str = t.Option(paths.CFG_DEFAULT, *CFG_PATH_CMDS, help=CFG_PATH_HELP),
     strict: bool = t.Option(False, *STRICT_CMDS, help=STRICT_HELP),
     engine: str = _engine_option(),
+    flavor: str = t.Option(None, *FLAVOR_CMDS, help=FLAVOR_HELP, show_default=False),
     _verbose: bool = t.Option(False, *VERBOSE_CMDS, help=VERBOSE_HELP, callback=verbose),
     _quiet: bool = t.Option(False, *QUIET_CMDS, help=QUIET_HELP, callback=quiet),
 ):
@@ -115,19 +118,23 @@ def build(  # noqa: PLR0917
         repo_path=repo_path,
         clone_depth=clone_depth,
         site_dir=site_dir,
+        flavor=flavor,
     )
     writer = _generate(settings, engine)
     args = ["--strict"] if strict else []
-    raise t.Exit(subprocess.call(writer.build_command(extra_args=args)))
+    if (cmd := writer.build_command(extra_args=args)) is None:
+        return  # no build step, the generated files are the result
+    raise t.Exit(subprocess.call(cmd))
 
 
 @cli.command()
-def serve(
+def serve(  # noqa: PLR0917
     repo_path: str = t.Option(None, *REPO_CMDS, help=REPO_HELP, show_default=False),
     build_fn: str = t.Option(None, *BUILD_CMS, help=BUILD_HELP, show_default=False),
     clone_depth: int = t.Option(None, *DEPTH_CMDS, help=DEPTH_HELP, show_default=False),
     config_path: str = t.Option(paths.CFG_DEFAULT, *CFG_PATH_CMDS, help=CFG_PATH_HELP),
     engine: str = _engine_option(),
+    flavor: str = t.Option(None, *FLAVOR_CMDS, help=FLAVOR_HELP, show_default=False),
     _verbose: bool = t.Option(False, *VERBOSE_CMDS, help=VERBOSE_HELP, callback=verbose),
     _quiet: bool = t.Option(False, *QUIET_CMDS, help=QUIET_HELP, callback=quiet),
 ):
@@ -143,10 +150,14 @@ def serve(
         build_fn=build_fn,
         repo_path=repo_path,
         clone_depth=clone_depth,
+        flavor=flavor,
     )
     settings = _load_settings(**opts)
     writer = _generate(settings, engine)
-    process = subprocess.Popen(writer.build_command(serve=True))
+    if (cmd := writer.build_command(serve=True)) is None:
+        msg = f"Engine {engine!r} has no server. Use `generate --watch` instead."
+        raise t.BadParameter(msg)
+    process = subprocess.Popen(cmd)
     signal.signal(signal.SIGTERM, _raise_keyboard_interrupt)
     try:
         watch_.watch(
@@ -170,6 +181,7 @@ def generate(  # noqa: PLR0917
     clone_depth: int = t.Option(None, *DEPTH_CMDS, help=DEPTH_HELP, show_default=False),
     config_path: str = t.Option(paths.CFG_DEFAULT, *CFG_PATH_CMDS, help=CFG_PATH_HELP),
     engine: str = _engine_option(),
+    flavor: str = t.Option(None, *FLAVOR_CMDS, help=FLAVOR_HELP, show_default=False),
     generated_dir: str = t.Option(None, "--generated-dir", help=GEN_DIR_HELP),
     watch: bool = t.Option(False, "-w", "--watch", help=WATCH_HELP),
     _verbose: bool = t.Option(False, *VERBOSE_CMDS, help=VERBOSE_HELP, callback=verbose),
@@ -189,6 +201,7 @@ def generate(  # noqa: PLR0917
         repo_path=repo_path,
         clone_depth=clone_depth,
         generated_dir=generated_dir,
+        flavor=flavor,
     )
     settings = _load_settings(**opts)
     _generate(settings, engine)
@@ -227,7 +240,7 @@ def _generate(settings: GeneratorSettings, engine: str) -> Writer:
     from mkdocs_mknodes.writers import get_writer
 
     writer = get_writer(engine)(settings)
-    output = generate_output(settings)
+    output = generate_output(settings, flavor=writer.resolved_flavor)
     cfg_path = writer.write(output)
     logger.info("Generated %s pages, config: %s", len(output.pages), cfg_path)
     return writer
@@ -240,6 +253,7 @@ def _generate_args(engine: str, **opts: Any) -> list[str]:
         "repo_path": "--repo-url",
         "clone_depth": "--clone-depth",
         "generated_dir": "--generated-dir",
+        "flavor": "--flavor",
     }
     args = ["--engine", engine]
     for key, value in opts.items():

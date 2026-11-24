@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from mkdocs_mknodes.writers.base import GeneratedFolder, Writer
+from mkdocs_mknodes.writers.markdown import MarkdownWriter
 from mkdocs_mknodes.writers.zensical import ZensicalWriter
 
 
-WRITERS: dict[str, type[Writer]] = {"zensical": ZensicalWriter}
+WRITERS: dict[str, type[Writer]] = {"zensical": ZensicalWriter, "markdown": MarkdownWriter}
 
 
 def get_writer(engine: str) -> type[Writer]:
@@ -18,4 +19,11 @@ def get_writer(engine: str) -> type[Writer]:
         raise ValueError(msg) from None
 
 
-__all__ = ["WRITERS", "GeneratedFolder", "Writer", "ZensicalWriter", "get_writer"]
+__all__ = [
+    "WRITERS",
+    "GeneratedFolder",
+    "MarkdownWriter",
+    "Writer",
+    "ZensicalWriter",
+    "get_writer",
+]

@@ -2,124 +2,28 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 import inspect
 import pathlib
 import re
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 import urllib.parse
 
 from anyenv import run_sync
 import mknodes as mk
+from mknodes.build import DocBuilder
 from mknodes.info import contexts, folderinfo, linkprovider, reporegistry
-from mknodes.mdlib import mdconverter
-from mknodes.utils import linkreplacer, log, resources
+from mknodes.utils import linkreplacer, log
 
-from mkdocs_mknodes import buildcollector
-from mkdocs_mknodes.backends import buildbackend
 from mkdocs_mknodes.generator import yamlconfig
-from mkdocs_mknodes.generator.output import BuildOutput, NavItem, Script, SiteMetadata
 
 
 if TYPE_CHECKING:
+    from mknodes.build import BuildOutput, NavItem
+
     from mkdocs_mknodes.generator.settings import GeneratorSettings
 
 
 logger = log.get_logger(__name__)
-
-ASSETS_DIR = "assets"
-
-
-class OutputBackend(buildbackend.BuildBackend):
-    """Build backend collecting everything into a `BuildOutput`."""
-
-    def __init__(self, output: BuildOutput) -> None:
-        self.output = output
-        self._extensions: dict[str, dict[str, Any]] = {}
-
-    def collect_extensions(self, extensions: dict[str, dict[str, Any]]) -> None:
-        for name, cfg in extensions.items():
-            self.output.markdown_extensions[name] = dict(cfg or {})
-
-    def write_files(self, files: dict[str, str | bytes]) -> None:
-        for path, content in files.items():
-            posix = pathlib.PurePosixPath(pathlib.PurePath(path).as_posix())
-            if posix.name == "SUMMARY.md":
-                continue
-            if posix.suffix == ".md" and isinstance(content, str):
-                self.output.pages[str(posix)] = content
-            else:
-                self.output.assets[str(posix)] = content
-
-    def write_assets(self, assets: list[resources.Asset]) -> None:
-        for asset in assets:
-            if asset.target_dir == "docs_dir":
-                path = asset.filename
-            else:
-                path = f"{ASSETS_DIR}/{asset.filename}"
-            self.output.assets[path] = asset.content
-
-    def write_css(self, css: list[resources.CSSType]) -> None:
-        for item in css:
-            if isinstance(item, resources.CSSText):
-                path = f"{ASSETS_DIR}/{item.resolved_filename}"
-                self.output.assets[path] = item.content
-                self._add_css(path)
-            else:
-                self._add_css(str(item))
-
-    def _add_css(self, path: str) -> None:
-        if path not in self.output.extra_css:
-            self.output.extra_css.append(path)
-
-    def write_js_links(self, js_links: list[resources.JSFile]) -> None:
-        for file in js_links:
-            self._add_js(Script(str(file), file.defer, file.async_, file.typ or None))
-
-    def write_js_files(self, js_files: list[resources.JSText]) -> None:
-        for file in js_files:
-            path = f"{ASSETS_DIR}/{file.resolved_filename}"
-            self.output.assets[path] = file.content
-            self._add_js(Script(path, file.defer, file.async_, file.typ or None))
-
-    def _add_js(self, script: Script) -> None:
-        if all(s.path != script.path for s in self.output.extra_javascript):
-            self.output.extra_javascript.append(script)
-
-    async def write_templates(self, templates: list[mk.PageTemplate]) -> None:
-        exts = self.output.markdown_extensions
-        md = mdconverter.MdConverter(extensions=list(exts), extension_configs=exts)
-        for template in templates:
-            if not template.filename:
-                continue
-            if html := await template.build_html(md):
-                self.output.templates[template.filename] = html
-
-
-def nav_from_dict(dct: dict[str, Any]) -> list[NavItem]:
-    """Convert a MkNodes nav dict (`MkNav.nav.to_nav_dict()`) into `NavItem`s."""
-    items = []
-    for title, value in dct.items():
-        if isinstance(value, dict):
-            items.append(NavItem(title=str(title), children=nav_from_dict(value)))
-        else:
-            target = str(value)
-            if "://" not in target:
-                target = pathlib.PurePath(target).as_posix()
-            items.append(NavItem(title=str(title), target=target))
-    return items
-
-
-def get_metadata(ctx: contexts.ProjectContext) -> SiteMetadata:
-    info = ctx.metadata
-    return SiteMetadata(
-        site_name=info.distribution_name,
-        site_description=info.summary,
-        site_author=info.author_name,
-        repo_url=info.repository_url,
-        copyright=f"Copyright © {datetime.now().year} {info.author_name}",
-        social=list(info.social_info or []),
-    )
 
 
 def _page_url(path: str) -> str:
@@ -159,6 +63,7 @@ def resolve_url_collisions(output: BuildOutput) -> None:
         return
     output.pages = {renames.get(k, k): v for k, v in output.pages.items()}
     output.edit_paths = {renames.get(k, k): v for k, v in output.edit_paths.items()}
+    output.page_resources = {renames.get(k, k): v for k, v in output.page_resources.items()}
 
     def rename(items: list[NavItem]) -> None:
         for item in items:
@@ -172,8 +77,9 @@ def resolve_url_collisions(output: BuildOutput) -> None:
 class SiteGenerator:
     """Runs the configured build function and returns an engine-neutral `BuildOutput`."""
 
-    def __init__(self, settings: GeneratorSettings) -> None:
+    def __init__(self, settings: GeneratorSettings, flavor: str | None = None) -> None:
         self.settings = settings
+        self.flavor = flavor or settings.flavor or "material"
         self.root: mk.MkNav | None = None
         self.theme: mk.Theme | None = None
 
@@ -225,20 +131,13 @@ class SiteGenerator:
         ]
         self._links.set_excludes(paths)
 
-        output = BuildOutput(metadata=get_metadata(root.ctx))
-        backend = OutputBackend(output)
-        collector = buildcollector.BuildCollector(
-            backends=[backend],
+        builder = DocBuilder(
+            flavor=self.flavor,
+            render_jinja=self.settings.render_by_default,
             show_page_info=self.settings.show_page_info,
             global_resources=self.settings.global_resources,
-            render_by_default=self.settings.render_by_default,
         )
-        build_ctx = run_sync(collector.collect(root, theme))
-        output.nav = nav_from_dict(root.nav.to_nav_dict())
-        theme.adapt_extras(output.extra)
-        for path, node in build_ctx.page_mapping.items():
-            if isinstance(node, mk.MkPage) and node._edit_path:
-                output.edit_paths[pathlib.PurePath(path).as_posix()] = node._edit_path
+        output = run_sync(builder.build(root, theme))
         resolve_url_collisions(output)
         self.replace_links(output)
         return output

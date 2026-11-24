@@ -56,6 +56,11 @@ class GeneratorSettings:
     """Render generated pages with the MkNodes Jinja environment."""
     global_resources: bool = True
     """Put CSS / JS into the site config instead of per-page template blocks."""
+    flavor: str | None = None
+    """Markdown flavour of the generated pages (`material`, `github`).
+
+    Defaults to the flavour of the engine: `material` for `zensical`, `github` for `markdown`.
+    """
     docs_dir: str | None = None
     """Docs folder (default: `docs_dir` of the site config, else `docs`)."""
     generated_dir: str | None = None

@@ -48,10 +48,11 @@ label = "Step 5"
 content = """
 ### Collect build artifacts
 
-The `BuildCollector` walks the node tree and renders every page and nav
-(Markdown incl. front matter, rendered with **jinja2**). It aggregates the required
-resources (CSS / JS / Markdown extensions) and the page templates and converts the
-template blocks to HTML. The result is an engine-neutral `BuildOutput`.
+MkNodes' `DocBuilder` walks the node tree and renders every page in the Markdown
+flavour of the engine (`material` for Zensical, `github` for plain Markdown), incl.
+front matter, rendered with **jinja2**. It aggregates the required resources
+(CSS / JS / Markdown extensions) and the page templates and converts the template
+blocks to HTML. The result is an engine-neutral `BuildOutput`.
 """
 
 [step_6]
@@ -59,7 +60,8 @@ label = "Step 6"
 content = """
 ### Write the site input
 
-The `ZensicalWriter` writes the pages and assets into the docs folder and the
+A writer turns the `BuildOutput` into the engine input. The `ZensicalWriter` writes the
+pages and assets into the docs folder and the
 template overrides into the theme `custom_dir` (both tracked in a generated
 `.gitignore`, hand-written files are never overwritten) as well as
 `mkdocs.generated.yml`, which inherits from `mkdocs.yml` and adds the nav,

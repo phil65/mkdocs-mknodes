@@ -6,10 +6,11 @@
 [MkNodes](https://github.com/phil65/mknodes) node tree into a website. A Python "build function"
 populates an `mk.MkNav` root; the generator collects pages, nav, assets, template overrides and
 the required Markdown extensions into an engine-neutral `BuildOutput`, a writer turns that into
-site-engine input and [Zensical](https://zensical.org) builds the HTML. Since 2.0 there is no
+site-engine input and [Zensical](https://zensical.org) builds the HTML (or the `markdown`
+writer emits plain GitHub-flavoured Markdown). Since 2.0 there is no
 MkDocs plugin anymore and `mkdocs` is not a dependency (the package name stays).
 It is used by ~30 documentation sites: treat the settings, the build-function signature, the
-CLI (`build`/`serve`/`generate`, `--engine zensical` accepted as a no-op) and
+CLI (`build`/`serve`/`generate`, `--engine zensical|markdown`, `--flavor`) and
 `MkDefaultWebsite` as public API.
 
 Not copier-managed. Type checking uses **mypy** (not ty). Package lives at top level
@@ -39,18 +40,19 @@ Unknown keys are ignored (old plugin options like `build_folder` don't error).
 
 - `generator/generator.py` `SiteGenerator.generate()`: theme (`mk.Theme.get_theme` from the
   `theme` section), git repo (`reporegistry.get_repo`, remote repos are cloned), `FolderInfo`,
-  `ProjectContext`, runs the build fn, runs `BuildCollector` with `OutputBackend`, converts the
-  nav, renames URL collisions (`resolve_url_collisions`, `-1` suffix with a
-  warning; only a safety net for hand-built navs: since mknodes 3.1 MkDoc API pages are
-  nested below their module and can't collide) and resolves bare `[x](file.md)` links (`replace_links`).
-- `generator/output.py` `BuildOutput` (pages, assets, nav, markdown_extensions, extra css/js,
-  templates, extra, metadata, edit_paths). Keep it engine-neutral (a Hugo writer may follow).
+  `ProjectContext`, runs the build fn, then mknodes' `DocBuilder(flavor=...).build(root, theme)`
+  (renders pages, page templates, page info, resources -> assets / CSS / JS, nav tree; see
+  `mknodes/build/`). Afterwards renames URL collisions (`resolve_url_collisions`, `-1` suffix
+  with a warning; only a safety net for hand-built navs) and resolves bare `[x](file.md)` links
+  (`replace_links`, needs the hand-written files of docs_dir).
+- `BuildOutput`, `NavItem`, `Script`, `SiteMetadata` live in `mknodes.build` (re-exported from
+  `mkdocs_mknodes.generator`). Keep engine-specific things out of them.
 - `generator/yamlconfig.py`: YAML round-trip keeping `!ENV` / `!!python/name` tags, `INHERIT`.
 - `generator/watch.py`: polling watcher for `generate --watch` / `serve`.
-- `buildcollector.py` `BuildCollector.collect()` - walks the node tree, renders pages/navs,
-  sets page templates (before the front matter is rendered), aggregates resources and templates,
-  passes everything to the backends; returns `buildcontext.BuildContext`.
-- `backends/buildbackend.py` - backend base class (the generator's `OutputBackend` subclasses it).
+- Flavours: every writer has a `flavor` (`material` for zensical, `github` for markdown),
+  overridable with the `flavor` setting / `--flavor`; passed to `DocBuilder`.
+- `writers/markdown.py` `MarkdownWriter` (engine `markdown`): mknodes' `MarkdownExporter` files
+  (pages, assets, nav as `SUMMARY.md`) written via `GeneratedFolder`; `build_command()` returns None (no build step, `serve` refuses).
 - `writers/zensical.py` `ZensicalWriter`: writes pages/assets into docs_dir (manifest
   `docs/.gitignore` via `writers/base.py` `GeneratedFolder`; hand-written files are never
   overwritten), templates + downloaded Iconify SVGs into the theme `custom_dir`, and
@@ -71,7 +73,7 @@ Unknown keys are ignored (old plugin options like `build_folder` don't error).
 | Add/change a setting | `mkdocs_mknodes/generator/settings.py` (docstrings are shown on the "Configuration" docs page) |
 | Default website content | `mkdocs_mknodes/mkdefaultwebsite.py`, `mkdocs_mknodes/__init__.py:parse` |
 | CLI commands/flags | `mkdocs_mknodes/cli/__init__.py` |
-| Page rendering / resource + template collection | `mkdocs_mknodes/buildcollector.py`, `generator/generator.py` |
+| Page rendering / resource + template collection | mknodes `src/mknodes/build/`, `mkdocs_mknodes/generator/generator.py` |
 | Generated config / files on disk | `mkdocs_mknodes/writers/zensical.py`, `writers/base.py` |
 | Own documentation | `mkdocs_mknodes/manual/`, `docs/*.jinja`, `mkdocs.yml`, `[tool.mknodes]`, `mkdocs_mknodes/resources/` |
 

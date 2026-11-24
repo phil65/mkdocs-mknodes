@@ -25,7 +25,7 @@ from mkdocs_mknodes.writers.base import GeneratedFolder, Writer
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from mkdocs_mknodes.generator.output import BuildOutput, NavItem, Script
+    from mknodes.build import BuildOutput, NavItem, Script
 
 
 logger = log.get_logger(__name__)
